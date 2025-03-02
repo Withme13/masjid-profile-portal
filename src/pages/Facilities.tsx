@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -6,7 +5,7 @@ import {
   Book, 
   Utensils, 
   Wifi, 
-  Parking, 
+  Car,  // Replacing Parking with Car
   BookOpen, 
   Users, 
   Home, 
@@ -285,7 +284,7 @@ const Facilities = () => {
             
             <motion.div variants={itemVariants} className="glass-panel p-6 hover-scale">
               <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
-                <Parking className="h-6 w-6 text-primary" />
+                <Car className="h-6 w-6 text-primary" />
               </div>
               <h3 className="text-xl font-bold mb-2 font-heading">Ample Parking</h3>
               <p className="text-muted-foreground">
