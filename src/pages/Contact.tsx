@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Map, Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from '@/components/ui/use-toast';
+import MapComponent from '@/components/MapComponent';
 
 const Contact = () => {
   useEffect(() => {
@@ -67,9 +68,9 @@ const Contact = () => {
       icon: <MapPin className="h-6 w-6 text-primary" />,
       title: "Address",
       details: [
-        "123 Faith Avenue",
-        "Springfield, IL 62701",
-        "United States"
+        "Jl. Ganggeng VII No.2 3, RT.4/RW.7,",
+        "Sungai Bambu, Kec. Tj. Priok,",
+        "Jkt Utara, Daerah Khusus Ibukota Jakarta 14330"
       ]
     },
     {
@@ -82,6 +83,9 @@ const Contact = () => {
       ]
     }
   ];
+
+  // Define the actual mosque address
+  const mosqueAddress = "Jl. Ganggeng VII No.2 3, RT.4/RW.7, Sungai Bambu, Kec. Tj. Priok, Jkt Utara, Daerah Khusus Ibukota Jakarta 14330";
 
   const cardVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -178,16 +182,8 @@ const Contact = () => {
                 </div>
               </div>
               <div className="h-[400px] relative">
-                {/* This is a placeholder for an actual map - in a real application, you'd integrate Google Maps or similar */}
-                <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-                  <div className="text-center">
-                    <Map className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-lg font-medium">Interactive Map</p>
-                    <p className="text-muted-foreground">
-                      In a real application, a Google Maps or similar integration would be displayed here.
-                    </p>
-                  </div>
-                </div>
+                {/* Replace the placeholder with our MapComponent */}
+                <MapComponent address={mosqueAddress} />
               </div>
             </motion.div>
             
