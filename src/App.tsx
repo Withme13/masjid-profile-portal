@@ -10,26 +10,33 @@ import Facilities from "./pages/Facilities";
 import Activities from "./pages/Activities";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
+import Navbar from "./components/Navbar";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/facilities" element={<Facilities />} />
-          <Route path="/activities" element={<Activities />} />
-          <Route path="/contact" element={<Contact />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Navbar />
+          <div className="pt-16">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/facilities" element={<Facilities />} />
+              <Route path="/activities" element={<Activities />} />
+              <Route path="/contact" element={<Contact />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

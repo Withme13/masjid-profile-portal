@@ -1,13 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, User, Building, Calendar, Mail, Menu, X, Sun } from 'lucide-react';
+import { Home, User, Building, Calendar, Mail, Menu, X, Sun, Moon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTheme } from './ThemeProvider';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +35,10 @@ const Navbar = () => {
     { name: 'Activities', path: '/activities', icon: <Calendar className="w-4 h-4" /> },
     { name: 'Contact', path: '/contact', icon: <Mail className="w-4 h-4" /> },
   ];
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
   
   return (
     <nav 
@@ -62,19 +68,47 @@ const Navbar = () => {
               <span>{link.name}</span>
             </Link>
           ))}
+          
+          {/* Theme Toggle Button */}
+          <button 
+            onClick={toggleTheme}
+            className="ml-4 p-2 rounded-full hover:bg-accent transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
+          </button>
         </div>
         
         {/* Mobile Navigation Toggle */}
-        <button 
-          className="md:hidden text-foreground/90 hover:text-primary transition-colors"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
+        <div className="md:hidden flex items-center space-x-2">
+          {/* Theme Toggle Button for Mobile */}
+          <button 
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-accent transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
+          </button>
+          
+          <button 
+            className="text-foreground/90 hover:text-primary transition-colors"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+        </div>
       </div>
       
       {/* Mobile Navigation Menu */}
