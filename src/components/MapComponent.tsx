@@ -1,103 +1,31 @@
-import React, { useEffect, useRef } from 'react';
+
+import React from 'react';
 
 interface MapComponentProps {
   address: string;
 }
 
 const MapComponent = ({ address }: MapComponentProps) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Function to load Google Maps API
-    const loadGoogleMapsScript = () => {
-      if (!document.querySelector('script[src*="maps.googleapis.com/maps/api"]')) {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBceSxfOqSJP_tCQJTnvJBQUkK3N6UCne4&callback=initMap`;
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-      } else {
-        // If script already loaded, initialize map directly
-        initializeMap();
-      }
-    };
-
-    // Function to initialize the map
-    const initializeMap = () => {
-      if (!mapRef.current || !window.google) return;
-
-      const geocoder = new window.google.maps.Geocoder();
-      
-      geocoder.geocode({ address }, (results, status) => {
-        if (status === 'OK' && results && results[0]) {
-          const location = results[0].geometry.location;
-          
-          const map = new window.google.maps.Map(mapRef.current, {
-            center: location,
-            zoom: 16,
-            mapTypeControl: true,
-            scrollwheel: false,
-            zoomControl: true,
-            streetViewControl: true,
-          });
-
-          new window.google.maps.Marker({
-            position: location,
-            map,
-            title: 'Al-Hikma Mosque',
-            animation: window.google.maps.Animation.DROP,
-          });
-        } else {
-          console.error('Geocode was not successful for the following reason:', status);
-          // Fallback to a default location (Jakarta)
-          const fallbackLocation = { lat: -6.1753924, lng: 106.8249641 };
-          const map = new window.google.maps.Map(mapRef.current, {
-            center: fallbackLocation,
-            zoom: 15,
-          });
-          
-          new window.google.maps.Marker({
-            position: fallbackLocation,
-            map,
-            title: 'Al-Hikma Mosque',
-          });
-        }
-      });
-    };
-
-    // Define the callback function that Google Maps API will call
-    window.initMap = initializeMap;
-
-    // Load the Google Maps script
-    loadGoogleMapsScript();
-
-    // Clean up
-    return () => {
-      window.initMap = undefined;
-      const script = document.querySelector('script[src*="maps.googleapis.com/maps/api"]');
-      if (script) {
-        script.remove();
-      }
-    };
-  }, [address]);
+  // Create URL-friendly address
+  const encodedAddress = encodeURIComponent(address);
+  
+  // Google Maps embed URL with the encoded address
+  const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3967.093243908937!2d106.87926567498945!3d-6.118149693868473!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6a1fc6a67eb9f9%3A0xa6fb471d71db11a6!2sJl.%20Ganggeng%20VII%20No.2%2C%20RT.4%2FRW.7%2C%20Sungai%20Bambu%2C%20Kec.%20Tj.%20Priok%2C%20Jkt%20Utara%2C%20Daerah%20Khusus%20Ibukota%20Jakarta%2014330!5e0!3m2!1sen!2sid!4v1740910488580!5m2!1sen!2sid`;
 
   return (
     <div className="w-full h-full rounded-lg overflow-hidden shadow-lg">
-      <div 
-        ref={mapRef} 
-        style={{ height: '400px', width: '100%' }}
-        className="rounded-lg" 
+      <iframe 
+        src={mapUrl}
+        className="w-full h-[400px]"
+        style={{ border: 0 }}
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        title="Al-Hikma Mosque Location"
+        aria-label="Map showing the location of Al-Hikma Mosque"
       />
     </div>
   );
 };
-
-// Add this to the global Window interface
-declare global {
-  interface Window {
-    initMap: (() => void) | undefined;
-    google: any;
-  }
-}
 
 export default MapComponent;
