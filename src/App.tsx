@@ -10,6 +10,7 @@ import Facilities from "./pages/Facilities";
 import Activities from "./pages/Activities";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
+import MediaCenter from "./pages/MediaCenter";
 import Navbar from "./components/Navbar";
 import { ThemeProvider } from "./components/ThemeProvider";
 
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/facilities" element={<Facilities />} />
               <Route path="/activities" element={<Activities />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/media-center" element={<MediaCenter />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

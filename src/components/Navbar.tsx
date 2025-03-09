@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, User, Building, Calendar, Mail, Menu, X, Sun, Moon } from 'lucide-react';
+import { Home, User, Building, Calendar, Mail, Menu, X, Sun, Moon, Film } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from './ThemeProvider';
 
@@ -33,6 +32,7 @@ const Navbar = () => {
     { name: 'Profile', path: '/profile', icon: <User className="w-4 h-4" /> },
     { name: 'Facilities', path: '/facilities', icon: <Building className="w-4 h-4" /> },
     { name: 'Activities', path: '/activities', icon: <Calendar className="w-4 h-4" /> },
+    { name: 'Media Center', path: '/media-center', icon: <Film className="w-4 h-4" /> },
     { name: 'Contact', path: '/contact', icon: <Mail className="w-4 h-4" /> },
   ];
 
