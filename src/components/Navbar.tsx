@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, User, Building, Calendar, Mail, Menu, X, Sun, Moon, Film } from 'lucide-react';
@@ -50,7 +51,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <Sun className="h-8 w-8 text-primary animate-pulse" />
-          <span className="font-heading text-xl md:text-2xl font-bold">Al-Hikma</span>
+          <span className="font-heading text-xl md:text-2xl font-bold">At_Tauhid</span>
         </Link>
         
         {/* Desktop Navigation */}

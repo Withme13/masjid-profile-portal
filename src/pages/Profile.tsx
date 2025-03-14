@@ -45,7 +45,7 @@ const Profile = () => {
             transition={{ duration: 0.5 }}
             className="text-3xl md:text-5xl font-bold font-heading mb-6"
           >
-            About Al-Hikma Mosque
+            About At_Tauhid Mosque
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -53,7 +53,7 @@ const Profile = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto"
           >
-            Established in 1985, Al-Hikma Mosque has been serving the community for nearly four decades with a commitment to spirituality, education, and social service.
+            Established in 1985, At_Tauhid Mosque has been serving the community for nearly four decades with a commitment to spirituality, education, and social service.
           </motion.p>
         </div>
       </section>
@@ -74,16 +74,16 @@ const Profile = () => {
             <h2 className="section-title mb-6">Our Story</h2>
             <div className="space-y-4 text-muted-foreground">
               <p>
-                Al-Hikma Mosque began as a small prayer space in a community center in 1985. Founded by a group of 12 families who saw the need for a dedicated Islamic center in the growing Muslim community.
+                At_Tauhid Mosque began as a small prayer space in a community center in 1985. Founded by a group of 12 families who saw the need for a dedicated Islamic center in the growing Muslim community.
               </p>
               <p>
                 Over the years, with the support of our community and generous donors, we expanded to our current location in 1995. The beautiful building we occupy today was completed in 2005 after extensive renovations and expansions.
               </p>
               <p>
-                Today, Al-Hikma serves thousands of Muslims in the area, providing not only a place for worship but also a community hub for education, social services, and cultural activities.
+                Today, At_Tauhid serves thousands of Muslims in the area, providing not only a place for worship but also a community hub for education, social services, and cultural activities.
               </p>
               <p>
-                Our name "Al-Hikma" (The Wisdom) reflects our commitment to education and thoughtful application of Islamic principles in contemporary life.
+                Our name "At_Tauhid" (The Oneness) reflects our commitment to education and thoughtful application of Islamic principles in contemporary life.
               </p>
             </div>
           </motion.div>
@@ -121,7 +121,7 @@ const Profile = () => {
             </span>
             <h2 className="section-title after:left-1/4 after:w-1/2 mx-auto mb-4">Mission & Values</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our mission and values guide everything we do at Al-Hikma Mosque.
+              Our mission and values guide everything we do at At_Tauhid Mosque.
             </p>
           </div>
           
@@ -273,7 +273,7 @@ const Profile = () => {
             <h3 className="text-xl font-bold font-heading mb-1">Mr. Omar Khan</h3>
             <p className="text-primary text-sm mb-3">Board President</p>
             <p className="text-muted-foreground text-sm">
-              A founding member of Al-Hikma, Omar has helped guide our mosque's growth for over 30 years with his business acumen and community vision.
+              A founding member of At_Tauhid, Omar has helped guide our mosque's growth for over 30 years with his business acumen and community vision.
             </p>
           </motion.div>
         </motion.div>

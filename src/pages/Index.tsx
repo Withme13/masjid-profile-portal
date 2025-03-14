@@ -57,7 +57,7 @@ const Index = () => {
             transition={{ duration: 0.8 }}
             className="text-4xl md:text-6xl font-bold text-white font-heading mb-6"
           >
-            Welcome to Al-Hikma Mosque
+            Welcome to At_Tauhid Mosque
           </motion.h1>
           <motion.p 
             initial={{ y: 30, opacity: 0 }}
@@ -105,7 +105,7 @@ const Index = () => {
           </span>
           <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">What We Offer</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Al-Hikma Mosque is more than just a place of worship. We are a community hub offering various services and activities.
+            At_Tauhid Mosque is more than just a place of worship. We are a community hub offering various services and activities.
           </p>
         </div>
         
@@ -207,7 +207,7 @@ const Index = () => {
           </span>
           <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Community Voices</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Hear what our community members have to say about Al-Hikma Mosque.
+            Hear what our community members have to say about At_Tauhid Mosque.
           </p>
         </div>
         
@@ -229,7 +229,7 @@ const Index = () => {
               </div>
             </div>
             <p className="italic text-muted-foreground">
-              "Al-Hikma has been my spiritual home for over 10 years. The community is welcoming and the educational programs have greatly benefited my children."
+              "At_Tauhid has been my spiritual home for over 10 years. The community is welcoming and the educational programs have greatly benefited my children."
             </p>
           </motion.div>
           
@@ -244,7 +244,7 @@ const Index = () => {
               </div>
             </div>
             <p className="italic text-muted-foreground">
-              "The youth programs at Al-Hikma have given me confidence and a deeper understanding of my faith. I've made lifelong friends here."
+              "The youth programs at At_Tauhid have given me confidence and a deeper understanding of my faith. I've made lifelong friends here."
             </p>
           </motion.div>
           
@@ -259,7 +259,7 @@ const Index = () => {
               </div>
             </div>
             <p className="italic text-muted-foreground">
-              "Though I'm not Muslim, I've been welcomed to many community events. Al-Hikma's interfaith initiatives are building bridges in our neighborhood."
+              "Though I'm not Muslim, I've been welcomed to many community events. At_Tauhid's interfaith initiatives are building bridges in our neighborhood."
             </p>
           </motion.div>
         </motion.div>
@@ -283,7 +283,7 @@ const Index = () => {
         >
           <h2 className="text-3xl md:text-4xl font-bold font-heading mb-6">Join Our Community Today</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Whether you're looking for a place to pray, learn, or connect with others, Al-Hikma Mosque welcomes you with open arms. Visit us to experience our community firsthand.
+            Whether you're looking for a place to pray, learn, or connect with others, At_Tauhid Mosque welcomes you with open arms. Visit us to experience our community firsthand.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/contact" className="btn-primary">
