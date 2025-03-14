@@ -1,13 +1,12 @@
-
 import React, { useState } from 'react';
-import { Pencil, Trash2, PlusCircle, Image, Film, Tabs } from 'lucide-react';
+import { Pencil, Trash2, PlusCircle, Image, Film } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useData } from '@/contexts/DataContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Tabs as TabsComponent, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FormDialog from '@/components/admin/FormDialog';
 import ConfirmationDialog from '@/components/admin/ConfirmationDialog';
 import { Photo, Video } from '@/types/adminTypes';
@@ -227,7 +226,7 @@ const MediaManagement = () => {
           </div>
         </div>
         
-        <TabsComponent defaultValue="photos">
+        <Tabs defaultValue="photos">
           <TabsList>
             <TabsTrigger value="photos" className="flex items-center">
               <Image className="mr-2 h-4 w-4" />
@@ -382,7 +381,7 @@ const MediaManagement = () => {
               </Table>
             </div>
           </TabsContent>
-        </TabsComponent>
+        </Tabs>
 
         {/* Photo Add Dialog */}
         <FormDialog

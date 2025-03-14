@@ -154,7 +154,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem as={Link} to="/">
+                <DropdownMenuItem onClick={() => navigate('/')}>
                   View Website
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
