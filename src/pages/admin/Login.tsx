@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,33 +9,17 @@ import { Loader2 } from 'lucide-react';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { login, isLoading } = useAuth();
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // Perbaikan di sini
-
-  const login = async (username: string, password: string) => {
-    return new Promise<void>((resolve, reject) => {
-      if (username === 'admin' && password === 'admin123') {
-        localStorage.setItem('isAuthenticated', 'true');
-        resolve();
-      } else {
-        reject(new Error('Invalid username or password'));
-      }
-    });
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
     
     try {
       await login(username, password);
-      navigate('/dashboard'); // Perbaikan di sini
     } catch (err) {
       setError('Invalid username or password');
-    } finally {
-      setIsLoading(false);
     }
   };
 
