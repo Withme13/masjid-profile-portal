@@ -50,7 +50,11 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <Sun className="h-8 w-8 text-primary animate-pulse" />
+          <img 
+            src="https://cdn-icons-png.flaticon.com/512/10031/10031045.png" 
+            alt="At_Tauhid Logo" 
+            className="h-8 w-8 text-primary" 
+          />
           <span className="font-heading text-xl md:text-2xl font-bold">At_Tauhid</span>
         </Link>
         
