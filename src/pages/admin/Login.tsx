@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,7 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  const navigate = useNavigate(); // Perbaikan di sini
 
   const login = async (username: string, password: string) => {
     return new Promise<void>((resolve, reject) => {
@@ -31,7 +31,7 @@ const Login = () => {
     
     try {
       await login(username, password);
-      router.push('/dashboard'); // Redirect to dashboard on successful login
+      navigate('/dashboard'); // Perbaikan di sini
     } catch (err) {
       setError('Invalid username or password');
     } finally {
