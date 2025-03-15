@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -20,8 +19,8 @@ type AuthContextType = {
 
 // Mock admin credentials - in a real app, this would be handled by a backend
 const ADMIN_CREDENTIALS = {
-  username: 'admin',
-  password: 'password123', // This would be stored securely in a real application
+  username: 'masjidattauhid',
+  password: 'admin123', // This would be stored securely in a real application
   id: '1',
   role: 'admin' as const
 };
@@ -34,7 +33,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Check if user is already logged in on mount
   useEffect(() => {
     const storedUser = localStorage.getItem('admin_user');
     if (storedUser) {
@@ -69,7 +67,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   };
 
-  // Logout function
   const logout = () => {
     setUser(null);
     localStorage.removeItem('admin_user');
