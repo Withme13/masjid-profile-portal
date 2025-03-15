@@ -87,7 +87,7 @@ const Facilities = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto"
           >
-            Al-Hikma Mosque offers modern facilities to ensure a comfortable and enriching experience for all visitors.
+            At_Tauhid Mosque offers modern facilities to ensure a comfortable and enriching experience for all visitors.
           </motion.p>
         </div>
       </section>
