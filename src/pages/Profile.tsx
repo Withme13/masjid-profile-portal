@@ -8,50 +8,34 @@ const Profile = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.5 }
-    }
-  };
-
   return (
-    <div className="min-h-screen pt-20">
-      {/* Header Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center z-0 opacity-20"
-          style={{ 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1626096100110-0b21e80e2610?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80")'
-          }}
-        />
+    <div className="min-h-screen">
+      {/* Hero Section with background image */}
+      <section 
+        className="relative min-h-[80vh] flex flex-col items-center justify-center bg-cover bg-center px-4 py-20"
+        style={{ 
+          backgroundImage: 'url("https://lh3.googleusercontent.com/gps-cs-s/AB5caB8Y7V3K7FkcufDmkIYzDVbxZRCiseUnWZgwpVn813DtaGKVn9CRxeaD9eJ_hDaRkBel6phxcw6sE-JtWx40ywvTpPjYvMyYFfQwEWBVUozEvja9FK3k1W-JPzy7qrNye1C9xCa4sQ=s1360-w1360-h1020")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="absolute inset-0 bg-black/50"></div>
         
-        <div className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-3xl md:text-5xl font-bold font-heading mb-6"
+            className="text-5xl md:text-6xl font-bold text-white mb-6"
           >
             About At_Tauhid Mosque
           </motion.h1>
+          
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto"
           >
             Established in 1985, At_Tauhid Mosque has been serving the community for nearly four decades with a commitment to spirituality, education, and social service.
           </motion.p>
@@ -226,13 +210,31 @@ const Profile = () => {
         </div>
         
         <motion.div 
-          variants={containerVariants}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.2
+              }
+            }
+          }}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-8"
         >
-          <motion.div variants={itemVariants} className="glass-panel p-6 text-center hover-scale">
+          <motion.div 
+            variants={{
+              hidden: { y: 20, opacity: 0 },
+              visible: {
+                y: 0,
+                opacity: 1,
+                transition: { duration: 0.5 }
+              }
+            }} 
+            className="glass-panel p-6 text-center hover-scale"
+          >
             <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden">
               <img 
                 src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" 
@@ -247,7 +249,17 @@ const Profile = () => {
             </p>
           </motion.div>
           
-          <motion.div variants={itemVariants} className="glass-panel p-6 text-center hover-scale">
+          <motion.div 
+            variants={{
+              hidden: { y: 20, opacity: 0 },
+              visible: {
+                y: 0,
+                opacity: 1,
+                transition: { duration: 0.5 }
+              }
+            }}
+            className="glass-panel p-6 text-center hover-scale"
+          >
             <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden">
               <img 
                 src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" 
@@ -262,7 +274,17 @@ const Profile = () => {
             </p>
           </motion.div>
           
-          <motion.div variants={itemVariants} className="glass-panel p-6 text-center hover-scale">
+          <motion.div 
+            variants={{
+              hidden: { y: 20, opacity: 0 },
+              visible: {
+                y: 0,
+                opacity: 1,
+                transition: { duration: 0.5 }
+              }
+            }}
+            className="glass-panel p-6 text-center hover-scale"
+          >
             <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden">
               <img 
                 src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" 
