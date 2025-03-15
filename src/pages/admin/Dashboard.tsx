@@ -16,28 +16,32 @@ import { useData } from '@/contexts/DataContext';
 const Dashboard = () => {
   const { leadership, facilities, activities, photos, videos, messages } = useData();
   
-  const totalPhotos = photos.length;
-  const totalVideos = videos.length;
-  const unreadMessages = messages.filter(m => !m.isRead).length;
+  const totalPhotos = photos?.length || 0;
+  const totalVideos = videos?.length || 0;
+  const unreadMessages = messages?.filter(m => !m.isRead)?.length || 0;
+  const totalMessages = messages?.length || 0;
+  const totalLeadership = leadership?.length || 0;
+  const totalFacilities = facilities?.length || 0;
+  const totalActivities = activities?.length || 0;
   
   const dashboardItems = [
     {
       title: 'Leadership Team',
-      description: `${leadership.length} members`,
+      description: `${totalLeadership} members`,
       icon: <Users className="h-6 w-6 text-primary" />,
       link: '/admin/profiles',
       linkText: 'Manage profiles',
     },
     {
       title: 'Facilities',
-      description: `${facilities.length} facilities`,
+      description: `${totalFacilities} facilities`,
       icon: <Building className="h-6 w-6 text-primary" />,
       link: '/admin/facilities',
       linkText: 'Manage facilities',
     },
     {
       title: 'Activities',
-      description: `${activities.length} activities`,
+      description: `${totalActivities} activities`,
       icon: <Calendar className="h-6 w-6 text-primary" />,
       link: '/admin/activities',
       linkText: 'Manage activities',
@@ -51,7 +55,7 @@ const Dashboard = () => {
     },
     {
       title: 'Contact Messages',
-      description: `${unreadMessages} unread of ${messages.length} total`,
+      description: `${unreadMessages} unread of ${totalMessages} total`,
       icon: <MessageSquare className="h-6 w-6 text-primary" />,
       link: '/admin/messages',
       linkText: 'View messages',

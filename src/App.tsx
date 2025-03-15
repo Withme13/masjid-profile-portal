@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { DataProvider } from "./contexts/DataContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Public pages
@@ -38,84 +39,86 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            {/* Public Routes */}
-            <Routes>
-              {/* Public Pages with Navbar */}
-              <Route
-                path="/"
-                element={
-                  <>
-                    <Navbar />
-                    <div className="pt-16">
-                      <Routes>
-                        <Route index element={<Index />} />
-                        <Route path="/profile" element={<Profile />} />
-                        <Route path="/facilities" element={<Facilities />} />
-                        <Route path="/activities" element={<Activities />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/media-center" element={<MediaCenter />} />
-                      </Routes>
-                    </div>
-                  </>
-                }
-              />
+            <DataProvider>
+              {/* Public Routes */}
+              <Routes>
+                {/* Public Pages with Navbar */}
+                <Route
+                  path="/"
+                  element={
+                    <>
+                      <Navbar />
+                      <div className="pt-16">
+                        <Routes>
+                          <Route index element={<Index />} />
+                          <Route path="/profile" element={<Profile />} />
+                          <Route path="/facilities" element={<Facilities />} />
+                          <Route path="/activities" element={<Activities />} />
+                          <Route path="/contact" element={<Contact />} />
+                          <Route path="/media-center" element={<MediaCenter />} />
+                        </Routes>
+                      </div>
+                    </>
+                  }
+                />
 
-              {/* Admin Routes */}
-              <Route path="/admin/login" element={<Login />} />
-              
-              {/* Protected Admin Routes */}
-              <Route
-                path="/admin/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/profiles"
-                element={
-                  <ProtectedRoute>
-                    <ProfilesManagement />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/facilities"
-                element={
-                  <ProtectedRoute>
-                    <FacilitiesManagement />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/activities"
-                element={
-                  <ProtectedRoute>
-                    <ActivitiesManagement />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/media"
-                element={
-                  <ProtectedRoute>
-                    <MediaManagement />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/messages"
-                element={
-                  <ProtectedRoute>
-                    <MessagesManagement />
-                  </ProtectedRoute>
-                }
-              />
+                {/* Admin Routes */}
+                <Route path="/admin/login" element={<Login />} />
+                
+                {/* Protected Admin Routes */}
+                <Route
+                  path="/admin/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/profiles"
+                  element={
+                    <ProtectedRoute>
+                      <ProfilesManagement />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/facilities"
+                  element={
+                    <ProtectedRoute>
+                      <FacilitiesManagement />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/activities"
+                  element={
+                    <ProtectedRoute>
+                      <ActivitiesManagement />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/media"
+                  element={
+                    <ProtectedRoute>
+                      <MediaManagement />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/messages"
+                  element={
+                    <ProtectedRoute>
+                      <MessagesManagement />
+                    </ProtectedRoute>
+                  }
+                />
 
-              {/* Catch-all route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+                {/* Catch-all route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </DataProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
