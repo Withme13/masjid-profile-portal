@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { DataProvider } from "./contexts/DataContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
 // Public pages
 import Index from "./pages/Index";
@@ -16,7 +17,6 @@ import Activities from "./pages/Activities";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
 import MediaCenter from "./pages/MediaCenter";
-import Navbar from "./components/Navbar";
 
 // Admin pages
 import Login from "./pages/admin/Login";
@@ -40,27 +40,16 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <DataProvider>
-              {/* Public Routes */}
               <Routes>
-                {/* Public Pages with Navbar */}
-                <Route
-                  path="/"
-                  element={
-                    <>
-                      <Navbar />
-                      <div className="pt-16">
-                        <Routes>
-                          <Route index element={<Index />} />
-                          <Route path="/profile" element={<Profile />} />
-                          <Route path="/facilities" element={<Facilities />} />
-                          <Route path="/activities" element={<Activities />} />
-                          <Route path="/contact" element={<Contact />} />
-                          <Route path="/media-center" element={<MediaCenter />} />
-                        </Routes>
-                      </div>
-                    </>
-                  }
-                />
+                {/* Public Pages with Layout (Navbar) */}
+                <Route element={<Layout />}>
+                  <Route index element={<Index />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/facilities" element={<Facilities />} />
+                  <Route path="/activities" element={<Activities />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/media-center" element={<MediaCenter />} />
+                </Route>
 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<Login />} />
