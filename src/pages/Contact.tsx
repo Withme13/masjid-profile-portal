@@ -98,12 +98,12 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
+      {/* Hero Section - Updated with new background image */}
       <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{ 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=2070&q=80")',
+            backgroundImage: 'url("https://lh3.googleusercontent.com/gps-cs-s/AB5caB9I2ai2ccpAlGiqXUsOeH7UPJKr8EtIOWiCZipuk7k6KIR7AiY298B8xc-OVb5bVPKawUIOv8irP4LjlnvSyH967NPzXCfan5Bvxy9VY0_e5vb-c9HrleJT8oHjyCIvclDCI-cG=s1360-w1360-h1020")',
             filter: 'brightness(0.4)'
           }}
         />
