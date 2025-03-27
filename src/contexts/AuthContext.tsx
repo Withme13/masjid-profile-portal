@@ -3,7 +3,6 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import bcrypt from 'bcryptjs';
 
 // Define types
 type User = {
@@ -46,17 +45,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .from('admin_users')
         .select('id, username, password_hash')
         .eq('username', username)
+        .eq('password_hash', password)
         .single();
       
-      if (error) {
-        toast.error("Invalid username or password");
-        throw new Error('Invalid credentials');
-      }
-      
-      // Verify password (in production, this would be done server-side)
-      const passwordMatch = await bcrypt.compare(password, data.password_hash);
-      
-      if (!passwordMatch) {
+      if (error || !data) {
         toast.error("Invalid username or password");
         throw new Error('Invalid credentials');
       }
