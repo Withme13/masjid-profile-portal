@@ -43,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Get admin user from Supabase
       const { data, error } = await supabase
         .from('admin_users')
-        .select('id, username, password_hash')
+        .select('id, username')
         .eq('username', username)
         .eq('password_hash', password)
         .single();
