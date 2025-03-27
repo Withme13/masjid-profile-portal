@@ -1,6 +1,9 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import bcrypt from 'bcryptjs';
 
 // Define types
 type User = {
@@ -15,14 +18,6 @@ type AuthContextType = {
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
-};
-
-// Mock admin credentials - in a real app, this would be handled by a backend
-const ADMIN_CREDENTIALS = {
-  username: 'masjidattauhid',
-  password: 'admin123', // This would be stored securely in a real application
-  id: '1',
-  role: 'admin' as const
 };
 
 // Create context
@@ -45,26 +40,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (username: string, password: string) => {
     setIsLoading(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+    try {
+      // Get admin user from Supabase
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('id, username, password_hash')
+        .eq('username', username)
+        .single();
+      
+      if (error) {
+        toast.error("Invalid username or password");
+        throw new Error('Invalid credentials');
+      }
+      
+      // Verify password (in production, this would be done server-side)
+      const passwordMatch = await bcrypt.compare(password, data.password_hash);
+      
+      if (!passwordMatch) {
+        toast.error("Invalid username or password");
+        throw new Error('Invalid credentials');
+      }
+      
       const user = {
-        id: ADMIN_CREDENTIALS.id,
-        username: ADMIN_CREDENTIALS.username,
-        role: ADMIN_CREDENTIALS.role
+        id: data.id,
+        username: data.username,
+        role: 'admin' as const
       };
       
       setUser(user);
       localStorage.setItem('admin_user', JSON.stringify(user));
       toast.success("Login successful!");
       navigate('/admin/dashboard');
-    } else {
-      toast.error("Invalid username or password");
-      throw new Error('Invalid credentials');
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Login failed");
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const logout = () => {

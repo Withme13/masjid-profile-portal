@@ -72,12 +72,14 @@ const ProfilesManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    addLeadershipMember(formData);
-    setIsSubmitting(false);
-    setIsAddDialogOpen(false);
+    try {
+      await addLeadershipMember(formData);
+      setIsAddDialogOpen(false);
+    } catch (error) {
+      console.error("Error adding leadership member:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleEditSubmit = async (e: React.FormEvent) => {
@@ -86,16 +88,17 @@ const ProfilesManagement = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    updateLeadershipMember({
-      ...formData,
-      id: currentMember.id
-    });
-    
-    setIsSubmitting(false);
-    setIsEditDialogOpen(false);
+    try {
+      await updateLeadershipMember({
+        ...formData,
+        id: currentMember.id
+      });
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      console.error("Error updating leadership member:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -103,13 +106,14 @@ const ProfilesManagement = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    deleteLeadershipMember(currentMember.id);
-    
-    setIsSubmitting(false);
-    setIsDeleteDialogOpen(false);
+    try {
+      await deleteLeadershipMember(currentMember.id);
+      setIsDeleteDialogOpen(false);
+    } catch (error) {
+      console.error("Error deleting leadership member:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
