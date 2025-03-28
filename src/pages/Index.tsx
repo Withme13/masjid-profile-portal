@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Map, Users, BookOpen, ArrowRight } from 'lucide-react';
@@ -42,6 +41,7 @@ const Index = () => {
         variants={heroVariants}
         className="relative h-screen flex items-center justify-center overflow-hidden"
       >
+        
         <div 
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{ 
@@ -99,6 +99,7 @@ const Index = () => {
 
       {/* Main Features Section */}
       <section className="section-container">
+        
         <div className="text-center mb-16">
           <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
             Our Community
@@ -160,6 +161,7 @@ const Index = () => {
 
       {/* Upcoming Event */}
       <section className="bg-primary/5 py-16">
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -199,74 +201,9 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="section-container">
-        <div className="text-center mb-16">
-          <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-            Testimonials
-          </span>
-          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Community Voices</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Hear what our community members have to say about At_Tauhid Mosque.
-          </p>
-        </div>
-        
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
-        >
-          <motion.div variants={itemVariants} className="glass-panel p-6">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
-                <span className="text-primary font-bold">AK</span>
-              </div>
-              <div>
-                <h4 className="font-medium">Ahmed Khan</h4>
-                <p className="text-sm text-muted-foreground">Community Member</p>
-              </div>
-            </div>
-            <p className="italic text-muted-foreground">
-              "At_Tauhid has been my spiritual home for over 10 years. The community is welcoming and the educational programs have greatly benefited my children."
-            </p>
-          </motion.div>
-          
-          <motion.div variants={itemVariants} className="glass-panel p-6">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
-                <span className="text-primary font-bold">SR</span>
-              </div>
-              <div>
-                <h4 className="font-medium">Sarah Rahman</h4>
-                <p className="text-sm text-muted-foreground">Youth Program Participant</p>
-              </div>
-            </div>
-            <p className="italic text-muted-foreground">
-              "The youth programs at At_Tauhid have given me confidence and a deeper understanding of my faith. I've made lifelong friends here."
-            </p>
-          </motion.div>
-          
-          <motion.div variants={itemVariants} className="glass-panel p-6">
-            <div className="flex items-center mb-4">
-              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
-                <span className="text-primary font-bold">MA</span>
-              </div>
-              <div>
-                <h4 className="font-medium">Michael Anderson</h4>
-                <p className="text-sm text-muted-foreground">Neighbor</p>
-              </div>
-            </div>
-            <p className="italic text-muted-foreground">
-              "Though I'm not Muslim, I've been welcomed to many community events. At_Tauhid's interfaith initiatives are building bridges in our neighborhood."
-            </p>
-          </motion.div>
-        </motion.div>
-      </section>
-
       {/* CTA Section */}
       <section className="relative py-20 overflow-hidden">
+        
         <div 
           className="absolute inset-0 bg-cover bg-center z-0 opacity-20"
           style={{ 
