@@ -81,7 +81,7 @@ const Profile = () => {
           >
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80" 
+                src="https://lh3.googleusercontent.com/gps-cs-s/AB5caB9aZ-ibwfcUJOJyzM3N7H5lu6Y2EJdN4TjAXWFCAZYbeXPc7h-49sJpRQPQv3fWFUxsYAn9PTI5TVXWYHyG8Sdrvc0FlSxGCWAIFgwf3gOKgiKzBS9qrCe3r6tyY7y6uA0Kpac=w243-h174-n-k-no-nu" 
                 alt="Mosque Building" 
                 className="rounded-2xl shadow-lg w-full h-96 object-cover"
               />
