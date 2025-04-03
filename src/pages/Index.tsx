@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Map, Users, BookOpen, ArrowRight } from 'lucide-react';
@@ -45,7 +46,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{ 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1519817650390-64a93db51149?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80")',
+            backgroundImage: 'url("https://lh3.googleusercontent.com/gps-cs-s/AB5caB-ZnTid9Qi5BCR1qK0dnU72QTQZSTMeaCbRqfvhO6JesUyvu1vuKTEv8b53JQMxnVQKtKbNYxMS1-n811Y2WKMqi6KZYcwEM75_ofzFSKGjxxwfrUi4z7LUrJSYjz9rvEmJELi-Gg=s1360-w1360-h1020")',
             filter: 'brightness(0.3)'
           }}
         />
