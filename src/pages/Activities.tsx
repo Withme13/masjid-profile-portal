@@ -219,7 +219,7 @@ const Activities = () => {
                   </div>
                   <h3 className="text-xl font-bold mb-2 font-heading">{activity.title}</h3>
                   <p className="text-muted-foreground mb-4">{activity.description}</p>
-                  <button className="btn-outline text-sm">Learn More</button>
+                  {/* Button removed as per user request */}
                 </div>
               </motion.div>
             ))}
