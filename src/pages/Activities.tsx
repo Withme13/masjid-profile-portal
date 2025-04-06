@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, BookOpen, Users, Search, Filter } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
+import { useData } from '@/contexts/DataContext';
 
 const Activities = () => {
   useEffect(() => {
@@ -11,66 +12,52 @@ const Activities = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
-
-  const today = new Date();
-  const upcomingDates = Array(5).fill(0).map((_, i) => {
-    const date = new Date();
-    date.setDate(today.getDate() + i * 5 + 1);
-    return date;
-  });
-
-  const activities = [
-    {
-      id: 1,
-      title: "Friday Sermon",
-      description: "Weekly congregational prayer and sermon addressing contemporary issues from an Islamic perspective.",
-      date: upcomingDates[0],
-      type: "prayer",
-      image: "https://images.unsplash.com/photo-1564939558297-fc396f18e5c7?auto=format&fit=crop&w=1171&q=80"
-    },
-    {
-      id: 2,
-      title: "Quran Study Circle",
-      description: "In-depth study of Quranic verses with explanation of their meanings and relevance to modern life.",
-      date: upcomingDates[1],
-      type: "education",
-      image: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&w=1171&q=80"
-    },
-    {
-      id: 3,
-      title: "Community Iftar",
-      description: "Breaking fast together during Ramadan, fostering community bonds and sharing blessings.",
-      date: upcomingDates[2],
-      type: "community",
-      image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1171&q=80"
-    },
-    {
-      id: 4,
-      title: "Islamic History Lectures",
-      description: "Series of talks exploring the rich history of Islamic civilization and its contributions to the world.",
-      date: upcomingDates[3],
-      type: "education",
-      image: "https://images.unsplash.com/photo-1588851691350-094a7190dab3?auto=format&fit=crop&w=1171&q=80"
-    },
-    {
-      id: 5,
-      title: "Youth Discussion Group",
-      description: "Open forum for young Muslims to discuss challenges and opportunities in practicing faith in modern times.",
-      date: upcomingDates[4],
-      type: "youth",
-      image: "https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=1171&q=80"
-    },
-    {
-      id: 6,
-      title: "Charity Drive",
-      description: "Collection of funds, food, and essentials for distribution to those in need in our local community.",
-      date: upcomingDates[0],
-      type: "community",
-      image: "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=1171&q=80"
+  const { activities } = useData();
+  
+  // Create activity types mapping to classify activities
+  const getActivityType = (name: string, description: string) => {
+    const nameAndDesc = (name + ' ' + description).toLowerCase();
+    
+    if (nameAndDesc.includes('prayer') || nameAndDesc.includes('sermon') || nameAndDesc.includes('eid')) {
+      return 'prayer';
+    } else if (nameAndDesc.includes('class') || nameAndDesc.includes('study') || nameAndDesc.includes('quran') || nameAndDesc.includes('education') || nameAndDesc.includes('lecture')) {
+      return 'education';
+    } else if (nameAndDesc.includes('youth') || nameAndDesc.includes('young')) {
+      return 'youth';
+    } else if (nameAndDesc.includes('charity') || nameAndDesc.includes('community') || nameAndDesc.includes('iftar')) {
+      return 'community';
     }
-  ];
+    
+    return 'community'; // Default type
+  };
 
-  const filteredActivities = activities.filter(activity => {
+  // Transform Supabase activities to the format needed for the UI
+  const transformedActivities = activities.map(activity => ({
+    id: activity.id,
+    title: activity.name,
+    description: activity.description || '',
+    date: activity.date,
+    type: getActivityType(activity.name, activity.description || ''),
+    image: activity.imageUrl || getDefaultImage(getActivityType(activity.name, activity.description || ''))
+  }));
+
+  // Get default image based on activity type
+  function getDefaultImage(type: string) {
+    switch(type) {
+      case 'prayer':
+        return "https://images.unsplash.com/photo-1564939558297-fc396f18e5c7?auto=format&fit=crop&w=1171&q=80";
+      case 'education':
+        return "https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&w=1171&q=80";
+      case 'community':
+        return "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1171&q=80";
+      case 'youth':
+        return "https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&fit=crop&w=1171&q=80";
+      default:
+        return "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=1171&q=80";
+    }
+  }
+
+  const filteredActivities = transformedActivities.filter(activity => {
     const matchesSearch = activity.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           activity.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filter === 'all' || activity.type === filter;
@@ -215,7 +202,7 @@ const Activities = () => {
                 <div className="p-6">
                   <div className="flex items-center text-primary mb-2">
                     <Calendar className="h-4 w-4 mr-2" />
-                    <span className="text-sm">{format(activity.date, 'MMMM d, yyyy')}</span>
+                    <span className="text-sm">{format(parseISO(activity.date), 'MMMM d, yyyy')}</span>
                   </div>
                   <h3 className="text-xl font-bold mb-2 font-heading">{activity.title}</h3>
                   <p className="text-muted-foreground mb-4">{activity.description}</p>
