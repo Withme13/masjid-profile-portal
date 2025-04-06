@@ -10,6 +10,27 @@ const MediaCenter = () => {
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   
+  // Function to ensure YouTube embed URLs are in the correct format
+  const formatYouTubeUrl = (url: string) => {
+    // If it's already an embed URL, return it
+    if (url.includes('youtube.com/embed/')) {
+      return url;
+    }
+    
+    // Extract video ID from various YouTube URL formats
+    let videoId = '';
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(youtubeRegex);
+    
+    if (match && match[1]) {
+      videoId = match[1];
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    // Return original URL if we couldn't parse it
+    return url;
+  };
+  
   return (
     <div className="section-container animate-fade-in min-h-screen">
       <h1 className="section-title text-center mb-12">Media Center</h1>
@@ -150,12 +171,13 @@ const MediaCenter = () => {
             </button>
             <div className="aspect-video">
               <iframe
-                src={selectedVideo.videoUrl}
+                src={formatYouTubeUrl(selectedVideo.videoUrl)}
                 className="w-full h-full"
                 title={selectedVideo.name}
                 allowFullScreen
                 loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                frameBorder="0"
               ></iframe>
             </div>
             <div className="p-6">
