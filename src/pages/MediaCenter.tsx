@@ -1,77 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, Play, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-// Dummy data for photos
-const photoGallery = [
-  {
-    id: 1,
-    title: 'Friday Prayer',
-    image: 'https://images.unsplash.com/photo-1564939558297-fc396f18e5c7?q=80&w=2574',
-    description: 'Community gathering for Friday prayer at Al-Hikma Mosque',
-  },
-  {
-    id: 2,
-    title: 'Ramadan Iftar',
-    image: 'https://images.unsplash.com/photo-1532339142463-fd0a8979791a?q=80&w=2670',
-    description: 'Breaking fast together during the holy month of Ramadan',
-  },
-  {
-    id: 3,
-    title: 'Islamic Studies',
-    image: 'https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?q=80&w=2574',
-    description: 'Weekly Islamic studies class for adults',
-  },
-  {
-    id: 4,
-    title: 'Eid Celebration',
-    image: 'https://images.unsplash.com/photo-1566996533069-7e043ebeec92?q=80&w=2574',
-    description: 'Eid celebrations at Al-Hikma Mosque',
-  },
-  {
-    id: 5,
-    title: 'Quran Recitation',
-    image: 'https://images.unsplash.com/photo-1609599006014-315d7eb5cc55?q=80&w=2670',
-    description: 'Youth Quran recitation competition',
-  },
-  {
-    id: 6,
-    title: 'Community Service',
-    image: 'https://images.unsplash.com/photo-1607166452427-cf5ec965a16e?q=80&w=2670',
-    description: 'Volunteers preparing food packages for the community',
-  },
-];
-
-// Dummy data for videos
-const videoGallery = [
-  {
-    id: 1,
-    title: 'Mosque Tour',
-    thumbnail: 'https://images.unsplash.com/photo-1528815240473-4e089882d69f?q=80&w=2642',
-    videoUrl: 'https://www.youtube.com/embed/EngW7tLk6R8',
-    description: 'A virtual tour of Al-Hikma Mosque facilities',
-  },
-  {
-    id: 2,
-    title: 'Eid Sermon',
-    thumbnail: 'https://images.unsplash.com/photo-1588855316970-2c9b3d95e11c?q=80&w=2574',
-    videoUrl: 'https://www.youtube.com/embed/j2JXGlKL2a0',
-    description: 'Highlights from last year\'s Eid sermon',
-  },
-  {
-    id: 3,
-    title: 'Islamic History Lecture',
-    thumbnail: 'https://images.unsplash.com/photo-1569315616076-6d63c84ab9d7?q=80&w=2670',
-    videoUrl: 'https://www.youtube.com/embed/k3Mv3k0vhAM',
-    description: 'A lecture on the history of Islam by Sheikh Abdullah',
-  },
-];
+import { useData } from '@/contexts/DataContext';
+import { Photo, Video } from '@/types/adminTypes';
 
 const MediaCenter = () => {
-  const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
-  const [selectedVideo, setSelectedVideo] = useState<any>(null);
-
+  const { photos, videos } = useData();
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  
   return (
     <div className="section-container animate-fade-in min-h-screen">
       <h1 className="section-title text-center mb-12">Media Center</h1>
@@ -84,28 +22,34 @@ const MediaCenter = () => {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {photoGallery.map((photo) => (
-            <div 
-              key={photo.id}
-              className="glass-panel overflow-hidden cursor-pointer hover-scale group"
-              onClick={() => setSelectedPhoto(photo)}
-            >
-              <div className="relative h-60 overflow-hidden">
-                <img 
-                  src={photo.image} 
-                  alt={photo.title} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white text-lg font-medium">View Larger</span>
+          {photos.length > 0 ? (
+            photos.map((photo) => (
+              <div 
+                key={photo.id}
+                className="glass-panel overflow-hidden cursor-pointer hover-scale group"
+                onClick={() => setSelectedPhoto(photo)}
+              >
+                <div className="relative h-60 overflow-hidden">
+                  <img 
+                    src={photo.imageUrl} 
+                    alt={photo.name} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white text-lg font-medium">View Larger</span>
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-heading font-bold text-lg">{photo.name}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">{photo.description}</p>
                 </div>
               </div>
-              <div className="p-4">
-                <h3 className="font-heading font-bold text-lg">{photo.title}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{photo.description}</p>
-              </div>
+            ))
+          ) : (
+            <div className="col-span-3 text-center py-10">
+              <p className="text-muted-foreground">No photos available at the moment.</p>
             </div>
-          ))}
+          )}
         </div>
       </section>
       
@@ -117,30 +61,36 @@ const MediaCenter = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videoGallery.map((video) => (
-            <div 
-              key={video.id}
-              className="glass-panel overflow-hidden cursor-pointer hover-scale group"
-              onClick={() => setSelectedVideo(video)}
-            >
-              <div className="relative h-48 overflow-hidden">
-                <img 
-                  src={video.thumbnail} 
-                  alt={video.title} 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-primary/80 flex items-center justify-center">
-                    <Play className="w-8 h-8 text-white ml-1" />
+          {videos.length > 0 ? (
+            videos.map((video) => (
+              <div 
+                key={video.id}
+                className="glass-panel overflow-hidden cursor-pointer hover-scale group"
+                onClick={() => setSelectedVideo(video)}
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <img 
+                    src={video.thumbnailUrl || 'https://via.placeholder.com/640x360?text=Video+Thumbnail'} 
+                    alt={video.name} 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-primary/80 flex items-center justify-center">
+                      <Play className="w-8 h-8 text-white ml-1" />
+                    </div>
                   </div>
                 </div>
+                <div className="p-4">
+                  <h3 className="font-heading font-bold text-lg">{video.name}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">{video.description}</p>
+                </div>
               </div>
-              <div className="p-4">
-                <h3 className="font-heading font-bold text-lg">{video.title}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{video.description}</p>
-              </div>
+            ))
+          ) : (
+            <div className="col-span-3 text-center py-10">
+              <p className="text-muted-foreground">No videos available at the moment.</p>
             </div>
-          ))}
+          )}
         </div>
       </section>
       
@@ -162,14 +112,21 @@ const MediaCenter = () => {
             </button>
             <div className="h-[70vh] overflow-hidden">
               <img 
-                src={selectedPhoto.image} 
-                alt={selectedPhoto.title} 
+                src={selectedPhoto.imageUrl} 
+                alt={selectedPhoto.name} 
                 className="w-full h-full object-contain"
               />
             </div>
             <div className="p-6">
-              <h3 className="font-heading font-bold text-xl">{selectedPhoto.title}</h3>
+              <h3 className="font-heading font-bold text-xl">{selectedPhoto.name}</h3>
               <p className="mt-2 text-muted-foreground">{selectedPhoto.description}</p>
+              {selectedPhoto.category && (
+                <div className="mt-2">
+                  <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
+                    {selectedPhoto.category}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -195,14 +152,14 @@ const MediaCenter = () => {
               <iframe
                 src={selectedVideo.videoUrl}
                 className="w-full h-full"
-                title={selectedVideo.title}
+                title={selectedVideo.name}
                 allowFullScreen
                 loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               ></iframe>
             </div>
             <div className="p-6">
-              <h3 className="font-heading font-bold text-xl">{selectedVideo.title}</h3>
+              <h3 className="font-heading font-bold text-xl">{selectedVideo.name}</h3>
               <p className="mt-2 text-muted-foreground">{selectedVideo.description}</p>
             </div>
           </div>
