@@ -1,5 +1,5 @@
-
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
+import { uploadFile } from '@/utils/fileUpload';
 import { Pencil, Trash2, PlusCircle } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useData } from '@/contexts/DataContext';
@@ -113,6 +113,19 @@ const ProfilesManagement = () => {
       console.error("Error deleting leadership member:", error);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const uploadedImageUrl = await uploadFile(file);
+      if (uploadedImageUrl) {
+        setFormData(prev => ({
+          ...prev,
+          imageUrl: uploadedImageUrl
+        }));
+      }
     }
   };
 
@@ -239,19 +252,33 @@ const ProfilesManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">Image URL</Label>
-              <Input
-                id="imageUrl"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleInputChange}
-                placeholder="https://example.com/image.jpg"
-                required
-              />
+              <Label htmlFor="imageUrl">Profile Image</Label>
+              <div className="flex items-center space-x-2">
+                <Input
+                  id="imageUrl"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="flex-grow"
+                />
+              </div>
               <p className="text-xs text-muted-foreground">
-                Enter the URL of the profile image. Recommended size: 200x200 pixels.
+                Upload a profile image (recommended size: 200x200 pixels)
               </p>
             </div>
+            
+            {formData.imageUrl && (
+              <div className="mt-4">
+                <p className="text-sm font-medium mb-2">Preview:</p>
+                <div className="h-16 w-16 rounded-full overflow-hidden border">
+                  <img 
+                    src={formData.imageUrl} 
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </FormDialog>
 
