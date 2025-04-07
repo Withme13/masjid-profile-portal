@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Pencil, Trash2, PlusCircle, Calendar } from 'lucide-react';
+import { Pencil, Trash2, PlusCircle, Calendar, Upload } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useData } from '@/contexts/DataContext';
 import { Button } from '@/components/ui/button';
@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import FormDialog from '@/components/admin/FormDialog';
 import ConfirmationDialog from '@/components/admin/ConfirmationDialog';
 import { Activity } from '@/types/adminTypes';
+import { uploadFile } from '@/utils/fileUpload';
 import {
   Table,
   TableBody,
@@ -28,6 +29,8 @@ const ActivitiesManagement = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentActivity, setCurrentActivity] = useState<Activity | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(false);
   const [formData, setFormData] = useState({
     date: '',
     name: '',
@@ -43,6 +46,31 @@ const ActivitiesManagement = () => {
     }));
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleFileUpload = async () => {
+    if (!selectedFile) return;
+    
+    setUploadProgress(true);
+    try {
+      const imageUrl = await uploadFile(selectedFile);
+      if (imageUrl) {
+        setFormData(prev => ({
+          ...prev,
+          imageUrl
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    } finally {
+      setUploadProgress(false);
+    }
+  };
+
   const openAddDialog = () => {
     setFormData({
       date: new Date().toISOString().split('T')[0],
@@ -50,6 +78,7 @@ const ActivitiesManagement = () => {
       description: '',
       imageUrl: '',
     });
+    setSelectedFile(null);
     setIsAddDialogOpen(true);
   };
 
@@ -61,6 +90,7 @@ const ActivitiesManagement = () => {
       description: activity.description,
       imageUrl: activity.imageUrl || '',
     });
+    setSelectedFile(null);
     setIsEditDialogOpen(true);
   };
 
@@ -73,8 +103,9 @@ const ActivitiesManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (selectedFile) {
+      await handleFileUpload();
+    }
     
     addActivity(formData);
     setIsSubmitting(false);
@@ -87,8 +118,9 @@ const ActivitiesManagement = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (selectedFile) {
+      await handleFileUpload();
+    }
     
     updateActivity({
       ...formData,
@@ -239,18 +271,39 @@ const ActivitiesManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">Image URL (Optional)</Label>
-              <Input
-                id="imageUrl"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleInputChange}
-                placeholder="https://example.com/image.jpg"
-              />
-              <p className="text-xs text-muted-foreground">
-                Enter the URL of an image for this activity (optional).
-              </p>
+              <Label htmlFor="image">Activity Image</Label>
+              <div className="flex flex-col space-y-2">
+                <Input
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Upload an image for this activity (optional).
+                </p>
+              </div>
             </div>
+            
+            {selectedFile && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Selected file: {selectedFile.name}</p>
+              </div>
+            )}
+            
+            {formData.imageUrl && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Image Preview:</p>
+                <div className="h-32 w-full rounded overflow-hidden border">
+                  <img 
+                    src={formData.imageUrl} 
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </FormDialog>
 
@@ -299,19 +352,31 @@ const ActivitiesManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="edit-imageUrl">Image URL (Optional)</Label>
-              <Input
-                id="edit-imageUrl"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleInputChange}
-              />
+              <Label htmlFor="edit-image">Activity Image</Label>
+              <div className="flex flex-col space-y-2">
+                <Input
+                  id="edit-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Upload a new image or keep the existing one.
+                </p>
+              </div>
             </div>
             
+            {selectedFile && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Selected file: {selectedFile.name}</p>
+              </div>
+            )}
+            
             {formData.imageUrl && (
-              <div className="mt-4">
-                <p className="text-sm font-medium mb-2">Preview:</p>
-                <div className="h-20 w-32 rounded overflow-hidden border">
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Current Image:</p>
+                <div className="h-32 w-full rounded overflow-hidden border">
                   <img 
                     src={formData.imageUrl} 
                     alt="Preview"

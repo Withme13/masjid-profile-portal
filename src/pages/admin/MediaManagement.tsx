@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Pencil, Trash2, PlusCircle, Image, Film } from 'lucide-react';
+import { Pencil, Trash2, PlusCircle, Image, Film, Upload } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useData } from '@/contexts/DataContext';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FormDialog from '@/components/admin/FormDialog';
 import ConfirmationDialog from '@/components/admin/ConfirmationDialog';
 import { Photo, Video } from '@/types/adminTypes';
+import { uploadFile } from '@/utils/fileUpload';
 import {
   Table,
   TableBody,
@@ -28,6 +30,8 @@ const MediaManagement = () => {
   const [isEditPhotoDialogOpen, setIsEditPhotoDialogOpen] = useState(false);
   const [isDeletePhotoDialogOpen, setIsDeletePhotoDialogOpen] = useState(false);
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
+  const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
+  const [photoUploadProgress, setPhotoUploadProgress] = useState(false);
   const [photoFormData, setPhotoFormData] = useState({
     name: '',
     description: '',
@@ -40,6 +44,8 @@ const MediaManagement = () => {
   const [isEditVideoDialogOpen, setIsEditVideoDialogOpen] = useState(false);
   const [isDeleteVideoDialogOpen, setIsDeleteVideoDialogOpen] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
+  const [selectedThumbnailFile, setSelectedThumbnailFile] = useState<File | null>(null);
+  const [thumbnailUploadProgress, setThumbnailUploadProgress] = useState(false);
   const [videoFormData, setVideoFormData] = useState({
     name: '',
     description: '',
@@ -58,6 +64,31 @@ const MediaManagement = () => {
     }));
   };
 
+  const handlePhotoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedPhotoFile(e.target.files[0]);
+    }
+  };
+
+  const handlePhotoFileUpload = async () => {
+    if (!selectedPhotoFile) return;
+    
+    setPhotoUploadProgress(true);
+    try {
+      const imageUrl = await uploadFile(selectedPhotoFile);
+      if (imageUrl) {
+        setPhotoFormData(prev => ({
+          ...prev,
+          imageUrl
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+    } finally {
+      setPhotoUploadProgress(false);
+    }
+  };
+
   const handlePhotoSelectChange = (value: string) => {
     setPhotoFormData(prev => ({
       ...prev,
@@ -72,6 +103,7 @@ const MediaManagement = () => {
       imageUrl: '',
       category: 'Events',
     });
+    setSelectedPhotoFile(null);
     setIsAddPhotoDialogOpen(true);
   };
 
@@ -83,6 +115,7 @@ const MediaManagement = () => {
       imageUrl: photo.imageUrl,
       category: photo.category,
     });
+    setSelectedPhotoFile(null);
     setIsEditPhotoDialogOpen(true);
   };
 
@@ -95,8 +128,9 @@ const MediaManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (selectedPhotoFile) {
+      await handlePhotoFileUpload();
+    }
     
     addPhoto(photoFormData);
     setIsSubmitting(false);
@@ -109,8 +143,9 @@ const MediaManagement = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (selectedPhotoFile) {
+      await handlePhotoFileUpload();
+    }
     
     updatePhoto({
       ...photoFormData,
@@ -144,6 +179,31 @@ const MediaManagement = () => {
     }));
   };
 
+  const handleThumbnailFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedThumbnailFile(e.target.files[0]);
+    }
+  };
+
+  const handleThumbnailFileUpload = async () => {
+    if (!selectedThumbnailFile) return;
+    
+    setThumbnailUploadProgress(true);
+    try {
+      const thumbnailUrl = await uploadFile(selectedThumbnailFile);
+      if (thumbnailUrl) {
+        setVideoFormData(prev => ({
+          ...prev,
+          thumbnailUrl
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading thumbnail:', error);
+    } finally {
+      setThumbnailUploadProgress(false);
+    }
+  };
+
   const openAddVideoDialog = () => {
     setVideoFormData({
       name: '',
@@ -151,6 +211,7 @@ const MediaManagement = () => {
       videoUrl: '',
       thumbnailUrl: '',
     });
+    setSelectedThumbnailFile(null);
     setIsAddVideoDialogOpen(true);
   };
 
@@ -162,6 +223,7 @@ const MediaManagement = () => {
       videoUrl: video.videoUrl,
       thumbnailUrl: video.thumbnailUrl || '',
     });
+    setSelectedThumbnailFile(null);
     setIsEditVideoDialogOpen(true);
   };
 
@@ -174,8 +236,9 @@ const MediaManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (selectedThumbnailFile) {
+      await handleThumbnailFileUpload();
+    }
     
     addVideo(videoFormData);
     setIsSubmitting(false);
@@ -188,8 +251,9 @@ const MediaManagement = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (selectedThumbnailFile) {
+      await handleThumbnailFileUpload();
+    }
     
     updateVideo({
       ...videoFormData,
@@ -435,16 +499,40 @@ const MediaManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="photo-imageUrl">Image URL</Label>
-              <Input
-                id="photo-imageUrl"
-                name="imageUrl"
-                value={photoFormData.imageUrl}
-                onChange={handlePhotoInputChange}
-                placeholder="https://example.com/image.jpg"
-                required
-              />
+              <Label htmlFor="photo-image">Photo Image</Label>
+              <div className="flex flex-col space-y-2">
+                <Input
+                  id="photo-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoFileChange}
+                  className="cursor-pointer"
+                  required={!photoFormData.imageUrl}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Upload the photo image file.
+                </p>
+              </div>
             </div>
+            
+            {selectedPhotoFile && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Selected file: {selectedPhotoFile.name}</p>
+              </div>
+            )}
+            
+            {photoFormData.imageUrl && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Image Preview:</p>
+                <div className="h-32 w-full rounded overflow-hidden border">
+                  <img 
+                    src={photoFormData.imageUrl} 
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </FormDialog>
 
@@ -500,20 +588,31 @@ const MediaManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="edit-photo-imageUrl">Image URL</Label>
-              <Input
-                id="edit-photo-imageUrl"
-                name="imageUrl"
-                value={photoFormData.imageUrl}
-                onChange={handlePhotoInputChange}
-                required
-              />
+              <Label htmlFor="edit-photo-image">Photo Image</Label>
+              <div className="flex flex-col space-y-2">
+                <Input
+                  id="edit-photo-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoFileChange}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Upload a new image or keep the existing one.
+                </p>
+              </div>
             </div>
             
+            {selectedPhotoFile && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Selected file: {selectedPhotoFile.name}</p>
+              </div>
+            )}
+            
             {photoFormData.imageUrl && (
-              <div className="mt-4">
-                <p className="text-sm font-medium mb-2">Preview:</p>
-                <div className="h-32 w-56 rounded overflow-hidden border">
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Current Image:</p>
+                <div className="h-32 w-full rounded overflow-hidden border">
                   <img 
                     src={photoFormData.imageUrl} 
                     alt="Preview"
@@ -583,18 +682,39 @@ const MediaManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="video-thumbnailUrl">Thumbnail URL (Optional)</Label>
-              <Input
-                id="video-thumbnailUrl"
-                name="thumbnailUrl"
-                value={videoFormData.thumbnailUrl}
-                onChange={handleVideoInputChange}
-                placeholder="https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg"
-              />
-              <p className="text-xs text-muted-foreground">
-                For YouTube videos, you can use: https://img.youtube.com/vi/VIDEO_ID/hqdefault.jpg
-              </p>
+              <Label htmlFor="video-thumbnail">Video Thumbnail</Label>
+              <div className="flex flex-col space-y-2">
+                <Input
+                  id="video-thumbnail"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleThumbnailFileChange}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Upload a thumbnail image for the video (optional).
+                </p>
+              </div>
             </div>
+            
+            {selectedThumbnailFile && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Selected thumbnail: {selectedThumbnailFile.name}</p>
+              </div>
+            )}
+            
+            {videoFormData.thumbnailUrl && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Thumbnail Preview:</p>
+                <div className="h-24 w-40 rounded overflow-hidden border">
+                  <img 
+                    src={videoFormData.thumbnailUrl} 
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </FormDialog>
 
@@ -642,18 +762,30 @@ const MediaManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="edit-video-thumbnailUrl">Thumbnail URL (Optional)</Label>
-              <Input
-                id="edit-video-thumbnailUrl"
-                name="thumbnailUrl"
-                value={videoFormData.thumbnailUrl}
-                onChange={handleVideoInputChange}
-              />
+              <Label htmlFor="edit-video-thumbnail">Video Thumbnail</Label>
+              <div className="flex flex-col space-y-2">
+                <Input
+                  id="edit-video-thumbnail"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleThumbnailFileChange}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Upload a new thumbnail or keep the existing one.
+                </p>
+              </div>
             </div>
             
+            {selectedThumbnailFile && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Selected thumbnail: {selectedThumbnailFile.name}</p>
+              </div>
+            )}
+            
             {videoFormData.thumbnailUrl && (
-              <div className="mt-4">
-                <p className="text-sm font-medium mb-2">Thumbnail Preview:</p>
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Current Thumbnail:</p>
                 <div className="h-24 w-40 rounded overflow-hidden border">
                   <img 
                     src={videoFormData.thumbnailUrl} 
