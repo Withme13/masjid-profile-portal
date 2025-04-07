@@ -21,6 +21,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
 
 const MediaManagement = () => {
   const { photos, videos, addPhoto, updatePhoto, deletePhoto, addVideo, updateVideo, deleteVideo } = useData();
@@ -182,25 +183,49 @@ const MediaManagement = () => {
   const handleThumbnailFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedThumbnailFile(e.target.files[0]);
+      
+      // Preview the selected image
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target && event.target.result) {
+          // Create a temporary preview
+          setVideoFormData(prev => ({
+            ...prev,
+            thumbnailUrl: event.target?.result as string
+          }));
+        }
+      };
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
 
   const handleThumbnailFileUpload = async () => {
-    if (!selectedThumbnailFile) return;
+    if (!selectedThumbnailFile) return null;
     
     setThumbnailUploadProgress(true);
     try {
       const thumbnailUrl = await uploadFile(selectedThumbnailFile);
-      if (thumbnailUrl) {
-        setVideoFormData(prev => ({
-          ...prev,
-          thumbnailUrl
-        }));
+      setThumbnailUploadProgress(false);
+      
+      if (!thumbnailUrl) {
+        toast({
+          title: "Upload failed",
+          description: "Failed to upload thumbnail. Please try again.",
+          variant: "destructive"
+        });
+        return null;
       }
+      
+      return thumbnailUrl;
     } catch (error) {
       console.error('Error uploading thumbnail:', error);
-    } finally {
+      toast({
+        title: "Upload error",
+        description: "An error occurred while uploading the thumbnail.",
+        variant: "destructive"
+      });
       setThumbnailUploadProgress(false);
+      return null;
     }
   };
 
@@ -236,13 +261,27 @@ const MediaManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
+    let thumbnailUrl = videoFormData.thumbnailUrl;
+    
     if (selectedThumbnailFile) {
-      await handleThumbnailFileUpload();
+      const uploadedUrl = await handleThumbnailFileUpload();
+      if (uploadedUrl) {
+        thumbnailUrl = uploadedUrl;
+      }
     }
     
-    addVideo(videoFormData);
+    addVideo({
+      ...videoFormData,
+      thumbnailUrl
+    });
+    
     setIsSubmitting(false);
     setIsAddVideoDialogOpen(false);
+    
+    toast({
+      title: "Video added",
+      description: "The video has been added successfully.",
+    });
   };
 
   const handleEditVideoSubmit = async (e: React.FormEvent) => {
@@ -251,17 +290,28 @@ const MediaManagement = () => {
     
     setIsSubmitting(true);
     
+    let thumbnailUrl = videoFormData.thumbnailUrl;
+    
     if (selectedThumbnailFile) {
-      await handleThumbnailFileUpload();
+      const uploadedUrl = await handleThumbnailFileUpload();
+      if (uploadedUrl) {
+        thumbnailUrl = uploadedUrl;
+      }
     }
     
     updateVideo({
       ...videoFormData,
-      id: currentVideo.id
+      id: currentVideo.id,
+      thumbnailUrl
     });
     
     setIsSubmitting(false);
     setIsEditVideoDialogOpen(false);
+    
+    toast({
+      title: "Video updated",
+      description: "The video has been updated successfully.",
+    });
   };
 
   const handleDeleteVideo = async () => {
@@ -276,6 +326,11 @@ const MediaManagement = () => {
     
     setIsSubmitting(false);
     setIsDeleteVideoDialogOpen(false);
+    
+    toast({
+      title: "Video deleted",
+      description: "The video has been deleted successfully.",
+    });
   };
 
   return (
@@ -764,13 +819,16 @@ const MediaManagement = () => {
             <div className="space-y-2">
               <Label htmlFor="edit-video-thumbnail">Video Thumbnail</Label>
               <div className="flex flex-col space-y-2">
-                <Input
-                  id="edit-video-thumbnail"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleThumbnailFileChange}
-                  className="cursor-pointer"
-                />
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="edit-video-thumbnail"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleThumbnailFileChange}
+                    className="cursor-pointer"
+                  />
+                  {thumbnailUploadProgress && <Upload className="h-4 w-4 animate-pulse" />}
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Upload a new thumbnail or keep the existing one.
                 </p>

@@ -9,16 +9,21 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
   const fileName = `${uuidv4()}.${fileExt}`;
   const filePath = `${fileName}`;
 
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(filePath, file);
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, file);
 
-  if (error) {
-    console.error('Error uploading file:', error);
+    if (error) {
+      console.error('Error uploading file:', error);
+      return null;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath);
+
+    return publicUrl;
+  } catch (error) {
+    console.error('Exception uploading file:', error);
     return null;
   }
-
-  const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath);
-
-  return publicUrl;
 };
