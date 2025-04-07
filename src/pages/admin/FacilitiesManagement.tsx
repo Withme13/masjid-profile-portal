@@ -1,5 +1,5 @@
-
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
+import { uploadFile } from '@/utils/fileUpload';
 import { Pencil, Trash2, PlusCircle } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useData } from '@/contexts/DataContext';
@@ -41,6 +41,26 @@ const FacilitiesManagement = () => {
     }));
   };
 
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsSubmitting(true);
+      try {
+        const uploadedImageUrl = await uploadFile(file);
+        if (uploadedImageUrl) {
+          setFormData(prev => ({
+            ...prev,
+            imageUrl: uploadedImageUrl
+          }));
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
+
   const openAddDialog = () => {
     setFormData({
       name: '',
@@ -69,12 +89,17 @@ const FacilitiesManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    addFacility(formData);
-    setIsSubmitting(false);
-    setIsAddDialogOpen(false);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      addFacility(formData);
+    } catch (error) {
+      console.error("Error adding facility:", error);
+    } finally {
+      setIsSubmitting(false);
+      setIsAddDialogOpen(false);
+    }
   };
 
   const handleEditSubmit = async (e: React.FormEvent) => {
@@ -83,16 +108,20 @@ const FacilitiesManagement = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    updateFacility({
-      ...formData,
-      id: currentFacility.id
-    });
-    
-    setIsSubmitting(false);
-    setIsEditDialogOpen(false);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      updateFacility({
+        ...formData,
+        id: currentFacility.id
+      });
+    } catch (error) {
+      console.error("Error updating facility:", error);
+    } finally {
+      setIsSubmitting(false);
+      setIsEditDialogOpen(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -100,13 +129,17 @@ const FacilitiesManagement = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    deleteFacility(currentFacility.id);
-    
-    setIsSubmitting(false);
-    setIsDeleteDialogOpen(false);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      deleteFacility(currentFacility.id);
+    } catch (error) {
+      console.error("Error deleting facility:", error);
+    } finally {
+      setIsSubmitting(false);
+      setIsDeleteDialogOpen(false);
+    }
   };
 
   return (
@@ -219,19 +252,31 @@ const FacilitiesManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">Image URL</Label>
+              <Label htmlFor="facilityImage">Facility Image</Label>
               <Input
-                id="imageUrl"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleInputChange}
-                placeholder="https://example.com/image.jpg"
-                required
+                id="facilityImage"
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="flex-grow"
               />
               <p className="text-xs text-muted-foreground">
-                Enter the URL of the facility image.
+                Upload a facility image (recommended size: 800x600 pixels)
               </p>
             </div>
+            
+            {formData.imageUrl && (
+              <div className="mt-4">
+                <p className="text-sm font-medium mb-2">Preview:</p>
+                <div className="h-16 w-20 rounded overflow-hidden border">
+                  <img 
+                    src={formData.imageUrl} 
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </FormDialog>
 
@@ -268,14 +313,26 @@ const FacilitiesManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="edit-imageUrl">Image URL</Label>
-              <Input
-                id="edit-imageUrl"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleInputChange}
-                required
-              />
+              <Label htmlFor="edit-facilityImage">Facility Image</Label>
+              <div className="flex flex-col gap-2">
+                <Input
+                  id="edit-facilityImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="flex-grow"
+                />
+                {formData.imageUrl && (
+                  <Input
+                    name="imageUrl"
+                    value={formData.imageUrl}
+                    onChange={handleInputChange}
+                    placeholder="Image URL will appear here after upload"
+                    readOnly
+                    className="bg-gray-50"
+                  />
+                )}
+              </div>
             </div>
             
             {formData.imageUrl && (
