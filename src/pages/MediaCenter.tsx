@@ -10,6 +10,7 @@ const MediaCenter = () => {
   const { photos, videos } = useData();
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [loading, setLoading] = useState(true);
   
   // Function to ensure YouTube embed URLs are in the correct format
   const formatYouTubeUrl = (url: string) => {
@@ -35,9 +36,14 @@ const MediaCenter = () => {
   // Debug logs for photos
   useEffect(() => {
     console.log("Photos in MediaCenter component:", photos);
-    photos.forEach(photo => {
-      console.log(`Photo ${photo.id}: ${photo.name} - URL: ${photo.imageUrl}`);
-    });
+    if (photos.length > 0) {
+      photos.forEach(photo => {
+        console.log(`Photo ${photo.id}: ${photo.name} - URL: ${photo.imageUrl}`);
+      });
+    } else {
+      console.log("No photos found in the data context.");
+    }
+    setLoading(false);
   }, [photos]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -57,38 +63,44 @@ const MediaCenter = () => {
           <h2 className="text-2xl font-heading font-bold">Photo Gallery</h2>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {photos.length > 0 ? (
-            photos.map((photo) => (
-              <div 
-                key={photo.id}
-                className="glass-panel overflow-hidden cursor-pointer hover-scale group"
-                onClick={() => setSelectedPhoto(photo)}
-              >
-                <div className="relative h-60 overflow-hidden">
-                  <img 
-                    src={photo.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'} 
-                    alt={photo.name} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onError={handleImageError}
-                    onLoad={() => console.log(`Image loaded successfully: ${photo.imageUrl}`)}
-                  />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-white text-lg font-medium">View Larger</span>
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {photos.length > 0 ? (
+              photos.map((photo) => (
+                <div 
+                  key={photo.id}
+                  className="glass-panel overflow-hidden cursor-pointer hover-scale group"
+                  onClick={() => setSelectedPhoto(photo)}
+                >
+                  <div className="relative h-60 overflow-hidden">
+                    <img 
+                      src={photo.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'} 
+                      alt={photo.name} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      onError={handleImageError}
+                      onLoad={() => console.log(`Image loaded successfully: ${photo.imageUrl}`)}
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-white text-lg font-medium">View Larger</span>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-heading font-bold text-lg">{photo.name}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">{photo.description}</p>
                   </div>
                 </div>
-                <div className="p-4">
-                  <h3 className="font-heading font-bold text-lg">{photo.name}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{photo.description}</p>
-                </div>
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-10">
+                <p className="text-muted-foreground">No photos available at the moment.</p>
               </div>
-            ))
-          ) : (
-            <div className="col-span-3 text-center py-10">
-              <p className="text-muted-foreground">No photos available at the moment.</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </section>
       
       {/* Video Gallery Section */}

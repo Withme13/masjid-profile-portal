@@ -446,6 +446,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       console.log('Adding photo with data:', photo);
       
+      // Ensure we have a valid imageUrl
+      if (!photo.imageUrl) {
+        console.error('Error: Attempting to add photo without imageUrl');
+        toast.error('Cannot add photo without an image');
+        return;
+      }
+      
       const { data, error } = await supabase
         .from('media_photos')
         .insert([{
@@ -457,7 +464,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .select();
 
       if (error) {
-        console.error('Error adding photo:', error);
+        console.error('Error adding photo to Supabase:', error);
         throw error;
       }
 
@@ -470,13 +477,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           imageUrl: data[0].image_url
         };
         
-        console.log('Successfully added photo:', newPhoto);
+        console.log('Successfully added photo to database:', newPhoto);
         setPhotos([...photos, newPhoto]);
         toast.success('Photo added successfully');
       }
     } catch (error) {
       console.error('Error adding photo:', error);
-      toast.error('Failed to add photo');
+      toast.error('Failed to add photo to database');
+      throw error;
     }
   };
 

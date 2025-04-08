@@ -114,6 +114,7 @@ const MediaManagement = () => {
     setPhotoUploadProgress(true);
     try {
       console.log("Uploading photo file:", selectedPhotoFile.name);
+      // Pass 'photos' as the explicit bucket name
       const imageUrl = await uploadFile(selectedPhotoFile, 'photos');
       setPhotoUploadProgress(false);
       
@@ -196,14 +197,20 @@ const MediaManagement = () => {
     console.log("Adding new photo with image URL:", imageUrl);
     // Remove tempPreview property before sending to addPhoto
     const { tempPreview, ...photoData } = photoFormData;
-    await addPhoto({
-      ...photoData,
-      imageUrl
-    });
-    
-    setIsSubmitting(false);
-    setIsAddPhotoDialogOpen(false);
-    toast.success("Photo added successfully");
+    try {
+      await addPhoto({
+        ...photoData,
+        imageUrl
+      });
+      
+      setIsSubmitting(false);
+      setIsAddPhotoDialogOpen(false);
+      toast.success("Photo added successfully");
+    } catch (error) {
+      console.error("Error adding photo:", error);
+      toast.error("Failed to add photo to database");
+      setIsSubmitting(false);
+    }
   };
 
   const handleEditPhotoSubmit = async (e: React.FormEvent) => {
