@@ -31,16 +31,6 @@ const Activities = () => {
     return 'community'; // Default type
   };
 
-  // Transform Supabase activities to the format needed for the UI
-  const transformedActivities = activities.map(activity => ({
-    id: activity.id,
-    title: activity.name,
-    description: activity.description || '',
-    date: activity.date,
-    type: getActivityType(activity.name, activity.description || ''),
-    image: activity.imageUrl || getDefaultImage(getActivityType(activity.name, activity.description || ''))
-  }));
-
   // Get default image based on activity type
   function getDefaultImage(type: string) {
     switch(type) {
@@ -56,6 +46,20 @@ const Activities = () => {
         return "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=1171&q=80";
     }
   }
+
+  // Transform Supabase activities to the format needed for the UI
+  const transformedActivities = activities.map(activity => {
+    const type = getActivityType(activity.name, activity.description || '');
+    return {
+      id: activity.id,
+      title: activity.name,
+      description: activity.description || '',
+      date: activity.date,
+      type: type,
+      // Use the uploaded image if available, otherwise use the default image for the activity type
+      image: activity.imageUrl && activity.imageUrl.trim() !== '' ? activity.imageUrl : getDefaultImage(type)
+    };
+  });
 
   const filteredActivities = transformedActivities.filter(activity => {
     const matchesSearch = activity.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -193,6 +197,11 @@ const Activities = () => {
                     src={activity.image} 
                     alt={activity.title} 
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // If image fails to load, fall back to default image
+                      const target = e.target as HTMLImageElement;
+                      target.src = getDefaultImage(activity.type);
+                    }}
                   />
                   <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 text-xs font-medium">
                     {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
