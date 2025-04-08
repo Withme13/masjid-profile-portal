@@ -40,10 +40,12 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
       return null;
     }
 
+    console.log('File uploaded successfully, data:', data);
+
     // Get the public URL of the uploaded file
     const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath);
     
-    console.log('Uploaded file with public URL:', publicUrl);
+    console.log('File public URL:', publicUrl);
     return publicUrl;
   } catch (error) {
     console.error('Exception uploading file:', error);

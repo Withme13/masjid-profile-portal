@@ -35,6 +35,9 @@ const MediaCenter = () => {
   // Debug logs for photos
   useEffect(() => {
     console.log("Photos in MediaCenter component:", photos);
+    photos.forEach(photo => {
+      console.log(`Photo ${photo.id}: ${photo.name} - URL: ${photo.imageUrl}`);
+    });
   }, [photos]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -68,6 +71,7 @@ const MediaCenter = () => {
                     alt={photo.name} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     onError={handleImageError}
+                    onLoad={() => console.log(`Image loaded successfully: ${photo.imageUrl}`)}
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white text-lg font-medium">View Larger</span>

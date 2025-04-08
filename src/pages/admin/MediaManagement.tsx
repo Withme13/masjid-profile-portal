@@ -67,12 +67,15 @@ const MediaManagement = () => {
 
   const handlePhotoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedPhotoFile(e.target.files[0]);
+      const file = e.target.files[0];
+      console.log("Photo file selected:", file.name);
+      setSelectedPhotoFile(file);
       
       // Preview the selected image
       const reader = new FileReader();
       reader.onload = (event) => {
         if (event.target && event.target.result) {
+          console.log("Photo file preview created");
           // Create a temporary preview
           setPhotoFormData(prev => ({
             ...prev,
@@ -80,17 +83,20 @@ const MediaManagement = () => {
           }));
         }
       };
-      reader.readAsDataURL(e.target.files[0]);
+      reader.readAsDataURL(file);
     }
   };
 
   const handlePhotoFileUpload = async () => {
-    if (!selectedPhotoFile) return null;
+    if (!selectedPhotoFile) {
+      console.log("No photo file selected for upload");
+      return null;
+    }
     
     setPhotoUploadProgress(true);
     try {
       console.log("Uploading photo file:", selectedPhotoFile.name);
-      const imageUrl = await uploadFile(selectedPhotoFile);
+      const imageUrl = await uploadFile(selectedPhotoFile, 'photos');
       setPhotoUploadProgress(false);
       
       if (!imageUrl) {
@@ -163,7 +169,7 @@ const MediaManagement = () => {
       }
     }
     
-    if (!imageUrl) {
+    if (!imageUrl && !selectedPhotoFile) {
       toast.error("Please provide an image URL or upload an image");
       setIsSubmitting(false);
       return;
@@ -372,6 +378,7 @@ const MediaManagement = () => {
 
   
   return (
+    
     <AdminLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -431,6 +438,10 @@ const MediaManagement = () => {
                               src={photo.imageUrl} 
                               alt={photo.name}
                               className="h-full w-full object-cover"
+                              onError={(e) => {
+                                console.error('Image failed to load:', photo.imageUrl);
+                                e.currentTarget.src = 'https://via.placeholder.com/160x90?text=Image+Not+Found';
+                              }}
                             />
                           </div>
                         </TableCell>
@@ -614,14 +625,30 @@ const MediaManagement = () => {
               </div>
             )}
             
-            {photoFormData.imageUrl && (
+            {photoFormData.tempPreview && (
               <div className="mt-2">
                 <p className="text-sm font-medium mb-2">Image Preview:</p>
+                <div className="h-32 w-full rounded overflow-hidden border">
+                  <img 
+                    src={photoFormData.tempPreview} 
+                    alt="Preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+            
+            {!photoFormData.tempPreview && photoFormData.imageUrl && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">Current Image:</p>
                 <div className="h-32 w-full rounded overflow-hidden border">
                   <img 
                     src={photoFormData.imageUrl} 
                     alt="Preview"
                     className="h-full w-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+                    }}
                   />
                 </div>
               </div>
