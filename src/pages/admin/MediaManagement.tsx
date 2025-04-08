@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Pencil, Trash2, PlusCircle, Image, Film, Upload } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useData } from '@/contexts/DataContext';
@@ -21,9 +20,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const MediaManagement = () => {
+  // ... keep existing code for component state and video state
+  
   const { photos, videos, addPhoto, updatePhoto, deletePhoto, addVideo, updateVideo, deleteVideo } = useData();
   
   // Photo state
@@ -68,25 +69,44 @@ const MediaManagement = () => {
   const handlePhotoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedPhotoFile(e.target.files[0]);
+      
+      // Preview the selected image
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target && event.target.result) {
+          // Create a temporary preview
+          setPhotoFormData(prev => ({
+            ...prev,
+            tempPreview: event.target?.result as string
+          }));
+        }
+      };
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
 
   const handlePhotoFileUpload = async () => {
-    if (!selectedPhotoFile) return;
+    if (!selectedPhotoFile) return null;
     
     setPhotoUploadProgress(true);
     try {
+      console.log("Uploading photo file:", selectedPhotoFile.name);
       const imageUrl = await uploadFile(selectedPhotoFile);
-      if (imageUrl) {
-        setPhotoFormData(prev => ({
-          ...prev,
-          imageUrl
-        }));
+      setPhotoUploadProgress(false);
+      
+      if (!imageUrl) {
+        console.error("Failed to upload photo file - no URL returned");
+        toast.error("Failed to upload photo. Please try again.");
+        return null;
       }
+      
+      console.log("Photo uploaded successfully with URL:", imageUrl);
+      return imageUrl;
     } catch (error) {
       console.error('Error uploading photo:', error);
-    } finally {
+      toast.error("An unexpected error occurred during upload.");
       setPhotoUploadProgress(false);
+      return null;
     }
   };
 
@@ -129,13 +149,36 @@ const MediaManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
+    let imageUrl = photoFormData.imageUrl;
+    
     if (selectedPhotoFile) {
-      await handlePhotoFileUpload();
+      console.log("Starting photo upload process...");
+      const uploadedUrl = await handlePhotoFileUpload();
+      if (uploadedUrl) {
+        imageUrl = uploadedUrl;
+        console.log("Using uploaded photo URL:", imageUrl);
+      } else {
+        console.error("Photo upload failed or was cancelled");
+        setIsSubmitting(false);
+        return;
+      }
     }
     
-    addPhoto(photoFormData);
+    if (!imageUrl) {
+      toast.error("Please provide an image URL or upload an image");
+      setIsSubmitting(false);
+      return;
+    }
+    
+    console.log("Adding new photo with image URL:", imageUrl);
+    await addPhoto({
+      ...photoFormData,
+      imageUrl
+    });
+    
     setIsSubmitting(false);
     setIsAddPhotoDialogOpen(false);
+    toast.success("Photo added successfully");
   };
 
   const handleEditPhotoSubmit = async (e: React.FormEvent) => {
@@ -144,17 +187,29 @@ const MediaManagement = () => {
     
     setIsSubmitting(true);
     
+    let imageUrl = photoFormData.imageUrl;
+    
     if (selectedPhotoFile) {
-      await handlePhotoFileUpload();
+      console.log("Starting photo upload for edit...");
+      const uploadedUrl = await handlePhotoFileUpload();
+      if (uploadedUrl) {
+        imageUrl = uploadedUrl;
+        console.log("Using new uploaded photo URL:", imageUrl);
+      } else {
+        console.log("Keeping existing photo URL:", imageUrl);
+      }
     }
     
-    updatePhoto({
+    console.log("Updating photo with image URL:", imageUrl);
+    await updatePhoto({
       ...photoFormData,
-      id: currentPhoto.id
+      id: currentPhoto.id,
+      imageUrl
     });
     
     setIsSubmitting(false);
     setIsEditPhotoDialogOpen(false);
+    toast.success("Photo updated successfully");
   };
 
   const handleDeletePhoto = async () => {
@@ -333,6 +388,7 @@ const MediaManagement = () => {
     });
   };
 
+  
   return (
     <AdminLayout>
       <div className="space-y-6">

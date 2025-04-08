@@ -4,6 +4,7 @@ import { Image, Play, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useData } from '@/contexts/DataContext';
 import { Photo, Video } from '@/types/adminTypes';
+import { toast } from 'sonner';
 
 const MediaCenter = () => {
   const { photos, videos } = useData();
@@ -30,6 +31,17 @@ const MediaCenter = () => {
     // Return original URL if we couldn't parse it
     return url;
   };
+
+  // Debug logs for photos
+  useEffect(() => {
+    console.log("Photos in MediaCenter component:", photos);
+  }, [photos]);
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.error('Image failed to load:', e.currentTarget.src);
+    e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+    toast.error("One or more images failed to load.");
+  };
   
   return (
     <div className="section-container animate-fade-in min-h-screen">
@@ -52,9 +64,10 @@ const MediaCenter = () => {
               >
                 <div className="relative h-60 overflow-hidden">
                   <img 
-                    src={photo.imageUrl} 
+                    src={photo.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'} 
                     alt={photo.name} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    onError={handleImageError}
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white text-lg font-medium">View Larger</span>
@@ -94,6 +107,7 @@ const MediaCenter = () => {
                     src={video.thumbnailUrl || 'https://via.placeholder.com/640x360?text=Video+Thumbnail'} 
                     alt={video.name} 
                     className="w-full h-full object-cover"
+                    onError={handleImageError}
                   />
                   <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                     <div className="w-16 h-16 rounded-full bg-primary/80 flex items-center justify-center">
@@ -133,9 +147,10 @@ const MediaCenter = () => {
             </button>
             <div className="h-[70vh] overflow-hidden">
               <img 
-                src={selectedPhoto.imageUrl} 
+                src={selectedPhoto.imageUrl || 'https://via.placeholder.com/800x600?text=Image+Not+Found'} 
                 alt={selectedPhoto.name} 
                 className="w-full h-full object-contain"
+                onError={handleImageError}
               />
             </div>
             <div className="p-6">

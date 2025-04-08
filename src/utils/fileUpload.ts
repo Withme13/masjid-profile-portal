@@ -11,18 +11,22 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
   const filePath = `${fileName}`;
 
   try {
+    console.log(`Starting upload for file: ${file.name} to bucket: ${bucket}`);
+    
     // First check if the bucket exists and create it if it doesn't
     const { data: buckets } = await supabase.storage.listBuckets();
     const bucketExists = buckets?.some(b => b.name === bucket);
     
     if (!bucketExists) {
-      // Create the bucket if it doesn't exist
+      console.log(`Bucket ${bucket} does not exist. Creating bucket...`);
       await supabase.storage.createBucket(bucket, {
         public: true // Make the bucket public so files are accessible
       });
+      console.log(`Bucket ${bucket} created successfully`);
     }
 
     // Upload the file
+    console.log(`Uploading file to ${bucket}/${filePath}...`);
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(filePath, file, {
