@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -351,6 +350,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Activity CRUD operations
   const addActivity = async (activity: Omit<Activity, 'id'>) => {
     try {
+      console.log("Sending activity data to Supabase:", {
+        name: activity.name,
+        description: activity.description,
+        date: activity.date,
+        image_url: activity.imageUrl
+      });
+      
       const { data, error } = await supabase
         .from('activities')
         .insert([{
@@ -361,7 +367,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }])
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error adding activity:', error);
+        throw error;
+      }
 
       if (data && data[0]) {
         const newActivity: Activity = {
@@ -372,6 +381,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           imageUrl: data[0].image_url
         };
         
+        console.log("New activity created with data:", newActivity);
         setActivities([...activities, newActivity]);
         toast.success('Activity added successfully');
       }
@@ -383,6 +393,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateActivity = async (activity: Activity) => {
     try {
+      console.log("Updating activity in Supabase:", {
+        id: activity.id,
+        name: activity.name,
+        description: activity.description,
+        date: activity.date,
+        image_url: activity.imageUrl
+      });
+      
       const { error } = await supabase
         .from('activities')
         .update({
@@ -393,7 +411,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         })
         .eq('id', activity.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error updating activity:', error);
+        throw error;
+      }
 
       setActivities(activities.map(a => a.id === activity.id ? activity : a));
       toast.success('Activity updated successfully');

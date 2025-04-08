@@ -1,6 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from "sonner";
 
 export const uploadFile = async (file: File, bucket: string = 'uploads') => {
   if (!file) return null;
@@ -31,15 +32,18 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
 
     if (error) {
       console.error('Error uploading file:', error);
+      toast.error("Failed to upload file. Please try again.");
       return null;
     }
 
     // Get the public URL of the uploaded file
     const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath);
-
+    
+    console.log('Uploaded file with public URL:', publicUrl);
     return publicUrl;
   } catch (error) {
     console.error('Exception uploading file:', error);
+    toast.error("An unexpected error occurred during upload.");
     return null;
   }
 };

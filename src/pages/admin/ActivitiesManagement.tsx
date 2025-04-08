@@ -11,6 +11,7 @@ import FormDialog from '@/components/admin/FormDialog';
 import ConfirmationDialog from '@/components/admin/ConfirmationDialog';
 import { Activity } from '@/types/adminTypes';
 import { uploadFile } from '@/utils/fileUpload';
+import { toast } from 'sonner';
 import {
   Table,
   TableBody,
@@ -53,21 +54,25 @@ const ActivitiesManagement = () => {
   };
 
   const handleFileUpload = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile) return null;
     
     setUploadProgress(true);
     try {
       const imageUrl = await uploadFile(selectedFile);
-      if (imageUrl) {
-        setFormData(prev => ({
-          ...prev,
-          imageUrl
-        }));
+      setUploadProgress(false);
+      
+      if (!imageUrl) {
+        toast.error("Failed to upload image. Please try again.");
+        return null;
       }
+      
+      console.log("Image uploaded successfully:", imageUrl);
+      return imageUrl;
     } catch (error) {
       console.error('Error uploading file:', error);
-    } finally {
+      toast.error("An error occurred during upload.");
       setUploadProgress(false);
+      return null;
     }
   };
 
@@ -103,11 +108,25 @@ const ActivitiesManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
+    let finalImageUrl = formData.imageUrl;
+    
     if (selectedFile) {
-      await handleFileUpload();
+      const uploadedUrl = await handleFileUpload();
+      if (uploadedUrl) {
+        finalImageUrl = uploadedUrl;
+      } else {
+        setIsSubmitting(false);
+        return; // Stop if upload failed
+      }
     }
     
-    addActivity(formData);
+    const activityData = {
+      ...formData,
+      imageUrl: finalImageUrl
+    };
+    
+    console.log("Adding activity with data:", activityData);
+    addActivity(activityData);
     setIsSubmitting(false);
     setIsAddDialogOpen(false);
   };
@@ -118,14 +137,28 @@ const ActivitiesManagement = () => {
     
     setIsSubmitting(true);
     
+    let finalImageUrl = formData.imageUrl;
+    
     if (selectedFile) {
-      await handleFileUpload();
+      const uploadedUrl = await handleFileUpload();
+      if (uploadedUrl) {
+        finalImageUrl = uploadedUrl;
+      } else {
+        setIsSubmitting(false);
+        return; // Stop if upload failed
+      }
     }
     
-    updateActivity({
-      ...formData,
-      id: currentActivity.id
-    });
+    const updatedActivity = {
+      ...currentActivity,
+      name: formData.name,
+      description: formData.description,
+      date: formData.date,
+      imageUrl: finalImageUrl
+    };
+    
+    console.log("Updating activity with data:", updatedActivity);
+    updateActivity(updatedActivity);
     
     setIsSubmitting(false);
     setIsEditDialogOpen(false);
@@ -135,12 +168,7 @@ const ActivitiesManagement = () => {
     if (!currentActivity) return;
     
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
     deleteActivity(currentActivity.id);
-    
     setIsSubmitting(false);
     setIsDeleteDialogOpen(false);
   };
