@@ -22,6 +22,24 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
+// Define interface for photo form data to include tempPreview
+interface PhotoFormData {
+  name: string;
+  description: string;
+  imageUrl: string;
+  category: string;
+  tempPreview?: string;
+}
+
+// Define interface for video form data
+interface VideoFormData {
+  name: string;
+  description: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  tempPreview?: string;
+}
+
 const MediaManagement = () => {
   
   const { photos, videos, addPhoto, updatePhoto, deletePhoto, addVideo, updateVideo, deleteVideo } = useData();
@@ -33,7 +51,7 @@ const MediaManagement = () => {
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
   const [photoUploadProgress, setPhotoUploadProgress] = useState(false);
-  const [photoFormData, setPhotoFormData] = useState({
+  const [photoFormData, setPhotoFormData] = useState<PhotoFormData>({
     name: '',
     description: '',
     imageUrl: '',
@@ -47,7 +65,7 @@ const MediaManagement = () => {
   const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
   const [selectedThumbnailFile, setSelectedThumbnailFile] = useState<File | null>(null);
   const [thumbnailUploadProgress, setThumbnailUploadProgress] = useState(false);
-  const [videoFormData, setVideoFormData] = useState({
+  const [videoFormData, setVideoFormData] = useState<VideoFormData>({
     name: '',
     description: '',
     videoUrl: '',
@@ -176,8 +194,10 @@ const MediaManagement = () => {
     }
     
     console.log("Adding new photo with image URL:", imageUrl);
+    // Remove tempPreview property before sending to addPhoto
+    const { tempPreview, ...photoData } = photoFormData;
     await addPhoto({
-      ...photoFormData,
+      ...photoData,
       imageUrl
     });
     
@@ -206,8 +226,10 @@ const MediaManagement = () => {
     }
     
     console.log("Updating photo with image URL:", imageUrl);
+    // Remove tempPreview property before sending to updatePhoto
+    const { tempPreview, ...photoData } = photoFormData;
     await updatePhoto({
-      ...photoFormData,
+      ...photoData,
       id: currentPhoto.id,
       imageUrl
     });
