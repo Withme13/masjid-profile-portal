@@ -23,7 +23,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 
 const MediaManagement = () => {
-  // ... keep existing code for component state and video state
   
   const { photos, videos, addPhoto, updatePhoto, deletePhoto, addVideo, updateVideo, deleteVideo } = useData();
   
@@ -263,22 +262,14 @@ const MediaManagement = () => {
       setThumbnailUploadProgress(false);
       
       if (!thumbnailUrl) {
-        toast({
-          title: "Upload failed",
-          description: "Failed to upload thumbnail. Please try again.",
-          variant: "destructive"
-        });
+        toast.error("Failed to upload thumbnail. Please try again.");
         return null;
       }
       
       return thumbnailUrl;
     } catch (error) {
       console.error('Error uploading thumbnail:', error);
-      toast({
-        title: "Upload error",
-        description: "An error occurred while uploading the thumbnail.",
-        variant: "destructive"
-      });
+      toast.error("An error occurred while uploading the thumbnail.");
       setThumbnailUploadProgress(false);
       return null;
     }
@@ -333,10 +324,7 @@ const MediaManagement = () => {
     setIsSubmitting(false);
     setIsAddVideoDialogOpen(false);
     
-    toast({
-      title: "Video added",
-      description: "The video has been added successfully.",
-    });
+    toast.success("Video added successfully");
   };
 
   const handleEditVideoSubmit = async (e: React.FormEvent) => {
@@ -363,10 +351,7 @@ const MediaManagement = () => {
     setIsSubmitting(false);
     setIsEditVideoDialogOpen(false);
     
-    toast({
-      title: "Video updated",
-      description: "The video has been updated successfully.",
-    });
+    toast.success("Video updated successfully");
   };
 
   const handleDeleteVideo = async () => {
@@ -382,10 +367,7 @@ const MediaManagement = () => {
     setIsSubmitting(false);
     setIsDeleteVideoDialogOpen(false);
     
-    toast({
-      title: "Video deleted",
-      description: "The video has been deleted successfully.",
-    });
+    toast.success("Video deleted successfully");
   };
 
   
