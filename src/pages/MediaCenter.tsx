@@ -52,6 +52,11 @@ const MediaCenter = () => {
     toast.error("One or more images failed to load.");
   };
   
+  // Helper function to check if URL is from Supabase Storage
+  const isSupabaseStorageUrl = (url: string) => {
+    return url && url.includes('supabase.co/storage/v1/object/public');
+  };
+  
   return (
     <div className="section-container animate-fade-in min-h-screen">
       <h1 className="section-title text-center mb-12">Media Center</h1>

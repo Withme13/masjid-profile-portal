@@ -1,11 +1,12 @@
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, checkIfBucketExists, createBucket } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 
 export const uploadFile = async (file: File, bucket: string = 'photos') => {
   if (!file) {
     console.error('No file provided for upload');
+    toast.error("No file selected for upload");
     return null;
   }
 
@@ -17,30 +18,21 @@ export const uploadFile = async (file: File, bucket: string = 'photos') => {
     console.log(`Starting upload for file: ${file.name} to bucket: ${bucket}`);
     
     // First check if the bucket exists and create it if it doesn't
-    const { data: buckets, error: bucketListError } = await supabase.storage.listBuckets();
-    
-    if (bucketListError) {
-      console.error('Error listing buckets:', bucketListError);
-      toast.error("Failed to check storage buckets. Please try again.");
-      return null;
-    }
-    
-    const bucketExists = buckets?.some(b => b.name === bucket);
+    const bucketExists = await checkIfBucketExists(bucket);
     
     if (!bucketExists) {
       console.log(`Bucket ${bucket} does not exist. Creating bucket...`);
-      const { error: createBucketError } = await supabase.storage.createBucket(bucket, {
-        public: true, // Make the bucket public so files are accessible
-        fileSizeLimit: 10485760 // 10MB file size limit
-      });
+      const bucketCreated = await createBucket(bucket, true);
       
-      if (createBucketError) {
-        console.error('Error creating bucket:', createBucketError);
-        toast.error("Failed to create storage bucket. Please try again.");
+      if (!bucketCreated) {
+        console.error(`Failed to create bucket ${bucket}`);
+        toast.error(`Failed to create storage bucket "${bucket}". Please try again.`);
         return null;
       }
       
       console.log(`Bucket ${bucket} created successfully`);
+    } else {
+      console.log(`Bucket ${bucket} already exists`);
     }
 
     // Upload the file
@@ -54,7 +46,7 @@ export const uploadFile = async (file: File, bucket: string = 'photos') => {
 
     if (uploadError) {
       console.error('Error uploading file:', uploadError);
-      toast.error("Failed to upload file: " + uploadError.message);
+      toast.error(`Failed to upload file: ${uploadError.message}`);
       return null;
     }
 
