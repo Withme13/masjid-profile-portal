@@ -11,18 +11,38 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
   const filePath = `${fileName}`;
 
   try {
+    console.log(`Starting upload of file to bucket: ${bucket}`);
+    
     // First check if the bucket exists and create it if it doesn't
-    const { data: buckets } = await supabase.storage.listBuckets();
+    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+    
+    if (bucketsError) {
+      console.error('Error listing buckets:', bucketsError);
+      toast.error("Failed to access storage. Please try again.");
+      return null;
+    }
+    
     const bucketExists = buckets?.some(b => b.name === bucket);
+    console.log(`Bucket ${bucket} exists: ${bucketExists}`);
     
     if (!bucketExists) {
       // Create the bucket if it doesn't exist
-      await supabase.storage.createBucket(bucket, {
-        public: true // Make the bucket public so files are accessible
+      console.log(`Creating bucket: ${bucket}`);
+      const { error: createBucketError } = await supabase.storage.createBucket(bucket, {
+        public: true, // Make the bucket public so files are accessible
+        fileSizeLimit: 10485760 // 10MB
       });
+      
+      if (createBucketError) {
+        console.error('Error creating bucket:', createBucketError);
+        toast.error("Failed to create storage bucket. Please try again.");
+        return null;
+      }
+      console.log(`Successfully created bucket: ${bucket}`);
     }
 
     // Upload the file
+    console.log(`Uploading file ${fileName} to bucket ${bucket}`);
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(filePath, file, {

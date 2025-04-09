@@ -4,11 +4,66 @@ import { Image, Play, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useData } from '@/contexts/DataContext';
 import { Photo, Video } from '@/types/adminTypes';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const MediaCenter = () => {
   const { photos, videos } = useData();
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [localPhotos, setLocalPhotos] = useState<Photo[]>([]);
+  const [localVideos, setLocalVideos] = useState<Video[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Fetch photos directly from Supabase to ensure we have the latest data
+  useEffect(() => {
+    const fetchPhotosDirectly = async () => {
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('media_photos')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching photos directly:', error);
+          toast.error('Failed to load photos. Please try refreshing the page.');
+          return;
+        }
+
+        if (data) {
+          const formattedPhotos: Photo[] = data.map(item => ({
+            id: item.id,
+            name: item.name,
+            description: item.description || '',
+            imageUrl: item.image_url,
+            category: item.category || ''
+          }));
+          
+          console.log('Photos fetched directly from Supabase:', formattedPhotos);
+          setLocalPhotos(formattedPhotos);
+        }
+      } catch (error) {
+        console.error('Exception fetching photos:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPhotosDirectly();
+  }, []);
+
+  // Also use the photos from context as a fallback
+  useEffect(() => {
+    if (photos.length > 0 && localPhotos.length === 0) {
+      console.log('Using photos from context:', photos);
+      setLocalPhotos(photos);
+    }
+    
+    if (videos.length > 0 && localVideos.length === 0) {
+      setLocalVideos(videos);
+    }
+  }, [photos, videos, localPhotos, localVideos]);
   
   // Function to ensure YouTube embed URLs are in the correct format
   const formatYouTubeUrl = (url: string) => {
@@ -43,8 +98,12 @@ const MediaCenter = () => {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {photos.length > 0 ? (
-            photos.map((photo) => (
+          {isLoading ? (
+            <div className="col-span-3 text-center py-10">
+              <p className="text-muted-foreground">Loading photos...</p>
+            </div>
+          ) : localPhotos.length > 0 ? (
+            localPhotos.map((photo) => (
               <div 
                 key={photo.id}
                 className="glass-panel overflow-hidden cursor-pointer hover-scale group"
@@ -55,6 +114,10 @@ const MediaCenter = () => {
                     src={photo.imageUrl} 
                     alt={photo.name} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    onError={(e) => {
+                      console.error(`Failed to load image: ${photo.imageUrl}`);
+                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/640x360?text=Image+Not+Found';
+                    }}
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white text-lg font-medium">View Larger</span>
@@ -82,8 +145,12 @@ const MediaCenter = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.length > 0 ? (
-            videos.map((video) => (
+          {isLoading ? (
+            <div className="col-span-3 text-center py-10">
+              <p className="text-muted-foreground">Loading videos...</p>
+            </div>
+          ) : localVideos.length > 0 ? (
+            localVideos.map((video) => (
               <div 
                 key={video.id}
                 className="glass-panel overflow-hidden cursor-pointer hover-scale group"
@@ -94,6 +161,9 @@ const MediaCenter = () => {
                     src={video.thumbnailUrl || 'https://via.placeholder.com/640x360?text=Video+Thumbnail'} 
                     alt={video.name} 
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/640x360?text=Video+Thumbnail';
+                    }}
                   />
                   <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                     <div className="w-16 h-16 rounded-full bg-primary/80 flex items-center justify-center">
@@ -136,6 +206,9 @@ const MediaCenter = () => {
                 src={selectedPhoto.imageUrl} 
                 alt={selectedPhoto.name} 
                 className="w-full h-full object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/800x600?text=Image+Not+Found';
+                }}
               />
             </div>
             <div className="p-6">

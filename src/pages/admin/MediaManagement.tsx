@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Pencil, Trash2, PlusCircle, Image, Film, Upload } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -22,6 +21,7 @@ import {
 } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { supabase, ensureBucketExists } from '@/integrations/supabase/client';
 
 const MediaManagement = () => {
   const { photos, videos, addPhoto, updatePhoto, deletePhoto, addVideo, updateVideo, deleteVideo } = useData();
@@ -67,7 +67,21 @@ const MediaManagement = () => {
 
   const handlePhotoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedPhotoFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setSelectedPhotoFile(file);
+      
+      // Preview the selected image
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target && event.target.result) {
+          // Create a temporary preview
+          setPhotoFormData(prev => ({
+            ...prev,
+            imageUrl: event.target?.result as string
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -76,15 +90,25 @@ const MediaManagement = () => {
     
     setPhotoUploadProgress(true);
     try {
-      const imageUrl = await uploadFile(selectedPhotoFile);
+      // Ensure the 'photos' bucket exists
+      await ensureBucketExists('photos');
+      
+      // Upload the file to the 'photos' bucket
+      const imageUrl = await uploadFile(selectedPhotoFile, 'photos');
       if (imageUrl) {
+        console.log('Photo uploaded successfully, URL:', imageUrl);
         setPhotoFormData(prev => ({
           ...prev,
           imageUrl
         }));
+        return imageUrl;
+      } else {
+        console.error('Failed to get image URL after upload');
+        return null;
       }
     } catch (error) {
       console.error('Error uploading photo:', error);
+      return null;
     } finally {
       setPhotoUploadProgress(false);
     }
@@ -129,13 +153,85 @@ const MediaManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    if (selectedPhotoFile) {
-      await handlePhotoFileUpload();
+    try {
+      let finalImageUrl = photoFormData.imageUrl;
+      
+      if (selectedPhotoFile) {
+        const uploadedUrl = await handlePhotoFileUpload();
+        if (uploadedUrl) {
+          finalImageUrl = uploadedUrl;
+        } else {
+          toast({
+            title: "Upload failed",
+            description: "Failed to upload image. Please try again.",
+            variant: "destructive"
+          });
+          setIsSubmitting(false);
+          return;
+        }
+      }
+      
+      if (!finalImageUrl) {
+        toast({
+          title: "Image required",
+          description: "Please select an image to upload.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Use the Supabase client directly to insert the photo
+      const { data, error } = await supabase
+        .from('media_photos')
+        .insert([{
+          name: photoFormData.name,
+          description: photoFormData.description,
+          category: photoFormData.category,
+          image_url: finalImageUrl
+        }])
+        .select();
+        
+      if (error) {
+        console.error('Error adding photo directly:', error);
+        toast({
+          title: "Error",
+          description: "Failed to add photo. Please try again.",
+          variant: "destructive"
+        });
+      } else if (data && data[0]) {
+        const newPhoto: Photo = {
+          id: data[0].id,
+          name: data[0].name,
+          description: data[0].description || '',
+          category: data[0].category || '',
+          imageUrl: data[0].image_url
+        };
+        
+        // Also use the context function to update the local state
+        await addPhoto({
+          name: photoFormData.name,
+          description: photoFormData.description,
+          category: photoFormData.category,
+          imageUrl: finalImageUrl
+        });
+        
+        toast({
+          title: "Success",
+          description: "Photo added successfully.",
+        });
+      }
+    } catch (error) {
+      console.error('Exception adding photo:', error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+      setIsAddPhotoDialogOpen(false);
     }
-    
-    addPhoto(photoFormData);
-    setIsSubmitting(false);
-    setIsAddPhotoDialogOpen(false);
   };
 
   const handleEditPhotoSubmit = async (e: React.FormEvent) => {

@@ -1,6 +1,7 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, ensureBucketExists } from '@/integrations/supabase/client';
 import { 
   LeadershipMember, 
   Facility, 
@@ -49,6 +50,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
+
+  // Create needed storage buckets on initial load
+  useEffect(() => {
+    const setupBuckets = async () => {
+      // Ensure the uploads bucket exists
+      await ensureBucketExists('uploads');
+      // Ensure the photos bucket exists
+      await ensureBucketExists('photos');
+    };
+    
+    setupBuckets();
+  }, []);
 
   // Fetch data on initial load
   useEffect(() => {
@@ -134,12 +147,25 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchPhotos = async () => {
     try {
+      console.log('Fetching photos from Supabase...');
       const { data, error } = await supabase
         .from('media_photos')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching photos data:', error);
+        toast.error('Failed to load photos data');
+        return;
+      }
+
+      console.log('Received photos data from Supabase:', data);
+      
+      if (!data || data.length === 0) {
+        console.log('No photos found in database');
+        setPhotos([]);
+        return;
+      }
 
       const photosData: Photo[] = data.map(item => ({
         id: item.id,
@@ -149,9 +175,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         category: item.category || ''
       }));
 
+      console.log('Formatted photos data:', photosData);
       setPhotos(photosData);
     } catch (error) {
-      console.error('Error fetching photos data:', error);
+      console.error('Exception fetching photos data:', error);
       toast.error('Failed to load photos data');
     }
   };
@@ -444,6 +471,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Photo CRUD operations
   const addPhoto = async (photo: Omit<Photo, 'id'>) => {
     try {
+      console.log('Adding new photo to Supabase:', photo);
+      
       const { data, error } = await supabase
         .from('media_photos')
         .insert([{
@@ -454,7 +483,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }])
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error adding photo:', error);
+        toast.error('Failed to add photo');
+        return;
+      }
 
       if (data && data[0]) {
         const newPhoto: Photo = {
@@ -465,11 +498,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           imageUrl: data[0].image_url
         };
         
-        setPhotos([...photos, newPhoto]);
+        console.log('New photo created successfully:', newPhoto);
+        // Update the local state with the new photo
+        setPhotos(prevPhotos => [newPhoto, ...prevPhotos]);
         toast.success('Photo added successfully');
+        
+        // After adding a photo, refresh the photos list to ensure we have the latest data
+        fetchPhotos();
       }
     } catch (error) {
-      console.error('Error adding photo:', error);
+      console.error('Exception adding photo:', error);
       toast.error('Failed to add photo');
     }
   };
