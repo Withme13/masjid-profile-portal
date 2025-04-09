@@ -185,6 +185,7 @@ const MediaManagement = () => {
         } else {
           console.error("Photo upload failed or was cancelled");
           setIsSubmitting(false);
+          toast.error("Failed to upload photo. Please try again.");
           return;
         }
       } catch (error) {
@@ -195,7 +196,7 @@ const MediaManagement = () => {
       }
     }
     
-    if (!imageUrl && !selectedPhotoFile) {
+    if (!imageUrl) {
       toast.error("Please provide an image URL or upload an image");
       setIsSubmitting(false);
       return;
@@ -210,10 +211,16 @@ const MediaManagement = () => {
         imageUrl
       });
       
+      if (newPhoto) {
+        console.log("Photo added successfully with data:", newPhoto);
+        toast.success("Photo added successfully");
+      } else {
+        console.error("Failed to add photo - no data returned");
+        toast.error("Failed to add photo to database");
+      }
+      
       setIsSubmitting(false);
       setIsAddPhotoDialogOpen(false);
-      // We don't need to do anything with the returned photo since
-      // addPhoto already updates the photos state in the context
     } catch (error) {
       console.error("Error adding photo:", error);
       toast.error("Failed to add photo to database");
