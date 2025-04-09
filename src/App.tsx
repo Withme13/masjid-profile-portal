@@ -51,7 +51,7 @@ const App = () => (
                   <Route path="/media-center" element={<MediaCenter />} />
                 </Route>
 
-                {/* Admin Routes */}
+                {/* Admin Login (Outside Protected Routes) */}
                 <Route path="/admin/login" element={<Login />} />
                 
                 {/* Protected Admin Routes */}

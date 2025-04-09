@@ -18,7 +18,11 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
     
     if (bucketsError) {
       console.error('Error listing buckets:', bucketsError);
-      toast.error("Failed to access storage. Please try again.");
+      if (bucketsError.message.includes('row-level security policy')) {
+        toast.error("Permission denied: Unable to access storage. Please login or check your permissions.");
+      } else {
+        toast.error("Failed to access storage. Please try again.");
+      }
       return null;
     }
     
@@ -26,7 +30,7 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
     console.log(`Bucket ${bucket} exists: ${bucketExists}`);
     
     if (!bucketExists) {
-      // Create the bucket if it doesn't exist
+      // Try to create the bucket if it doesn't exist
       console.log(`Creating bucket: ${bucket}`);
       const { error: createBucketError } = await supabase.storage.createBucket(bucket, {
         public: true, // Make the bucket public so files are accessible
@@ -35,8 +39,13 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
       
       if (createBucketError) {
         console.error('Error creating bucket:', createBucketError);
-        toast.error("Failed to create storage bucket. Please try again.");
-        return null;
+        if (createBucketError.message.includes('row-level security policy')) {
+          toast.error("Permission denied: Unable to create storage bucket. Try logging in again.");
+          return null;
+        } else {
+          toast.error("Failed to create storage bucket. Please try again.");
+          return null;
+        }
       }
       console.log(`Successfully created bucket: ${bucket}`);
     }
@@ -52,7 +61,11 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
 
     if (error) {
       console.error('Error uploading file:', error);
-      toast.error("Failed to upload file. Please try again.");
+      if (error.message.includes('row-level security policy')) {
+        toast.error("Permission denied: Unable to upload file. Please login or check your permissions.");
+      } else {
+        toast.error("Failed to upload file. Please try again.");
+      }
       return null;
     }
 
