@@ -1,5 +1,5 @@
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, uploadDirectlyToSupabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 
@@ -13,66 +13,15 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
   try {
     console.log(`Starting upload of file to bucket: ${bucket}`);
     
-    // First check if the bucket exists and create it if it doesn't
-    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+    // Use the new direct upload function
+    const publicUrl = await uploadDirectlyToSupabase(file, filePath, bucket);
     
-    if (bucketsError) {
-      console.error('Error listing buckets:', bucketsError);
-      if (bucketsError.message.includes('row-level security policy')) {
-        toast.error("Permission denied: Unable to access storage. Please login or check your permissions.");
-      } else {
-        toast.error("Failed to access storage. Please try again.");
-      }
+    if (!publicUrl) {
+      console.error('Failed to get URL after upload');
       return null;
     }
     
-    const bucketExists = buckets?.some(b => b.name === bucket);
-    console.log(`Bucket ${bucket} exists: ${bucketExists}`);
-    
-    if (!bucketExists) {
-      // Try to create the bucket if it doesn't exist
-      console.log(`Creating bucket: ${bucket}`);
-      const { error: createBucketError } = await supabase.storage.createBucket(bucket, {
-        public: true, // Make the bucket public so files are accessible
-        fileSizeLimit: 10485760 // 10MB
-      });
-      
-      if (createBucketError) {
-        console.error('Error creating bucket:', createBucketError);
-        if (createBucketError.message.includes('row-level security policy')) {
-          toast.error("Permission denied: Unable to create storage bucket. Try logging in again.");
-          return null;
-        } else {
-          toast.error("Failed to create storage bucket. Please try again.");
-          return null;
-        }
-      }
-      console.log(`Successfully created bucket: ${bucket}`);
-    }
-
-    // Upload the file
-    console.log(`Uploading file ${fileName} to bucket ${bucket}`);
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: true
-      });
-
-    if (error) {
-      console.error('Error uploading file:', error);
-      if (error.message.includes('row-level security policy')) {
-        toast.error("Permission denied: Unable to upload file. Please login or check your permissions.");
-      } else {
-        toast.error("Failed to upload file. Please try again.");
-      }
-      return null;
-    }
-
-    // Get the public URL of the uploaded file
-    const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath);
-    
-    console.log('Uploaded file with public URL:', publicUrl);
+    console.log('File uploaded successfully with URL:', publicUrl);
     return publicUrl;
   } catch (error) {
     console.error('Exception uploading file:', error);

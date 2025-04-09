@@ -27,7 +27,11 @@ const MediaCenter = () => {
 
         if (error) {
           console.error('Error fetching photos directly:', error);
-          toast.error('Failed to load photos. Please try refreshing the page.');
+          toast.error('Failed to load photos. Using cached data instead.');
+          // If direct fetch fails, fall back to context data
+          if (photos.length > 0) {
+            setLocalPhotos(photos);
+          }
           return;
         }
 
@@ -45,25 +49,24 @@ const MediaCenter = () => {
         }
       } catch (error) {
         console.error('Exception fetching photos:', error);
+        // Fall back to context data
+        if (photos.length > 0) {
+          setLocalPhotos(photos);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchPhotosDirectly();
-  }, []);
+  }, [photos]);
 
-  // Also use the photos from context as a fallback
+  // Also use the videos from context
   useEffect(() => {
-    if (photos.length > 0 && localPhotos.length === 0) {
-      console.log('Using photos from context:', photos);
-      setLocalPhotos(photos);
-    }
-    
     if (videos.length > 0 && localVideos.length === 0) {
       setLocalVideos(videos);
     }
-  }, [photos, videos, localPhotos, localVideos]);
+  }, [videos, localVideos]);
   
   // Function to ensure YouTube embed URLs are in the correct format
   const formatYouTubeUrl = (url: string) => {
@@ -84,6 +87,12 @@ const MediaCenter = () => {
     
     // Return original URL if we couldn't parse it
     return url;
+  };
+
+  // Helper function to handle image loading errors
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.error(`Failed to load image: ${(e.target as HTMLImageElement).src}`);
+    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/640x360?text=Image+Not+Found';
   };
   
   return (
@@ -114,10 +123,7 @@ const MediaCenter = () => {
                     src={photo.imageUrl} 
                     alt={photo.name} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                      console.error(`Failed to load image: ${photo.imageUrl}`);
-                      (e.target as HTMLImageElement).src = 'https://via.placeholder.com/640x360?text=Image+Not+Found';
-                    }}
+                    onError={handleImageError}
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <span className="text-white text-lg font-medium">View Larger</span>
@@ -206,9 +212,7 @@ const MediaCenter = () => {
                 src={selectedPhoto.imageUrl} 
                 alt={selectedPhoto.name} 
                 className="w-full h-full object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://via.placeholder.com/800x600?text=Image+Not+Found';
-                }}
+                onError={handleImageError}
               />
             </div>
             <div className="p-6">

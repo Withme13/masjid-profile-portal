@@ -86,15 +86,15 @@ const MediaManagement = () => {
   };
 
   const handlePhotoFileUpload = async () => {
-    if (!selectedPhotoFile) return;
+    if (!selectedPhotoFile) return null;
     
     setPhotoUploadProgress(true);
     try {
-      // Ensure the 'photos' bucket exists
-      await ensureBucketExists('photos');
+      console.log('Starting photo upload...');
       
-      // Upload the file to the 'photos' bucket
+      // Use the updated upload utility with 'photos' bucket
       const imageUrl = await uploadFile(selectedPhotoFile, 'photos');
+      
       if (imageUrl) {
         console.log('Photo uploaded successfully, URL:', imageUrl);
         setPhotoFormData(prev => ({
@@ -104,10 +104,12 @@ const MediaManagement = () => {
         return imageUrl;
       } else {
         console.error('Failed to get image URL after upload');
+        toast.error("Upload failed. Please try again or contact support.");
         return null;
       }
     } catch (error) {
       console.error('Error uploading photo:', error);
+      toast.error("Upload failed due to an unexpected error.");
       return null;
     } finally {
       setPhotoUploadProgress(false);
@@ -161,20 +163,27 @@ const MediaManagement = () => {
         if (uploadedUrl) {
           finalImageUrl = uploadedUrl;
         } else {
-          toast({
-            title: "Upload failed",
-            description: "Failed to upload image. Please try again.",
-            variant: "destructive"
-          });
-          setIsSubmitting(false);
-          return;
+          // If upload failed but we have a data URL preview, we can use that temporarily
+          // This allows users to continue even if storage permissions are limited
+          if (photoFormData.imageUrl && photoFormData.imageUrl.startsWith('data:')) {
+            console.log('Using data URL as fallback');
+            finalImageUrl = photoFormData.imageUrl;
+          } else {
+            toast({
+              title: "Upload failed",
+              description: "Failed to upload image. Please try again or use an external image URL.",
+              variant: "destructive"
+            });
+            setIsSubmitting(false);
+            return;
+          }
         }
       }
       
       if (!finalImageUrl) {
         toast({
           title: "Image required",
-          description: "Please select an image to upload.",
+          description: "Please select an image to upload or provide an image URL.",
           variant: "destructive"
         });
         setIsSubmitting(false);
@@ -196,7 +205,7 @@ const MediaManagement = () => {
         console.error('Error adding photo directly:', error);
         toast({
           title: "Error",
-          description: "Failed to add photo. Please try again.",
+          description: "Failed to add photo to database. Please try again.",
           variant: "destructive"
         });
       } else if (data && data[0]) {
@@ -220,6 +229,9 @@ const MediaManagement = () => {
           title: "Success",
           description: "Photo added successfully.",
         });
+        
+        // Close the dialog
+        setIsAddPhotoDialogOpen(false);
       }
     } catch (error) {
       console.error('Exception adding photo:', error);
@@ -230,7 +242,6 @@ const MediaManagement = () => {
       });
     } finally {
       setIsSubmitting(false);
-      setIsAddPhotoDialogOpen(false);
     }
   };
 
