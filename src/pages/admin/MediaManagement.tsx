@@ -205,15 +205,14 @@ const MediaManagement = () => {
     // Remove tempPreview property before sending to addPhoto
     const { tempPreview, ...photoData } = photoFormData;
     try {
-      const newPhoto = await addPhoto({
+      await addPhoto({
         ...photoData,
         imageUrl
       });
       
       setIsSubmitting(false);
       setIsAddPhotoDialogOpen(false);
-      // We don't need to do anything with the returned photo since
-      // addPhoto already updates the photos state in the context
+      toast.success("Photo added successfully");
     } catch (error) {
       console.error("Error adding photo:", error);
       toast.error("Failed to add photo to database");
