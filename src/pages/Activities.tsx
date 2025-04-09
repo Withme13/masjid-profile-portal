@@ -1,38 +1,19 @@
+
 import React, { useState, useEffect } from 'react';
 import { Calendar, BookOpen, Users, Search, Filter } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, parseISO } from 'date-fns';
 import { useData } from '@/contexts/DataContext';
-import { toast } from 'sonner';
 
 const Activities = () => {
-  // Add state to track if the context has loaded
-  const [contextLoaded, setContextLoaded] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('all');
-  
-  // Use try-catch to handle the case when DataProvider is not ready
-  let activities = [];
-  let dataContextAvailable = false;
-  
-  try {
-    // Try to use the hook - this will throw if DataProvider is not ready
-    const dataContext = useData();
-    activities = dataContext.activities;
-    dataContextAvailable = true;
-    
-    useEffect(() => {
-      setContextLoaded(true);
-    }, []);
-  } catch (error) {
-    console.error('DataContext not ready:', error);
-    // We'll handle this in the UI
-  }
-  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('all');
+  const { activities } = useData();
+  
   // Create activity types mapping to classify activities
   const getActivityType = (name: string, description: string) => {
     const nameAndDesc = (name + ' ' + description).toLowerCase();
@@ -64,15 +45,6 @@ const Activities = () => {
       default:
         return "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=1171&q=80";
     }
-  }
-
-  // If DataContext is not available, show loading state
-  if (!dataContextAvailable) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
   }
 
   // Transform Supabase activities to the format needed for the UI

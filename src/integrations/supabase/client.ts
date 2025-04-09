@@ -57,10 +57,10 @@ export const createBucket = async (bucketName: string, isPublic: boolean = true)
     // Apply public bucket policy if it's meant to be public
     if (isPublic) {
       try {
-        // This line had the TS error - getPublicUrl doesn't return an error property
-        // We're just testing if we can get a public URL, so we don't need to check for errors
-        const publicUrlData = supabase.storage.from(bucketName).getPublicUrl('test-policy');
-        console.log('Testing bucket public access:', publicUrlData);
+        const { error: policyError } = await supabase.storage.from(bucketName).getPublicUrl('test-policy');
+        if (policyError) {
+          console.error(`Error testing bucket policy:`, policyError);
+        }
       } catch (policyError) {
         console.error(`Exception testing bucket policy:`, policyError);
       }
