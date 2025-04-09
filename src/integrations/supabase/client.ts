@@ -20,39 +20,3 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     }
   }
 });
-
-// Helper function to check if a storage bucket exists
-export const checkIfBucketExists = async (bucketName: string): Promise<boolean> => {
-  try {
-    const { data, error } = await supabase.storage.getBucket(bucketName);
-    if (error) {
-      console.error(`Error checking if bucket ${bucketName} exists:`, error);
-      return false;
-    }
-    return !!data;
-  } catch (error) {
-    console.error(`Exception checking if bucket ${bucketName} exists:`, error);
-    return false;
-  }
-};
-
-// Helper function to create a storage bucket
-export const createBucket = async (bucketName: string, isPublic: boolean = true): Promise<boolean> => {
-  try {
-    const { data, error } = await supabase.storage.createBucket(bucketName, {
-      public: isPublic,
-      fileSizeLimit: 10485760 // 10MB file size limit
-    });
-    
-    if (error) {
-      console.error(`Error creating bucket ${bucketName}:`, error);
-      return false;
-    }
-    
-    console.log(`Bucket ${bucketName} created successfully:`, data);
-    return true;
-  } catch (error) {
-    console.error(`Exception creating bucket ${bucketName}:`, error);
-    return false;
-  }
-};

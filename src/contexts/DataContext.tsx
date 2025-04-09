@@ -453,8 +453,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
-      console.log('Image URL before sending to Supabase:', photo.imageUrl);
-      
       const { data, error } = await supabase
         .from('media_photos')
         .insert([{
@@ -480,9 +478,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         
         console.log('Successfully added photo to database:', newPhoto);
-        setPhotos([newPhoto, ...photos]);
+        setPhotos([...photos, newPhoto]);
         toast.success('Photo added successfully');
-        return newPhoto;
       }
     } catch (error) {
       console.error('Error adding photo:', error);

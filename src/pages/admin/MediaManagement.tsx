@@ -177,19 +177,12 @@ const MediaManagement = () => {
     
     if (selectedPhotoFile) {
       console.log("Starting photo upload process...");
-      try {
-        const uploadedUrl = await handlePhotoFileUpload();
-        if (uploadedUrl) {
-          imageUrl = uploadedUrl;
-          console.log("Using uploaded photo URL:", imageUrl);
-        } else {
-          console.error("Photo upload failed or was cancelled");
-          setIsSubmitting(false);
-          return;
-        }
-      } catch (error) {
-        console.error("Error during photo upload:", error);
-        toast.error("Failed to upload photo. Please try again.");
+      const uploadedUrl = await handlePhotoFileUpload();
+      if (uploadedUrl) {
+        imageUrl = uploadedUrl;
+        console.log("Using uploaded photo URL:", imageUrl);
+      } else {
+        console.error("Photo upload failed or was cancelled");
         setIsSubmitting(false);
         return;
       }
