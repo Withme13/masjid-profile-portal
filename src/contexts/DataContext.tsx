@@ -442,7 +442,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Photo CRUD operations
-  const addPhoto = async (photo: Omit<Photo, 'id'>): Promise<Photo | void> => {
+  const addPhoto = async (photo: Omit<Photo, 'id'>) => {
     try {
       console.log('Adding photo with data:', photo);
       
@@ -460,7 +460,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .insert([{
           name: photo.name,
           description: photo.description,
-          category: photo.category || '',
+          category: photo.category,
           image_url: photo.imageUrl
         }])
         .select();
@@ -487,6 +487,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       console.error('Error adding photo:', error);
       toast.error('Failed to add photo to database');
+      throw error;
     }
   };
 

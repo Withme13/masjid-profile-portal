@@ -18,7 +18,7 @@ export const uploadFile = async (file: File, bucket: string = 'photos') => {
     console.log(`Starting upload for file: ${file.name} to bucket: ${bucket}`);
     
     // First check if the bucket exists
-    let bucketExists = await checkIfBucketExists(bucket);
+    const bucketExists = await checkIfBucketExists(bucket);
     
     console.log(`Bucket ${bucket} exists: ${bucketExists}`);
     
@@ -33,13 +33,6 @@ export const uploadFile = async (file: File, bucket: string = 'photos') => {
       }
       
       console.log(`Bucket ${bucket} created successfully`);
-      // Verify bucket creation
-      bucketExists = await checkIfBucketExists(bucket);
-      if (!bucketExists) {
-        console.error(`Bucket ${bucket} still does not exist after creation attempt`);
-        toast.error("Storage configuration issue. Please contact support.");
-        return null;
-      }
     }
     
     // Upload the file

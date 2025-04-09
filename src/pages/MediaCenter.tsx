@@ -49,7 +49,7 @@ const MediaCenter = () => {
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     console.error('Image failed to load:', e.currentTarget.src);
     e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
-    // Do not show toast for every failed image as it can be overwhelming
+    toast.error("One or more images failed to load.");
   };
   
   // Helper function to check if URL is from Supabase Storage
@@ -83,7 +83,7 @@ const MediaCenter = () => {
                 >
                   <div className="relative h-60 overflow-hidden">
                     <img 
-                      src={photo.imageUrl} 
+                      src={photo.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image'} 
                       alt={photo.name} 
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       onError={handleImageError}
