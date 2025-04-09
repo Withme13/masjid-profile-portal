@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Pencil, Trash2, PlusCircle, Image, Film, Upload } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useData } from '@/contexts/DataContext';
@@ -20,28 +21,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
-
-// Define interface for photo form data to include tempPreview
-interface PhotoFormData {
-  name: string;
-  description: string;
-  imageUrl: string;
-  category: string;
-  tempPreview?: string;
-}
-
-// Define interface for video form data
-interface VideoFormData {
-  name: string;
-  description: string;
-  videoUrl: string;
-  thumbnailUrl: string;
-  tempPreview?: string;
-}
+import { toast } from "@/components/ui/use-toast";
 
 const MediaManagement = () => {
-  
   const { photos, videos, addPhoto, updatePhoto, deletePhoto, addVideo, updateVideo, deleteVideo } = useData();
   
   // Photo state
@@ -51,7 +33,7 @@ const MediaManagement = () => {
   const [currentPhoto, setCurrentPhoto] = useState<Photo | null>(null);
   const [selectedPhotoFile, setSelectedPhotoFile] = useState<File | null>(null);
   const [photoUploadProgress, setPhotoUploadProgress] = useState(false);
-  const [photoFormData, setPhotoFormData] = useState<PhotoFormData>({
+  const [photoFormData, setPhotoFormData] = useState({
     name: '',
     description: '',
     imageUrl: '',
@@ -65,7 +47,7 @@ const MediaManagement = () => {
   const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
   const [selectedThumbnailFile, setSelectedThumbnailFile] = useState<File | null>(null);
   const [thumbnailUploadProgress, setThumbnailUploadProgress] = useState(false);
-  const [videoFormData, setVideoFormData] = useState<VideoFormData>({
+  const [videoFormData, setVideoFormData] = useState({
     name: '',
     description: '',
     videoUrl: '',
@@ -85,52 +67,26 @@ const MediaManagement = () => {
 
   const handlePhotoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      console.log("Photo file selected:", file.name);
-      setSelectedPhotoFile(file);
-      
-      // Preview the selected image
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target && event.target.result) {
-          console.log("Photo file preview created");
-          // Create a temporary preview
-          setPhotoFormData(prev => ({
-            ...prev,
-            tempPreview: event.target?.result as string
-          }));
-        }
-      };
-      reader.readAsDataURL(file);
+      setSelectedPhotoFile(e.target.files[0]);
     }
   };
 
   const handlePhotoFileUpload = async () => {
-    if (!selectedPhotoFile) {
-      console.log("No photo file selected for upload");
-      return null;
-    }
+    if (!selectedPhotoFile) return;
     
     setPhotoUploadProgress(true);
     try {
-      console.log("Uploading photo file:", selectedPhotoFile.name);
-      // Pass 'photos' as the explicit bucket name
-      const imageUrl = await uploadFile(selectedPhotoFile, 'photos');
-      setPhotoUploadProgress(false);
-      
-      if (!imageUrl) {
-        console.error("Failed to upload photo file - no URL returned");
-        toast.error("Failed to upload photo. Please try again.");
-        return null;
+      const imageUrl = await uploadFile(selectedPhotoFile);
+      if (imageUrl) {
+        setPhotoFormData(prev => ({
+          ...prev,
+          imageUrl
+        }));
       }
-      
-      console.log("Photo uploaded successfully with URL:", imageUrl);
-      return imageUrl;
     } catch (error) {
       console.error('Error uploading photo:', error);
-      toast.error("An unexpected error occurred during upload.");
+    } finally {
       setPhotoUploadProgress(false);
-      return null;
     }
   };
 
@@ -173,44 +129,13 @@ const MediaManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    let imageUrl = photoFormData.imageUrl;
-    
     if (selectedPhotoFile) {
-      console.log("Starting photo upload process...");
-      const uploadedUrl = await handlePhotoFileUpload();
-      if (uploadedUrl) {
-        imageUrl = uploadedUrl;
-        console.log("Using uploaded photo URL:", imageUrl);
-      } else {
-        console.error("Photo upload failed or was cancelled");
-        setIsSubmitting(false);
-        return;
-      }
+      await handlePhotoFileUpload();
     }
     
-    if (!imageUrl && !selectedPhotoFile) {
-      toast.error("Please provide an image URL or upload an image");
-      setIsSubmitting(false);
-      return;
-    }
-    
-    console.log("Adding new photo with image URL:", imageUrl);
-    // Remove tempPreview property before sending to addPhoto
-    const { tempPreview, ...photoData } = photoFormData;
-    try {
-      await addPhoto({
-        ...photoData,
-        imageUrl
-      });
-      
-      setIsSubmitting(false);
-      setIsAddPhotoDialogOpen(false);
-      toast.success("Photo added successfully");
-    } catch (error) {
-      console.error("Error adding photo:", error);
-      toast.error("Failed to add photo to database");
-      setIsSubmitting(false);
-    }
+    addPhoto(photoFormData);
+    setIsSubmitting(false);
+    setIsAddPhotoDialogOpen(false);
   };
 
   const handleEditPhotoSubmit = async (e: React.FormEvent) => {
@@ -219,31 +144,17 @@ const MediaManagement = () => {
     
     setIsSubmitting(true);
     
-    let imageUrl = photoFormData.imageUrl;
-    
     if (selectedPhotoFile) {
-      console.log("Starting photo upload for edit...");
-      const uploadedUrl = await handlePhotoFileUpload();
-      if (uploadedUrl) {
-        imageUrl = uploadedUrl;
-        console.log("Using new uploaded photo URL:", imageUrl);
-      } else {
-        console.log("Keeping existing photo URL:", imageUrl);
-      }
+      await handlePhotoFileUpload();
     }
     
-    console.log("Updating photo with image URL:", imageUrl);
-    // Remove tempPreview property before sending to updatePhoto
-    const { tempPreview, ...photoData } = photoFormData;
-    await updatePhoto({
-      ...photoData,
-      id: currentPhoto.id,
-      imageUrl
+    updatePhoto({
+      ...photoFormData,
+      id: currentPhoto.id
     });
     
     setIsSubmitting(false);
     setIsEditPhotoDialogOpen(false);
-    toast.success("Photo updated successfully");
   };
 
   const handleDeletePhoto = async () => {
@@ -297,14 +208,22 @@ const MediaManagement = () => {
       setThumbnailUploadProgress(false);
       
       if (!thumbnailUrl) {
-        toast.error("Failed to upload thumbnail. Please try again.");
+        toast({
+          title: "Upload failed",
+          description: "Failed to upload thumbnail. Please try again.",
+          variant: "destructive"
+        });
         return null;
       }
       
       return thumbnailUrl;
     } catch (error) {
       console.error('Error uploading thumbnail:', error);
-      toast.error("An error occurred while uploading the thumbnail.");
+      toast({
+        title: "Upload error",
+        description: "An error occurred while uploading the thumbnail.",
+        variant: "destructive"
+      });
       setThumbnailUploadProgress(false);
       return null;
     }
@@ -359,7 +278,10 @@ const MediaManagement = () => {
     setIsSubmitting(false);
     setIsAddVideoDialogOpen(false);
     
-    toast.success("Video added successfully");
+    toast({
+      title: "Video added",
+      description: "The video has been added successfully.",
+    });
   };
 
   const handleEditVideoSubmit = async (e: React.FormEvent) => {
@@ -386,7 +308,10 @@ const MediaManagement = () => {
     setIsSubmitting(false);
     setIsEditVideoDialogOpen(false);
     
-    toast.success("Video updated successfully");
+    toast({
+      title: "Video updated",
+      description: "The video has been updated successfully.",
+    });
   };
 
   const handleDeleteVideo = async () => {
@@ -402,12 +327,13 @@ const MediaManagement = () => {
     setIsSubmitting(false);
     setIsDeleteVideoDialogOpen(false);
     
-    toast.success("Video deleted successfully");
+    toast({
+      title: "Video deleted",
+      description: "The video has been deleted successfully.",
+    });
   };
 
-  
   return (
-    
     <AdminLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
@@ -467,10 +393,6 @@ const MediaManagement = () => {
                               src={photo.imageUrl} 
                               alt={photo.name}
                               className="h-full w-full object-cover"
-                              onError={(e) => {
-                                console.error('Image failed to load:', photo.imageUrl);
-                                e.currentTarget.src = 'https://via.placeholder.com/160x90?text=Image+Not+Found';
-                              }}
                             />
                           </div>
                         </TableCell>
@@ -654,30 +576,14 @@ const MediaManagement = () => {
               </div>
             )}
             
-            {photoFormData.tempPreview && (
+            {photoFormData.imageUrl && (
               <div className="mt-2">
                 <p className="text-sm font-medium mb-2">Image Preview:</p>
-                <div className="h-32 w-full rounded overflow-hidden border">
-                  <img 
-                    src={photoFormData.tempPreview} 
-                    alt="Preview"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              </div>
-            )}
-            
-            {!photoFormData.tempPreview && photoFormData.imageUrl && (
-              <div className="mt-2">
-                <p className="text-sm font-medium mb-2">Current Image:</p>
                 <div className="h-32 w-full rounded overflow-hidden border">
                   <img 
                     src={photoFormData.imageUrl} 
                     alt="Preview"
                     className="h-full w-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Image+Not+Found';
-                    }}
                   />
                 </div>
               </div>

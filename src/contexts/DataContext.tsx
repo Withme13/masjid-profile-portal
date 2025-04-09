@@ -444,15 +444,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Photo CRUD operations
   const addPhoto = async (photo: Omit<Photo, 'id'>) => {
     try {
-      console.log('Adding photo with data:', photo);
-      
-      // Ensure we have a valid imageUrl
-      if (!photo.imageUrl) {
-        console.error('Error: Attempting to add photo without imageUrl');
-        toast.error('Cannot add photo without an image');
-        return;
-      }
-      
       const { data, error } = await supabase
         .from('media_photos')
         .insert([{
@@ -463,10 +454,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }])
         .select();
 
-      if (error) {
-        console.error('Error adding photo to Supabase:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       if (data && data[0]) {
         const newPhoto: Photo = {
@@ -477,21 +465,17 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           imageUrl: data[0].image_url
         };
         
-        console.log('Successfully added photo to database:', newPhoto);
         setPhotos([...photos, newPhoto]);
         toast.success('Photo added successfully');
       }
     } catch (error) {
       console.error('Error adding photo:', error);
-      toast.error('Failed to add photo to database');
-      throw error;
+      toast.error('Failed to add photo');
     }
   };
 
   const updatePhoto = async (photo: Photo) => {
     try {
-      console.log('Updating photo with data:', photo);
-      
       const { error } = await supabase
         .from('media_photos')
         .update({
@@ -502,10 +486,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         })
         .eq('id', photo.id);
 
-      if (error) {
-        console.error('Error updating photo:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       setPhotos(photos.map(p => p.id === photo.id ? photo : p));
       toast.success('Photo updated successfully');

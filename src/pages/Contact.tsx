@@ -52,7 +52,8 @@ const Contact = () => {
       icon: <Phone className="h-6 w-6 text-primary" />,
       title: "Phone",
       details: [
-        "+62 812-8484-2334"
+        "+1 (555) 123-4567",
+        "+1 (555) 987-6543"
       ]
     },
     {
