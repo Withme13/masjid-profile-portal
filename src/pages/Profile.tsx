@@ -17,7 +17,7 @@ const Profile = () => {
       <section 
         className="relative min-h-[80vh] flex flex-col items-center justify-center bg-cover bg-center px-4 py-20"
         style={{ 
-          backgroundImage: 'url("https://lh3.googleusercontent.com/gps-cs-s/AB5caB8Y7V3K7FkcufDmkIYzDVbxZRCiseUnWZgwpVn813DtaGKVn9CRxeaD9eJ_hDaRkBel6phxcw6sE-JtWx40ywvTpPjYvMyYFfQwEWBVUozEvja9FK3k1W-JPzy7qrNye1C9xCa4sQ=s1360-w1360-h1020")',
+          backgroundImage: 'url("https://lh3.googleusercontent.com/gps-cs-s/AB5caB9lrLmRyWEkh1LLs7zq81zG5iQfsys47LcTdEDGRzycB0FmAyyYlw759Xh66FbQHH9UyKvTaEsm9fxBLaDIihLo_lsPhijXQtYQSNAAsVQw603xGqFTLj7GxZyOZaki6L386Ype=s1360-w1360-h1020")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
