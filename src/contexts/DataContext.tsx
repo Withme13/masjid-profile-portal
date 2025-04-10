@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase, ensureBucketExists } from '@/integrations/supabase/client';
@@ -155,7 +154,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         console.error('Error fetching photos data:', error);
-        toast.error('Failed to load photos data');
+        toast("Failed to load photos data");
         return;
       }
 
@@ -179,7 +178,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setPhotos(photosData);
     } catch (error) {
       console.error('Exception fetching photos data:', error);
-      toast.error('Failed to load photos data');
+      toast("Failed to load photos data");
     }
   };
 
@@ -485,7 +484,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) {
         console.error('Error adding photo:', error);
-        toast.error('Failed to add photo');
+        toast("Failed to add photo");
         return;
       }
 
@@ -499,16 +498,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
         
         console.log('New photo created successfully:', newPhoto);
-        // Update the local state with the new photo
+        // Update the local state with the new photo - add at the beginning of the array
         setPhotos(prevPhotos => [newPhoto, ...prevPhotos]);
-        toast.success('Photo added successfully');
         
-        // After adding a photo, refresh the photos list to ensure we have the latest data
-        fetchPhotos();
+        // No need to call fetchPhotos() here which was causing the duplicate issue
       }
     } catch (error) {
       console.error('Exception adding photo:', error);
-      toast.error('Failed to add photo');
+      toast("Failed to add photo");
     }
   };
 

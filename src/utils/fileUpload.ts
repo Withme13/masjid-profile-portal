@@ -13,7 +13,7 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
   try {
     console.log(`Starting upload of file to bucket: ${bucket}`);
     
-    // Use the new direct upload function
+    // Use the direct upload function
     const publicUrl = await uploadDirectlyToSupabase(file, filePath, bucket);
     
     if (!publicUrl) {

@@ -182,42 +182,18 @@ const MediaManagement = () => {
         return;
       }
       
-      // Use the Supabase client directly to insert the photo
-      const { data, error } = await supabase
-        .from('media_photos')
-        .insert([{
-          name: photoFormData.name,
-          description: photoFormData.description,
-          category: photoFormData.category,
-          image_url: finalImageUrl
-        }])
-        .select();
-        
-      if (error) {
-        console.error('Error adding photo directly:', error);
-        toast("Failed to add photo to database. Please try again.");
-      } else if (data && data[0]) {
-        const newPhoto: Photo = {
-          id: data[0].id,
-          name: data[0].name,
-          description: data[0].description || '',
-          category: data[0].category || '',
-          imageUrl: data[0].image_url
-        };
-        
-        // Also use the context function to update the local state
-        await addPhoto({
-          name: photoFormData.name,
-          description: photoFormData.description,
-          category: photoFormData.category,
-          imageUrl: finalImageUrl
-        });
-        
-        toast("Photo added successfully.");
-        
-        // Close the dialog
-        setIsAddPhotoDialogOpen(false);
-      }
+      // Use the context function to add the photo - NO DIRECT SUPABASE CALL HERE
+      await addPhoto({
+        name: photoFormData.name,
+        description: photoFormData.description,
+        category: photoFormData.category,
+        imageUrl: finalImageUrl
+      });
+      
+      toast("Photo added successfully.");
+      
+      // Close the dialog
+      setIsAddPhotoDialogOpen(false);
     } catch (error) {
       console.error('Exception adding photo:', error);
       toast("An unexpected error occurred. Please try again.");
