@@ -2,8 +2,11 @@
 import React, { useEffect } from 'react';
 import { Building, Wifi, Clipboard, Book, Car, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useData } from '@/contexts/DataContext';
 
 const Facilities = () => {
+  const { facilities } = useData();
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -27,7 +30,7 @@ const Facilities = () => {
     }
   };
 
-  const facilities = [
+  const mainFacilities = [
     {
       icon: <Building className="h-10 w-10 text-primary" />,
       title: "Main Prayer Hall",
@@ -111,7 +114,7 @@ const Facilities = () => {
           viewport={{ once: true, amount: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {facilities.map((facility, index) => (
+          {mainFacilities.map((facility, index) => (
             <motion.div 
               key={index}
               variants={itemVariants} 
@@ -189,90 +192,77 @@ const Facilities = () => {
         </div>
       </section>
 
-      {/* Additional Facilities Grid */}
+      {/* Additional Facilities Grid - Now dynamically populated from database */}
       <section className="section-container">
         <h2 className="section-title mb-12">Additional Amenities</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true, amount: 0.2 }}
-            className="glass-panel overflow-hidden rounded-xl"
-          >
-            <img 
-              src="https://images.unsplash.com/photo-1439337153520-7082a56a81f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1171&q=80" 
-              alt="Modern Architecture" 
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-6">
-              <h3 className="text-xl font-bold mb-2 font-heading">Modern Architecture</h3>
-              <p className="text-muted-foreground">
-                Our mosque features contemporary Islamic architecture with energy-efficient design and beautiful geometric patterns.
-              </p>
-            </div>
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true, amount: 0.2 }}
-            className="glass-panel overflow-hidden rounded-xl"
-          >
-            <img 
-              src="https://images.unsplash.com/photo-1721322800607-8c38375eef04?auto=format&fit=crop&w=1171&q=80" 
-              alt="Community Hall" 
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-6">
-              <h3 className="text-xl font-bold mb-2 font-heading">Multipurpose Community Hall</h3>
-              <p className="text-muted-foreground">
-                A versatile space for community gatherings, workshops, and social events with modern audiovisual equipment.
-              </p>
-            </div>
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            className="glass-panel overflow-hidden rounded-xl"
-          >
-            <img 
-              src="https://images.unsplash.com/photo-1605189442989-ea86e65c8210?auto=format&fit=crop&w=1171&q=80" 
-              alt="Ablution Area" 
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-6">
-              <h3 className="text-xl font-bold mb-2 font-heading">Modern Ablution Areas</h3>
-              <p className="text-muted-foreground">
-                Clean and spacious wudu facilities with accessible design for elderly and disabled visitors.
-              </p>
-            </div>
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            viewport={{ once: true, amount: 0.2 }}
-            className="glass-panel overflow-hidden rounded-xl"
-          >
-            <img 
-              src="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=1171&q=80" 
-              alt="Children's Area" 
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-6">
-              <h3 className="text-xl font-bold mb-2 font-heading">Children's Learning Space</h3>
-              <p className="text-muted-foreground">
-                Dedicated area for children's Islamic education with interactive learning tools and child-friendly furniture.
-              </p>
-            </div>
-          </motion.div>
+          {facilities.length > 0 ? (
+            facilities.map((facility) => (
+              <motion.div 
+                key={facility.id}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true, amount: 0.2 }}
+                className="glass-panel overflow-hidden rounded-xl"
+              >
+                <img 
+                  src={facility.imageUrl || "https://images.unsplash.com/photo-1439337153520-7082a56a81f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1171&q=80"} 
+                  alt={facility.name} 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2 font-heading">{facility.name}</h3>
+                  <p className="text-muted-foreground">
+                    {facility.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <>
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true, amount: 0.2 }}
+                className="glass-panel overflow-hidden rounded-xl"
+              >
+                <img 
+                  src="https://images.unsplash.com/photo-1439337153520-7082a56a81f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1171&q=80" 
+                  alt="Modern Architecture" 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2 font-heading">Modern Architecture</h3>
+                  <p className="text-muted-foreground">
+                    Our mosque features contemporary Islamic architecture with energy-efficient design and beautiful geometric patterns.
+                  </p>
+                </div>
+              </motion.div>
+              
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true, amount: 0.2 }}
+                className="glass-panel overflow-hidden rounded-xl"
+              >
+                <img 
+                  src="https://images.unsplash.com/photo-1721322800607-8c38375eef04?auto=format&fit=crop&w=1171&q=80" 
+                  alt="Community Hall" 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-2 font-heading">Multipurpose Community Hall</h3>
+                  <p className="text-muted-foreground">
+                    A versatile space for community gatherings, workshops, and social events with modern audiovisual equipment.
+                  </p>
+                </div>
+              </motion.div>
+            </>
+          )}
         </div>
       </section>
     </div>

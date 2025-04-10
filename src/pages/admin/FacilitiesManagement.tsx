@@ -1,3 +1,4 @@
+
 import React, { useState, ChangeEvent } from 'react';
 import { uploadFile } from '@/utils/fileUpload';
 import { Pencil, Trash2, PlusCircle } from 'lucide-react';
@@ -90,10 +91,7 @@ const FacilitiesManagement = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      addFacility(formData);
+      await addFacility(formData);
     } catch (error) {
       console.error("Error adding facility:", error);
     } finally {
@@ -109,10 +107,7 @@ const FacilitiesManagement = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      updateFacility({
+      await updateFacility({
         ...formData,
         id: currentFacility.id
       });
@@ -130,10 +125,7 @@ const FacilitiesManagement = () => {
     setIsSubmitting(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      deleteFacility(currentFacility.id);
+      await deleteFacility(currentFacility.id);
     } catch (error) {
       console.error("Error deleting facility:", error);
     } finally {
