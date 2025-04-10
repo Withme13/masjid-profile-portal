@@ -25,7 +25,7 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
     return publicUrl;
   } catch (error) {
     console.error('Exception uploading file:', error);
-    toast.error("An unexpected error occurred during upload.");
+    toast("An unexpected error occurred during upload.");
     return null;
   }
 };

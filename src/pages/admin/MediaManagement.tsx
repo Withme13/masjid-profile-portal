@@ -20,7 +20,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { supabase, ensureBucketExists } from '@/integrations/supabase/client';
 
 const MediaManagement = () => {
@@ -104,12 +104,12 @@ const MediaManagement = () => {
         return imageUrl;
       } else {
         console.error('Failed to get image URL after upload');
-        toast.error("Upload failed. Please try again or contact support.");
+        toast("Upload failed. Please try again or contact support.");
         return null;
       }
     } catch (error) {
       console.error('Error uploading photo:', error);
-      toast.error("Upload failed due to an unexpected error.");
+      toast("Upload failed due to an unexpected error.");
       return null;
     } finally {
       setPhotoUploadProgress(false);
@@ -169,11 +169,7 @@ const MediaManagement = () => {
             console.log('Using data URL as fallback');
             finalImageUrl = photoFormData.imageUrl;
           } else {
-            toast({
-              title: "Upload failed",
-              description: "Failed to upload image. Please try again or use an external image URL.",
-              variant: "destructive"
-            });
+            toast("Failed to upload image. Please try again or use an external image URL.");
             setIsSubmitting(false);
             return;
           }
@@ -181,11 +177,7 @@ const MediaManagement = () => {
       }
       
       if (!finalImageUrl) {
-        toast({
-          title: "Image required",
-          description: "Please select an image to upload or provide an image URL.",
-          variant: "destructive"
-        });
+        toast("Please select an image to upload or provide an image URL.");
         setIsSubmitting(false);
         return;
       }
@@ -203,11 +195,7 @@ const MediaManagement = () => {
         
       if (error) {
         console.error('Error adding photo directly:', error);
-        toast({
-          title: "Error",
-          description: "Failed to add photo to database. Please try again.",
-          variant: "destructive"
-        });
+        toast("Failed to add photo to database. Please try again.");
       } else if (data && data[0]) {
         const newPhoto: Photo = {
           id: data[0].id,
@@ -225,21 +213,14 @@ const MediaManagement = () => {
           imageUrl: finalImageUrl
         });
         
-        toast({
-          title: "Success",
-          description: "Photo added successfully.",
-        });
+        toast("Photo added successfully.");
         
         // Close the dialog
         setIsAddPhotoDialogOpen(false);
       }
     } catch (error) {
       console.error('Exception adding photo:', error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
-        variant: "destructive"
-      });
+      toast("An unexpected error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -315,22 +296,14 @@ const MediaManagement = () => {
       setThumbnailUploadProgress(false);
       
       if (!thumbnailUrl) {
-        toast({
-          title: "Upload failed",
-          description: "Failed to upload thumbnail. Please try again.",
-          variant: "destructive"
-        });
+        toast("Failed to upload thumbnail. Please try again.");
         return null;
       }
       
       return thumbnailUrl;
     } catch (error) {
       console.error('Error uploading thumbnail:', error);
-      toast({
-        title: "Upload error",
-        description: "An error occurred while uploading the thumbnail.",
-        variant: "destructive"
-      });
+      toast("An error occurred while uploading the thumbnail.");
       setThumbnailUploadProgress(false);
       return null;
     }
@@ -385,10 +358,7 @@ const MediaManagement = () => {
     setIsSubmitting(false);
     setIsAddVideoDialogOpen(false);
     
-    toast({
-      title: "Video added",
-      description: "The video has been added successfully.",
-    });
+    toast("The video has been added successfully.");
   };
 
   const handleEditVideoSubmit = async (e: React.FormEvent) => {
@@ -415,10 +385,7 @@ const MediaManagement = () => {
     setIsSubmitting(false);
     setIsEditVideoDialogOpen(false);
     
-    toast({
-      title: "Video updated",
-      description: "The video has been updated successfully.",
-    });
+    toast("The video has been updated successfully.");
   };
 
   const handleDeleteVideo = async () => {
@@ -434,10 +401,7 @@ const MediaManagement = () => {
     setIsSubmitting(false);
     setIsDeleteVideoDialogOpen(false);
     
-    toast({
-      title: "Video deleted",
-      description: "The video has been deleted successfully.",
-    });
+    toast("The video has been deleted successfully.");
   };
 
   return (

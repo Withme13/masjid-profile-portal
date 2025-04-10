@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { toast } from "sonner";
@@ -26,11 +27,11 @@ export const uploadDirectlyToSupabase = async (file: File, filePath: string, buc
       console.error('Error uploading file to Supabase:', error);
       
       if (error.message.includes('The resource was not found')) {
-        toast.error(`Bucket ${bucketName} doesn't exist. Please contact your administrator.`);
+        toast(`Bucket ${bucketName} doesn't exist. Please contact your administrator.`);
       } else if (error.message.includes('row-level security policy')) {
-        toast.error("Permission denied: Unable to upload file. Please make sure you're logged in with the correct permissions.");
+        toast("Permission denied: Unable to upload file. Please make sure you're logged in with the correct permissions.");
       } else {
-        toast.error(`Upload failed: ${error.message}`);
+        toast(`Upload failed: ${error.message}`);
       }
       return null;
     }
@@ -41,7 +42,7 @@ export const uploadDirectlyToSupabase = async (file: File, filePath: string, buc
     return publicUrl;
   } catch (error) {
     console.error('Exception during direct file upload:', error);
-    toast.error("An unexpected error occurred during upload.");
+    toast("An unexpected error occurred during upload.");
     return null;
   }
 };
