@@ -1,3 +1,4 @@
+
 import React, { useState, ChangeEvent } from 'react';
 import { uploadFile } from '@/utils/fileUpload';
 import { Pencil, Trash2, PlusCircle } from 'lucide-react';
@@ -18,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { toast } from "sonner";
 
 const ProfilesManagement = () => {
   const { leadership, addLeadershipMember, updateLeadershipMember, deleteLeadershipMember } = useData();
@@ -33,6 +35,7 @@ const ProfilesManagement = () => {
     education: '',
     imageUrl: '',
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -49,6 +52,7 @@ const ProfilesManagement = () => {
       education: '',
       imageUrl: '',
     });
+    setImageFile(null);
     setIsAddDialogOpen(true);
   };
 
@@ -60,6 +64,7 @@ const ProfilesManagement = () => {
       education: member.education,
       imageUrl: member.imageUrl,
     });
+    setImageFile(null);
     setIsEditDialogOpen(true);
   };
 
@@ -73,10 +78,36 @@ const ProfilesManagement = () => {
     setIsSubmitting(true);
     
     try {
-      await addLeadershipMember(formData);
+      // First handle the image upload if there's a new image
+      let finalImageUrl = formData.imageUrl;
+      
+      if (imageFile) {
+        const uploadedUrl = await uploadFile(imageFile, 'uploads');
+        if (uploadedUrl) {
+          finalImageUrl = uploadedUrl;
+        } else {
+          toast("Failed to upload image. Please try again.");
+          setIsSubmitting(false);
+          return;
+        }
+      }
+      
+      if (!finalImageUrl) {
+        toast("Please provide an image or image URL.");
+        setIsSubmitting(false);
+        return;
+      }
+      
+      await addLeadershipMember({
+        ...formData,
+        imageUrl: finalImageUrl
+      });
+      
+      toast("Leadership profile added successfully.");
       setIsAddDialogOpen(false);
     } catch (error) {
       console.error("Error adding leadership member:", error);
+      toast("An error occurred while adding the profile.");
     } finally {
       setIsSubmitting(false);
     }
@@ -89,13 +120,37 @@ const ProfilesManagement = () => {
     setIsSubmitting(true);
     
     try {
+      // First handle the image upload if there's a new image
+      let finalImageUrl = formData.imageUrl;
+      
+      if (imageFile) {
+        const uploadedUrl = await uploadFile(imageFile, 'uploads');
+        if (uploadedUrl) {
+          finalImageUrl = uploadedUrl;
+        } else {
+          toast("Failed to upload image. Please try again.");
+          setIsSubmitting(false);
+          return;
+        }
+      }
+      
+      if (!finalImageUrl) {
+        toast("Please provide an image or image URL.");
+        setIsSubmitting(false);
+        return;
+      }
+      
       await updateLeadershipMember({
         ...formData,
-        id: currentMember.id
+        id: currentMember.id,
+        imageUrl: finalImageUrl
       });
+      
+      toast("Leadership profile updated successfully.");
       setIsEditDialogOpen(false);
     } catch (error) {
       console.error("Error updating leadership member:", error);
+      toast("An error occurred while updating the profile.");
     } finally {
       setIsSubmitting(false);
     }
@@ -108,24 +163,20 @@ const ProfilesManagement = () => {
     
     try {
       await deleteLeadershipMember(currentMember.id);
+      toast("Leadership profile deleted successfully.");
       setIsDeleteDialogOpen(false);
     } catch (error) {
       console.error("Error deleting leadership member:", error);
+      toast("An error occurred while deleting the profile.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const uploadedImageUrl = await uploadFile(file);
-      if (uploadedImageUrl) {
-        setFormData(prev => ({
-          ...prev,
-          imageUrl: uploadedImageUrl
-        }));
-      }
+      setImageFile(file);
     }
   };
 
@@ -252,27 +303,22 @@ const ProfilesManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">Profile Image</Label>
-              <div className="flex items-center space-x-2">
-                <Input
-                  id="imageUrl"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="flex-grow"
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Upload a profile image (recommended size: 200x200 pixels)
-              </p>
+              <Label htmlFor="image">Profile Image</Label>
+              <Input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="flex-grow"
+              />
             </div>
             
-            {formData.imageUrl && (
+            {(imageFile || formData.imageUrl) && (
               <div className="mt-4">
                 <p className="text-sm font-medium mb-2">Preview:</p>
                 <div className="h-16 w-16 rounded-full overflow-hidden border">
                   <img 
-                    src={formData.imageUrl} 
+                    src={imageFile ? URL.createObjectURL(imageFile) : formData.imageUrl} 
                     alt="Preview"
                     className="h-full w-full object-cover"
                   />
@@ -326,22 +372,34 @@ const ProfilesManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="edit-imageUrl">Image URL</Label>
-              <Input
-                id="edit-imageUrl"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            {formData.imageUrl && (
-              <div className="mt-4">
-                <p className="text-sm font-medium mb-2">Preview:</p>
-                <div className="h-16 w-16 rounded-full overflow-hidden border">
+              <Label htmlFor="edit-image">Current Image</Label>
+              {formData.imageUrl && (
+                <div className="h-16 w-16 rounded-full overflow-hidden border mb-2">
                   <img 
                     src={formData.imageUrl} 
+                    alt="Current"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
+              <Input
+                id="edit-image"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="flex-grow"
+              />
+              <p className="text-xs text-muted-foreground">
+                Upload a new image or leave empty to keep the current one
+              </p>
+            </div>
+            
+            {imageFile && (
+              <div className="mt-4">
+                <p className="text-sm font-medium mb-2">New Image Preview:</p>
+                <div className="h-16 w-16 rounded-full overflow-hidden border">
+                  <img 
+                    src={URL.createObjectURL(imageFile)} 
                     alt="Preview"
                     className="h-full w-full object-cover"
                   />

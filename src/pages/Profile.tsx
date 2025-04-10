@@ -2,8 +2,11 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, Users, BookOpen, Award, Heart } from 'lucide-react';
+import { useData } from '@/contexts/DataContext';
 
 const Profile = () => {
+  const { leadership } = useData();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -224,80 +227,117 @@ const Profile = () => {
           viewport={{ once: true, amount: 0.2 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-8"
         >
-          <motion.div 
-            variants={{
-              hidden: { y: 20, opacity: 0 },
-              visible: {
-                y: 0,
-                opacity: 1,
-                transition: { duration: 0.5 }
-              }
-            }} 
-            className="glass-panel p-6 text-center hover-scale"
-          >
-            <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" 
-                alt="Imam Ahmad" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h3 className="text-xl font-bold font-heading mb-1">Imam Ahmad Rashid</h3>
-            <p className="text-primary text-sm mb-3">Head Imam</p>
-            <p className="text-muted-foreground text-sm">
-              Leading our congregation since 2010, Imam Ahmad is a graduate of Al-Azhar University with a focus on comparative religious studies.
-            </p>
-          </motion.div>
-          
-          <motion.div 
-            variants={{
-              hidden: { y: 20, opacity: 0 },
-              visible: {
-                y: 0,
-                opacity: 1,
-                transition: { duration: 0.5 }
-              }
-            }}
-            className="glass-panel p-6 text-center hover-scale"
-          >
-            <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" 
-                alt="Dr. Fatima" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h3 className="text-xl font-bold font-heading mb-1">Dr. Fatima Hassan</h3>
-            <p className="text-primary text-sm mb-3">Education Director</p>
-            <p className="text-muted-foreground text-sm">
-              Dr. Fatima oversees our educational programs, bringing her experience as a professor of Islamic Studies and childhood education expert.
-            </p>
-          </motion.div>
-          
-          <motion.div 
-            variants={{
-              hidden: { y: 20, opacity: 0 },
-              visible: {
-                y: 0,
-                opacity: 1,
-                transition: { duration: 0.5 }
-              }
-            }}
-            className="glass-panel p-6 text-center hover-scale"
-          >
-            <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" 
-                alt="Mr. Omar" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <h3 className="text-xl font-bold font-heading mb-1">Mr. Omar Khan</h3>
-            <p className="text-primary text-sm mb-3">Board President</p>
-            <p className="text-muted-foreground text-sm">
-              A founding member of At_Tauhid, Omar has helped guide our mosque's growth for over 30 years with his business acumen and community vision.
-            </p>
-          </motion.div>
+          {leadership.length > 0 ? (
+            leadership.map((member) => (
+              <motion.div 
+                key={member.id}
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: {
+                    y: 0,
+                    opacity: 1,
+                    transition: { duration: 0.5 }
+                  }
+                }} 
+                className="glass-panel p-6 text-center hover-scale"
+              >
+                <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden">
+                  <img 
+                    src={member.imageUrl} 
+                    alt={member.name} 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://via.placeholder.com/150";
+                    }}
+                  />
+                </div>
+                <h3 className="text-xl font-bold font-heading mb-1">{member.name}</h3>
+                <p className="text-primary text-sm mb-3">{member.position}</p>
+                <p className="text-muted-foreground text-sm">
+                  {member.education}
+                </p>
+              </motion.div>
+            ))
+          ) : (
+            // Display 3 placeholder profiles if no leadership data is available
+            <>
+              <motion.div 
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: {
+                    y: 0,
+                    opacity: 1,
+                    transition: { duration: 0.5 }
+                  }
+                }} 
+                className="glass-panel p-6 text-center hover-scale"
+              >
+                <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" 
+                    alt="Imam Ahmad" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-xl font-bold font-heading mb-1">Imam Ahmad Rashid</h3>
+                <p className="text-primary text-sm mb-3">Head Imam</p>
+                <p className="text-muted-foreground text-sm">
+                  Leading our congregation since 2010, Imam Ahmad is a graduate of Al-Azhar University with a focus on comparative religious studies.
+                </p>
+              </motion.div>
+              
+              <motion.div 
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: {
+                    y: 0,
+                    opacity: 1,
+                    transition: { duration: 0.5 }
+                  }
+                }}
+                className="glass-panel p-6 text-center hover-scale"
+              >
+                <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" 
+                    alt="Dr. Fatima" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-xl font-bold font-heading mb-1">Dr. Fatima Hassan</h3>
+                <p className="text-primary text-sm mb-3">Education Director</p>
+                <p className="text-muted-foreground text-sm">
+                  Dr. Fatima oversees our educational programs, bringing her experience as a professor of Islamic Studies and childhood education expert.
+                </p>
+              </motion.div>
+              
+              <motion.div 
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  visible: {
+                    y: 0,
+                    opacity: 1,
+                    transition: { duration: 0.5 }
+                  }
+                }}
+                className="glass-panel p-6 text-center hover-scale"
+              >
+                <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" 
+                    alt="Mr. Omar" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <h3 className="text-xl font-bold font-heading mb-1">Mr. Omar Khan</h3>
+                <p className="text-primary text-sm mb-3">Board President</p>
+                <p className="text-muted-foreground text-sm">
+                  A founding member of At_Tauhid, Omar has helped guide our mosque's growth for over 30 years with his business acumen and community vision.
+                </p>
+              </motion.div>
+            </>
+          )}
         </motion.div>
       </section>
 
