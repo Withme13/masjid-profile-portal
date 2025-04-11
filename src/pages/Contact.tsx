@@ -54,7 +54,15 @@ const Contact = () => {
     
     try {
       // Pass the values directly - all fields are required by the schema
-      await addMessage(values);
+      // Explicitly cast or create a new object that matches the expected type
+      const messageData = {
+        name: values.name,
+        email: values.email,
+        subject: values.subject,
+        message: values.message
+      };
+      
+      await addMessage(messageData);
       
       // Reset the form
       form.reset();
