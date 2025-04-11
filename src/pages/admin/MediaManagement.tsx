@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Pencil, Trash2, PlusCircle, Image, Film, Upload } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -46,7 +47,9 @@ const MediaManagement = () => {
   const [isDeleteVideoDialogOpen, setIsDeleteVideoDialogOpen] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
   const [selectedThumbnailFile, setSelectedThumbnailFile] = useState<File | null>(null);
+  const [selectedVideoFile, setSelectedVideoFile] = useState<File | null>(null);
   const [thumbnailUploadProgress, setThumbnailUploadProgress] = useState(false);
+  const [videoUploadProgress, setVideoUploadProgress] = useState(false);
   const [videoFormData, setVideoFormData] = useState({
     name: '',
     description: '',
@@ -55,6 +58,15 @@ const MediaManagement = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Ensure video bucket exists
+  React.useEffect(() => {
+    const setupBuckets = async () => {
+      await ensureBucketExists('videos');
+    };
+    
+    setupBuckets();
+  }, []);
 
   // Photo handlers
   const handlePhotoInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -244,6 +256,45 @@ const MediaManagement = () => {
     }));
   };
 
+  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedVideoFile(file);
+      console.log('Video file selected:', file.name, 'Size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
+    }
+  };
+
+  const handleVideoFileUpload = async () => {
+    if (!selectedVideoFile) return null;
+    
+    setVideoUploadProgress(true);
+    try {
+      console.log('Starting video upload...');
+      // Upload to videos bucket
+      const videoUrl = await uploadFile(selectedVideoFile, 'videos');
+      
+      if (!videoUrl) {
+        console.error('Failed to get video URL after upload');
+        toast("Video upload failed. Please try again.");
+        return null;
+      }
+      
+      console.log('Video uploaded successfully, URL:', videoUrl);
+      setVideoFormData(prev => ({
+        ...prev,
+        videoUrl
+      }));
+      
+      return videoUrl;
+    } catch (error) {
+      console.error('Error uploading video:', error);
+      toast("Video upload failed due to an unexpected error.");
+      return null;
+    } finally {
+      setVideoUploadProgress(false);
+    }
+  };
+
   const handleThumbnailFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedThumbnailFile(e.target.files[0]);
@@ -268,8 +319,7 @@ const MediaManagement = () => {
     
     setThumbnailUploadProgress(true);
     try {
-      const thumbnailUrl = await uploadFile(selectedThumbnailFile);
-      setThumbnailUploadProgress(false);
+      const thumbnailUrl = await uploadFile(selectedThumbnailFile, 'videos');
       
       if (!thumbnailUrl) {
         toast("Failed to upload thumbnail. Please try again.");
@@ -280,8 +330,9 @@ const MediaManagement = () => {
     } catch (error) {
       console.error('Error uploading thumbnail:', error);
       toast("An error occurred while uploading the thumbnail.");
-      setThumbnailUploadProgress(false);
       return null;
+    } finally {
+      setThumbnailUploadProgress(false);
     }
   };
 
@@ -292,6 +343,7 @@ const MediaManagement = () => {
       videoUrl: '',
       thumbnailUrl: '',
     });
+    setSelectedVideoFile(null);
     setSelectedThumbnailFile(null);
     setIsAddVideoDialogOpen(true);
   };
@@ -304,6 +356,7 @@ const MediaManagement = () => {
       videoUrl: video.videoUrl,
       thumbnailUrl: video.thumbnailUrl || '',
     });
+    setSelectedVideoFile(null);
     setSelectedThumbnailFile(null);
     setIsEditVideoDialogOpen(true);
   };
@@ -317,24 +370,52 @@ const MediaManagement = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    let thumbnailUrl = videoFormData.thumbnailUrl;
-    
-    if (selectedThumbnailFile) {
-      const uploadedUrl = await handleThumbnailFileUpload();
-      if (uploadedUrl) {
-        thumbnailUrl = uploadedUrl;
+    try {
+      let videoUrl = videoFormData.videoUrl;
+      let thumbnailUrl = videoFormData.thumbnailUrl;
+      
+      // Handle video file upload
+      if (selectedVideoFile) {
+        const uploadedVideoUrl = await handleVideoFileUpload();
+        if (uploadedVideoUrl) {
+          videoUrl = uploadedVideoUrl;
+        } else {
+          toast("Failed to upload video. Please try again.");
+          setIsSubmitting(false);
+          return;
+        }
       }
+      
+      if (!videoUrl) {
+        toast("Please upload a video file.");
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // Handle thumbnail upload if present
+      if (selectedThumbnailFile) {
+        const uploadedThumbnailUrl = await handleThumbnailFileUpload();
+        if (uploadedThumbnailUrl) {
+          thumbnailUrl = uploadedThumbnailUrl;
+        }
+      }
+      
+      // Add the video through the context function
+      await addVideo({
+        name: videoFormData.name,
+        description: videoFormData.description,
+        videoUrl,
+        thumbnailUrl
+      });
+      
+      toast("Video added successfully.");
+      setIsAddVideoDialogOpen(false);
+    } catch (error) {
+      console.error('Error adding video:', error);
+      toast("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    addVideo({
-      ...videoFormData,
-      thumbnailUrl
-    });
-    
-    setIsSubmitting(false);
-    setIsAddVideoDialogOpen(false);
-    
-    toast("The video has been added successfully.");
   };
 
   const handleEditVideoSubmit = async (e: React.FormEvent) => {
@@ -343,25 +424,45 @@ const MediaManagement = () => {
     
     setIsSubmitting(true);
     
-    let thumbnailUrl = videoFormData.thumbnailUrl;
-    
-    if (selectedThumbnailFile) {
-      const uploadedUrl = await handleThumbnailFileUpload();
-      if (uploadedUrl) {
-        thumbnailUrl = uploadedUrl;
+    try {
+      let videoUrl = videoFormData.videoUrl;
+      let thumbnailUrl = videoFormData.thumbnailUrl;
+      
+      // Handle video file upload if a new file was selected
+      if (selectedVideoFile) {
+        const uploadedVideoUrl = await handleVideoFileUpload();
+        if (uploadedVideoUrl) {
+          videoUrl = uploadedVideoUrl;
+        } else {
+          toast("Failed to upload new video. Using existing video.");
+        }
       }
+      
+      // Handle thumbnail upload if a new thumbnail was selected
+      if (selectedThumbnailFile) {
+        const uploadedThumbnailUrl = await handleThumbnailFileUpload();
+        if (uploadedThumbnailUrl) {
+          thumbnailUrl = uploadedThumbnailUrl;
+        }
+      }
+      
+      // Update the video through the context function
+      await updateVideo({
+        id: currentVideo.id,
+        name: videoFormData.name,
+        description: videoFormData.description,
+        videoUrl,
+        thumbnailUrl
+      });
+      
+      toast("Video updated successfully.");
+      setIsEditVideoDialogOpen(false);
+    } catch (error) {
+      console.error('Error updating video:', error);
+      toast("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
-    
-    updateVideo({
-      ...videoFormData,
-      id: currentVideo.id,
-      thumbnailUrl
-    });
-    
-    setIsSubmitting(false);
-    setIsEditVideoDialogOpen(false);
-    
-    toast("The video has been updated successfully.");
   };
 
   const handleDeleteVideo = async () => {
@@ -369,15 +470,16 @@ const MediaManagement = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    deleteVideo(currentVideo.id);
-    
-    setIsSubmitting(false);
-    setIsDeleteVideoDialogOpen(false);
-    
-    toast("The video has been deleted successfully.");
+    try {
+      await deleteVideo(currentVideo.id);
+      toast("The video has been deleted successfully.");
+    } catch (error) {
+      console.error('Error deleting video:', error);
+      toast("An error occurred while deleting the video.");
+    } finally {
+      setIsSubmitting(false);
+      setIsDeleteVideoDialogOpen(false);
+    }
   };
 
   return (
@@ -769,19 +871,36 @@ const MediaManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="video-url">Video URL (YouTube embed link)</Label>
-              <Input
-                id="video-url"
-                name="videoUrl"
-                value={videoFormData.videoUrl}
-                onChange={handleVideoInputChange}
-                placeholder="https://www.youtube.com/embed/VIDEO_ID"
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Enter the embed URL of the YouTube video (e.g., https://www.youtube.com/embed/VIDEO_ID).
-              </p>
+              <Label htmlFor="video-file">Video File</Label>
+              <div className="flex flex-col space-y-2">
+                <Input
+                  id="video-file"
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoFileChange}
+                  className="cursor-pointer"
+                  required={!videoFormData.videoUrl}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Upload a video file (MP4, WebM, etc.)
+                </p>
+              </div>
             </div>
+            
+            {selectedVideoFile && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">
+                  Selected video: {selectedVideoFile.name} 
+                  ({(selectedVideoFile.size / 1024 / 1024).toFixed(2)} MB)
+                </p>
+                {videoUploadProgress && (
+                  <div className="flex items-center gap-2">
+                    <Upload className="h-4 w-4 animate-pulse text-primary" />
+                    <span className="text-sm text-muted-foreground">Uploading video...</span>
+                  </div>
+                )}
+              </div>
+            )}
             
             <div className="space-y-2">
               <Label htmlFor="video-thumbnail">Video Thumbnail</Label>
@@ -853,15 +972,35 @@ const MediaManagement = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="edit-video-url">Video URL (YouTube embed link)</Label>
-              <Input
-                id="edit-video-url"
-                name="videoUrl"
-                value={videoFormData.videoUrl}
-                onChange={handleVideoInputChange}
-                required
-              />
+              <Label htmlFor="edit-video-file">Video File</Label>
+              <div className="flex flex-col space-y-2">
+                <Input
+                  id="edit-video-file"
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoFileChange}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Upload a new video file or keep the existing one.
+                </p>
+              </div>
             </div>
+            
+            {selectedVideoFile && (
+              <div className="mt-2">
+                <p className="text-sm font-medium mb-2">
+                  Selected video: {selectedVideoFile.name} 
+                  ({(selectedVideoFile.size / 1024 / 1024).toFixed(2)} MB)
+                </p>
+                {videoUploadProgress && (
+                  <div className="flex items-center gap-2">
+                    <Upload className="h-4 w-4 animate-pulse text-primary" />
+                    <span className="text-sm text-muted-foreground">Uploading video...</span>
+                  </div>
+                )}
+              </div>
+            )}
             
             <div className="space-y-2">
               <Label htmlFor="edit-video-thumbnail">Video Thumbnail</Label>

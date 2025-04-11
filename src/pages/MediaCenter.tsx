@@ -25,15 +25,7 @@ const MediaCenter = () => {
           .select('*')
           .order('created_at', { ascending: false });
 
-        if (error) {
-          console.error('Error fetching photos directly:', error);
-          toast.error('Failed to load photos. Using cached data instead.');
-          // If direct fetch fails, fall back to context data
-          if (photos.length > 0) {
-            setLocalPhotos(photos);
-          }
-          return;
-        }
+        if (error) throw error;
 
         if (data) {
           const formattedPhotos: Photo[] = data.map(item => ({
@@ -61,18 +53,61 @@ const MediaCenter = () => {
     fetchPhotosDirectly();
   }, [photos]);
 
-  // Also use the videos from context
+  // Fetch videos directly from Supabase
   useEffect(() => {
-    if (videos.length > 0 && localVideos.length === 0) {
-      setLocalVideos(videos);
-    }
-  }, [videos, localVideos]);
+    const fetchVideosDirectly = async () => {
+      try {
+        setIsLoading(true);
+        const { data, error } = await supabase
+          .from('media_videos')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (data) {
+          const formattedVideos: Video[] = data.map(item => ({
+            id: item.id,
+            name: item.name,
+            description: item.description || '',
+            videoUrl: item.video_url,
+            thumbnailUrl: item.thumbnail_url
+          }));
+          
+          console.log('Videos fetched directly from Supabase:', formattedVideos);
+          setLocalVideos(formattedVideos);
+        }
+      } catch (error) {
+        console.error('Exception fetching videos:', error);
+        // Fall back to context data
+        if (videos.length > 0) {
+          setLocalVideos(videos);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchVideosDirectly();
+  }, [videos]);
+
+  // Helper function to check if URL is a video file (not a YouTube embed)
+  const isVideoFile = (url: string): boolean => {
+    return /\.(mp4|webm|ogg|mov)($|\?)/i.test(url) || 
+           url.includes('storage.googleapis.com') || 
+           url.includes('supabase.co');
+  };
   
   // Function to ensure YouTube embed URLs are in the correct format
   const formatYouTubeUrl = (url: string) => {
     // If it's already an embed URL, return it
     if (url.includes('youtube.com/embed/')) {
       return url;
+    }
+    
+    // If it appears to be a video file URL rather than YouTube, return null
+    if (isVideoFile(url)) {
+      return null;
     }
     
     // Extract video ID from various YouTube URL formats
@@ -247,15 +282,27 @@ const MediaCenter = () => {
               <X className="w-6 h-6 text-white" />
             </button>
             <div className="aspect-video">
-              <iframe
-                src={formatYouTubeUrl(selectedVideo.videoUrl)}
-                className="w-full h-full"
-                title={selectedVideo.name}
-                allowFullScreen
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                frameBorder="0"
-              ></iframe>
+              {isVideoFile(selectedVideo.videoUrl) ? (
+                <video 
+                  src={selectedVideo.videoUrl}
+                  className="w-full h-full"
+                  controls
+                  autoPlay
+                  controlsList="nodownload"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <iframe
+                  src={formatYouTubeUrl(selectedVideo.videoUrl)}
+                  className="w-full h-full"
+                  title={selectedVideo.name}
+                  allowFullScreen
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  frameBorder="0"
+                ></iframe>
+              )}
             </div>
             <div className="p-6">
               <h3 className="font-heading font-bold text-xl">{selectedVideo.name}</h3>

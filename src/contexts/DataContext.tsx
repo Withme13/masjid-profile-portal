@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { supabase, ensureBucketExists } from '@/integrations/supabase/client';
@@ -57,6 +58,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await ensureBucketExists('uploads');
       // Ensure the photos bucket exists
       await ensureBucketExists('photos');
+      // Ensure the videos bucket exists
+      await ensureBucketExists('videos');
     };
     
     setupBuckets();
@@ -551,6 +554,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Video CRUD operations
   const addVideo = async (video: Omit<Video, 'id'>) => {
     try {
+      console.log('Adding new video to Supabase:', video);
+      
       const { data, error } = await supabase
         .from('media_videos')
         .insert([{
@@ -561,7 +566,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }])
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error adding video:', error);
+        toast.error('Failed to add video');
+        return;
+      }
 
       if (data && data[0]) {
         const newVideo: Video = {
@@ -572,7 +581,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           thumbnailUrl: data[0].thumbnail_url
         };
         
-        setVideos([...videos, newVideo]);
+        console.log('New video created successfully:', newVideo);
+        // Update the local state with the new video - add at the beginning of the array
+        setVideos(prevVideos => [newVideo, ...prevVideos]);
         toast.success('Video added successfully');
       }
     } catch (error) {
