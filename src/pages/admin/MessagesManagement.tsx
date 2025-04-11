@@ -1,15 +1,15 @@
 
-import React, { useState } from 'react';
-import { Eye, Trash2, MailOpen, Mail, Calendar, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Eye, Trash2, MailOpen, Mail, Calendar, Search, Check } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useData } from '@/contexts/DataContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import ConfirmationDialog from '@/components/admin/ConfirmationDialog';
 import { ContactMessage } from '@/types/adminTypes';
+import { toast } from '@/components/ui/use-toast';
 import {
   Table,
   TableBody,
@@ -55,18 +55,29 @@ const MessagesManagement = () => {
     
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    deleteMessage(messageToDelete.id);
-    
-    if (selectedMessage?.id === messageToDelete.id) {
-      setSelectedMessage(null);
-      setIsMessageDrawerOpen(false);
+    try {
+      await deleteMessage(messageToDelete.id);
+      
+      if (selectedMessage?.id === messageToDelete.id) {
+        setSelectedMessage(null);
+        setIsMessageDrawerOpen(false);
+      }
+      
+      toast({
+        title: "Success",
+        description: "Message deleted successfully.",
+      });
+    } catch (error) {
+      console.error('Error deleting message:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the message.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+      setIsDeleteDialogOpen(false);
     }
-    
-    setIsSubmitting(false);
-    setIsDeleteDialogOpen(false);
   };
 
   // Filter messages
@@ -94,14 +105,23 @@ const MessagesManagement = () => {
     // Sort by date (most recent first)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+  const countUnreadMessages = messages.filter(message => !message.isRead).length;
+
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Contact Messages</h1>
-          <p className="text-muted-foreground">
-            Manage messages submitted through the contact form.
-          </p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Contact Messages</h1>
+            <p className="text-muted-foreground">
+              Manage messages submitted through the contact form.
+            </p>
+          </div>
+          {countUnreadMessages > 0 && (
+            <Badge variant="default" className="self-start">
+              {countUnreadMessages} unread {countUnreadMessages === 1 ? 'message' : 'messages'}
+            </Badge>
+          )}
         </div>
 
         {/* Search and filter */}
@@ -168,15 +188,28 @@ const MessagesManagement = () => {
                           variant="ghost" 
                           size="icon"
                           onClick={() => handleViewMessage(message)}
+                          title="View message"
                         >
                           <Eye className="h-4 w-4" />
                           <span className="sr-only">View</span>
                         </Button>
+                        {!message.isRead && (
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={() => updateMessageReadStatus(message.id, true)}
+                            title="Mark as read"
+                          >
+                            <Check className="h-4 w-4" />
+                            <span className="sr-only">Mark as read</span>
+                          </Button>
+                        )}
                         <Button 
                           variant="ghost" 
                           size="icon"
                           className="text-destructive hover:text-destructive"
                           onClick={() => handleDeleteClick(message)}
+                          title="Delete message"
                         >
                           <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Delete</span>
@@ -198,23 +231,35 @@ const MessagesManagement = () => {
                 <DrawerHeader className="px-0">
                   <DrawerTitle>Message from {selectedMessage.name}</DrawerTitle>
                   <DrawerDescription>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span>{selectedMessage.email}</span>
                       <span className="text-muted-foreground">•</span>
                       <span>{format(parseISO(selectedMessage.date), 'MMM d, yyyy h:mm a')}</span>
+                      <span className="text-muted-foreground">•</span>
+                      <span>
+                        {selectedMessage.isRead ? (
+                          <Badge variant="outline" className="flex items-center gap-1">
+                            <Check className="h-3 w-3" /> Read
+                          </Badge>
+                        ) : (
+                          <Badge variant="default" className="flex items-center gap-1">
+                            <Mail className="h-3 w-3" /> Unread
+                          </Badge>
+                        )}
+                      </span>
                     </div>
                   </DrawerDescription>
                 </DrawerHeader>
                 
                 <div className="space-y-4 mt-4">
                   <div>
-                    <Label className="text-muted-foreground text-sm">Subject</Label>
-                    <h3 className="text-lg font-medium">{selectedMessage.subject}</h3>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Subject</h3>
+                    <p className="text-lg font-medium">{selectedMessage.subject}</p>
                   </div>
                   
                   <div>
-                    <Label className="text-muted-foreground text-sm">Message</Label>
-                    <div className="p-4 border rounded-md bg-background mt-1 whitespace-pre-wrap">
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">Message</h3>
+                    <div className="p-4 border rounded-md bg-background whitespace-pre-wrap">
                       {selectedMessage.message}
                     </div>
                   </div>

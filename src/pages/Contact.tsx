@@ -4,47 +4,74 @@ import { Map, Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from '@/components/ui/use-toast';
 import MapComponent from '@/components/MapComponent';
+import { useData } from '@/contexts/DataContext';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+
+// Define form schema with Zod
+const formSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  subject: z.string().min(1, { message: "Please select a subject." }),
+  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
+});
+
+type ContactFormValues = z.infer<typeof formSchema>;
 
 const Contact = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-
+  const { addMessage } = useData();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  // Initialize react-hook-form with zod validation
+  const form = useForm<ContactFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      subject: '',
+      message: '',
+    },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (values: ContactFormValues) => {
     setIsSubmitting(true);
     
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await addMessage(values);
+      
+      // Reset the form
+      form.reset();
+      
       toast({
         title: "Message Sent!",
         description: "We'll get back to you as soon as possible.",
       });
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem sending your message. Please try again.",
+        variant: "destructive",
       });
-    }, 1500);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -95,6 +122,16 @@ const Contact = () => {
       transition: { duration: 0.5 }
     }
   };
+
+  // Available subject options
+  const subjectOptions = [
+    { value: "general", label: "General Inquiry" },
+    { value: "prayer", label: "Prayer Times" },
+    { value: "activities", label: "Activities & Events" },
+    { value: "donation", label: "Donations" },
+    { value: "volunteer", label: "Volunteering" },
+    { value: "other", label: "Other" }
+  ];
 
   return (
     <div className="min-h-screen">
@@ -182,7 +219,6 @@ const Contact = () => {
                 </div>
               </div>
               <div className="h-[400px] relative">
-                {/* Replace the placeholder with our MapComponent */}
                 <MapComponent address={mosqueAddress} />
               </div>
             </motion.div>
@@ -201,93 +237,98 @@ const Contact = () => {
                 </div>
               </div>
               <div className="p-6">
-                <form onSubmit={handleSubmit}>
-                  <div className="space-y-4">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium mb-1">
-                        Your Name
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary"
-                      />
-                    </div>
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Your Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium mb-1">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary"
-                      />
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email Address</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter your email" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     
-                    <div>
-                      <label htmlFor="subject" className="block text-sm font-medium mb-1">
-                        Subject
-                      </label>
-                      <select
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        required
-                        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary"
-                      >
-                        <option value="">Select a subject</option>
-                        <option value="general">General Inquiry</option>
-                        <option value="prayer">Prayer Times</option>
-                        <option value="activities">Activities & Events</option>
-                        <option value="donation">Donations</option>
-                        <option value="volunteer">Volunteering</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="subject"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Subject</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a subject" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {subjectOptions.map(option => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     
-                    <div>
-                      <label htmlFor="message" className="block text-sm font-medium mb-1">
-                        Message
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        rows={4}
-                        value={formData.message}
-                        onChange={handleChange}
-                        required
-                        className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary"
-                      ></textarea>
-                    </div>
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Message</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Type your message here..." 
+                              rows={4} 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     
-                    <div>
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full btn-primary flex items-center justify-center"
-                      >
-                        {isSubmitting ? (
-                          <>Processing...</>
-                        ) : (
-                          <>
-                            Send Message
-                            <Send className="ml-2 h-4 w-4" />
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </form>
+                    <Button 
+                      type="submit" 
+                      className="w-full btn-primary flex items-center justify-center" 
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        "Processing..."
+                      ) : (
+                        <>
+                          Send Message
+                          <Send className="ml-2 h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </Form>
               </div>
             </motion.div>
           </div>
