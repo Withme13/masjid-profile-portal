@@ -53,6 +53,7 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
+      // Pass the values directly - all fields are required by the schema
       await addMessage(values);
       
       // Reset the form
