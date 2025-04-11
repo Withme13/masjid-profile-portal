@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Pencil, Trash2, PlusCircle, Image, Film, Upload } from 'lucide-react';
+import { Pencil, Trash2, PlusCircle, Image, Film, Upload, FileVideo, FileImage, Info } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { useData } from '@/contexts/DataContext';
 import { Button } from '@/components/ui/button';
@@ -838,7 +837,7 @@ const MediaManagement = () => {
           isConfirming={isSubmitting}
         />
 
-        {/* Video Add Dialog */}
+        {/* Video Add Dialog - Updated with better layout */}
         <FormDialog
           title="Add New Video"
           isOpen={isAddVideoDialogOpen}
@@ -846,100 +845,156 @@ const MediaManagement = () => {
           onSubmit={handleAddVideoSubmit}
           isSubmitting={isSubmitting}
           submitLabel="Add Video"
+          maxWidth="lg"
         >
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="video-name">Video Name</Label>
-              <Input
-                id="video-name"
-                name="name"
-                value={videoFormData.name}
-                onChange={handleVideoInputChange}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="video-description">Description</Label>
-              <Textarea
-                id="video-description"
-                name="description"
-                value={videoFormData.description}
-                onChange={handleVideoInputChange}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="video-file">Video File</Label>
-              <div className="flex flex-col space-y-2">
-                <Input
-                  id="video-file"
-                  type="file"
-                  accept="video/*"
-                  onChange={handleVideoFileChange}
-                  className="cursor-pointer"
-                  required={!videoFormData.videoUrl}
-                />
-                <p className="text-xs text-muted-foreground">
-                  Upload a video file (MP4, WebM, etc.)
-                </p>
+          <div className="grid gap-6">
+            {/* Basic Info Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-primary">
+                <Info size={18} />
+                <h3 className="text-lg font-medium">Basic Information</h3>
               </div>
-            </div>
-            
-            {selectedVideoFile && (
-              <div className="mt-2">
-                <p className="text-sm font-medium mb-2">
-                  Selected video: {selectedVideoFile.name} 
-                  ({(selectedVideoFile.size / 1024 / 1024).toFixed(2)} MB)
-                </p>
-                {videoUploadProgress && (
-                  <div className="flex items-center gap-2">
-                    <Upload className="h-4 w-4 animate-pulse text-primary" />
-                    <span className="text-sm text-muted-foreground">Uploading video...</span>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="video-thumbnail">Video Thumbnail</Label>
-              <div className="flex flex-col space-y-2">
-                <Input
-                  id="video-thumbnail"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleThumbnailFileChange}
-                  className="cursor-pointer"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Upload a thumbnail image for the video (optional).
-                </p>
-              </div>
-            </div>
-            
-            {selectedThumbnailFile && (
-              <div className="mt-2">
-                <p className="text-sm font-medium mb-2">Selected thumbnail: {selectedThumbnailFile.name}</p>
-              </div>
-            )}
-            
-            {videoFormData.thumbnailUrl && (
-              <div className="mt-2">
-                <p className="text-sm font-medium mb-2">Thumbnail Preview:</p>
-                <div className="h-24 w-40 rounded overflow-hidden border">
-                  <img 
-                    src={videoFormData.thumbnailUrl} 
-                    alt="Preview"
-                    className="h-full w-full object-cover"
+              
+              <div className="grid gap-4 sm:grid-cols-1">
+                <div className="space-y-2">
+                  <Label htmlFor="video-name" className="text-base">Video Name</Label>
+                  <Input
+                    id="video-name"
+                    name="name"
+                    value={videoFormData.name}
+                    onChange={handleVideoInputChange}
+                    placeholder="Enter a descriptive title for the video"
+                    className="h-10"
+                    required
                   />
                 </div>
               </div>
-            )}
+              
+              <div className="space-y-2">
+                <Label htmlFor="video-description" className="text-base">Description</Label>
+                <Textarea
+                  id="video-description"
+                  name="description"
+                  value={videoFormData.description}
+                  onChange={handleVideoInputChange}
+                  placeholder="Add details about this video"
+                  className="min-h-[100px] resize-y"
+                  required
+                />
+              </div>
+            </div>
+            
+            {/* Video File Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-primary">
+                <FileVideo size={18} />
+                <h3 className="text-lg font-medium">Video File</h3>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="border rounded-lg p-4 bg-muted/30">
+                  <Label 
+                    htmlFor="video-file" 
+                    className="block mb-2 text-base"
+                  >
+                    Upload Video
+                  </Label>
+                  <div className="flex flex-col space-y-3">
+                    <Input
+                      id="video-file"
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoFileChange}
+                      className="cursor-pointer h-10"
+                      required={!videoFormData.videoUrl}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Supported formats: MP4, WebM, OGG (max 500MB)
+                    </p>
+                  </div>
+                </div>
+              
+                {selectedVideoFile && (
+                  <div className="mt-2 p-3 border rounded-md bg-primary/5">
+                    <div className="flex items-start gap-3">
+                      <FileVideo className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">
+                          {selectedVideoFile.name} 
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {(selectedVideoFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {videoUploadProgress && (
+                      <div className="flex items-center gap-2 mt-2">
+                        <Upload className="h-4 w-4 animate-pulse text-primary" />
+                        <span className="text-sm text-muted-foreground">Uploading video...</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Thumbnail Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-primary">
+                <FileImage size={18} />
+                <h3 className="text-lg font-medium">Video Thumbnail</h3>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="border rounded-lg p-4 bg-muted/30">
+                  <Label 
+                    htmlFor="video-thumbnail" 
+                    className="block mb-2 text-base"
+                  >
+                    Upload Thumbnail
+                  </Label>
+                  <div className="flex flex-col space-y-3">
+                    <Input
+                      id="video-thumbnail"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleThumbnailFileChange}
+                      className="cursor-pointer h-10"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Recommended: 16:9 ratio image (1280x720px)
+                    </p>
+                  </div>
+                </div>
+                
+                {selectedThumbnailFile && (
+                  <div className="mt-2 p-3 border rounded-md bg-primary/5">
+                    <div className="flex items-start gap-3">
+                      <FileImage className="h-5 w-5 text-primary mt-0.5" />
+                      <p className="text-sm font-medium">{selectedThumbnailFile.name}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {videoFormData.thumbnailUrl && (
+                <div className="mt-4 space-y-2">
+                  <p className="text-sm font-medium">Thumbnail Preview:</p>
+                  <div className="w-full max-w-[280px] rounded-md overflow-hidden border">
+                    <img 
+                      src={videoFormData.thumbnailUrl} 
+                      alt="Thumbnail preview"
+                      className="h-auto w-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </FormDialog>
 
-        {/* Video Edit Dialog */}
+        {/* Video Edit Dialog - Updated with better layout */}
         <FormDialog
           title="Edit Video"
           isOpen={isEditVideoDialogOpen}
@@ -947,113 +1002,10 @@ const MediaManagement = () => {
           onSubmit={handleEditVideoSubmit}
           isSubmitting={isSubmitting}
           submitLabel="Update Video"
+          maxWidth="lg"
         >
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-video-name">Video Name</Label>
-              <Input
-                id="edit-video-name"
-                name="name"
-                value={videoFormData.name}
-                onChange={handleVideoInputChange}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="edit-video-description">Description</Label>
-              <Textarea
-                id="edit-video-description"
-                name="description"
-                value={videoFormData.description}
-                onChange={handleVideoInputChange}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="edit-video-file">Video File</Label>
-              <div className="flex flex-col space-y-2">
-                <Input
-                  id="edit-video-file"
-                  type="file"
-                  accept="video/*"
-                  onChange={handleVideoFileChange}
-                  className="cursor-pointer"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Upload a new video file or keep the existing one.
-                </p>
-              </div>
-            </div>
-            
-            {selectedVideoFile && (
-              <div className="mt-2">
-                <p className="text-sm font-medium mb-2">
-                  Selected video: {selectedVideoFile.name} 
-                  ({(selectedVideoFile.size / 1024 / 1024).toFixed(2)} MB)
-                </p>
-                {videoUploadProgress && (
-                  <div className="flex items-center gap-2">
-                    <Upload className="h-4 w-4 animate-pulse text-primary" />
-                    <span className="text-sm text-muted-foreground">Uploading video...</span>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="edit-video-thumbnail">Video Thumbnail</Label>
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center gap-2">
-                  <Input
-                    id="edit-video-thumbnail"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleThumbnailFileChange}
-                    className="cursor-pointer"
-                  />
-                  {thumbnailUploadProgress && <Upload className="h-4 w-4 animate-pulse" />}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Upload a new thumbnail or keep the existing one.
-                </p>
-              </div>
-            </div>
-            
-            {selectedThumbnailFile && (
-              <div className="mt-2">
-                <p className="text-sm font-medium mb-2">Selected thumbnail: {selectedThumbnailFile.name}</p>
-              </div>
-            )}
-            
-            {videoFormData.thumbnailUrl && (
-              <div className="mt-2">
-                <p className="text-sm font-medium mb-2">Current Thumbnail:</p>
-                <div className="h-24 w-40 rounded overflow-hidden border">
-                  <img 
-                    src={videoFormData.thumbnailUrl} 
-                    alt="Preview"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        </FormDialog>
-
-        {/* Video Delete Confirmation Dialog */}
-        <ConfirmationDialog
-          title="Delete Video"
-          description={`Are you sure you want to delete the video "${currentVideo?.name}"? This action cannot be undone.`}
-          isOpen={isDeleteVideoDialogOpen}
-          onClose={() => setIsDeleteVideoDialogOpen(false)}
-          onConfirm={handleDeleteVideo}
-          isConfirming={isSubmitting}
-        />
-      </div>
-    </AdminLayout>
-  );
-};
-
-export default MediaManagement;
+          <div className="grid gap-6">
+            {/* Basic Info Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-primary">
+                <
