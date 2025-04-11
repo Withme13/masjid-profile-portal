@@ -44,18 +44,18 @@ const FormDialog: React.FC<FormDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={`${maxWidthClasses[maxWidth]} max-h-[90vh] overflow-y-auto`}>
+      <DialogContent className={`${maxWidthClasses[maxWidth]} max-h-[85vh] overflow-y-auto`}>
         <form onSubmit={onSubmit} className="space-y-6">
           <DialogHeader className="pb-2">
             <DialogTitle>{title}</DialogTitle>
             {description && <DialogDescription>{description}</DialogDescription>}
           </DialogHeader>
           
-          <div className="py-2 space-y-5">
+          <div className="py-2 space-y-5 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 180px)' }}>
             {children}
           </div>
           
-          <DialogFooter className="sticky bottom-0 pt-4 bg-background flex justify-end space-x-2">
+          <DialogFooter className="sticky bottom-0 pt-4 bg-background flex justify-end space-x-2 border-t mt-4">
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
