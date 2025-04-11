@@ -269,7 +269,12 @@ const MediaManagement = () => {
     
     setVideoUploadProgress(true);
     try {
-      console.log('Starting video upload...');
+      console.log('Starting video upload...', selectedVideoFile.name, selectedVideoFile.size);
+      
+      // First ensure the videos bucket exists
+      const bucketExists = await ensureBucketExists('videos');
+      console.log('Video bucket exists check result:', bucketExists);
+      
       // Upload to videos bucket
       const videoUrl = await uploadFile(selectedVideoFile, 'videos');
       
