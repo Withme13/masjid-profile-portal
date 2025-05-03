@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Pencil, Trash2, PlusCircle, Image, Film, Upload, FileVideo, FileImage, Info } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -61,11 +60,16 @@ const MediaManagement = () => {
 
   // Ensure video bucket exists
   React.useEffect(() => {
-    const setupBuckets = async () => {
-      await ensureBucketExists('videos');
+    const checkBuckets = async () => {
+      const videosBucketExists = await ensureBucketExists('videos');
+      if (!videosBucketExists) {
+        toast.error("The 'videos' storage bucket doesn't exist. Please create it in your Supabase project.", {
+          duration: 8000,
+        });
+      }
     };
     
-    setupBuckets();
+    checkBuckets();
   }, []);
 
   // Photo handlers
@@ -259,7 +263,19 @@ const MediaManagement = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setSelectedVideoFile(file);
-      console.log('Video file selected:', file.name, 'Size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
+      console.log('Video file selected:', file.name, 'Size:', (file.size / 1024 / 1024).toFixed(2), 'MB', 'Type:', file.type);
+      
+      // Validate file type
+      const validVideoTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
+      if (!validVideoTypes.includes(file.type)) {
+        toast.warning(`File type ${file.type} might not be supported. We recommend using MP4, WebM, OGG, or MOV formats.`);
+      }
+      
+      // Warn if file is large
+      const fileSizeMB = file.size / 1024 / 1024;
+      if (fileSizeMB > 100) {
+        toast.warning(`Large file detected (${fileSizeMB.toFixed(2)}MB). Upload may take some time.`);
+      }
     }
   };
 
@@ -273,8 +289,8 @@ const MediaManagement = () => {
       // First check if the videos bucket exists
       const bucketExists = await ensureBucketExists('videos');
       if (!bucketExists) {
-        console.error('Videos bucket does not exist or is not accessible');
-        toast("The videos storage bucket is not available. Please contact an administrator.");
+        toast.error("The 'videos' storage bucket doesn't exist. Please contact an administrator to create it in Supabase.");
+        setVideoUploadProgress(false);
         return null;
       }
       
@@ -283,18 +299,30 @@ const MediaManagement = () => {
       const maxSizeMB = 500; // 500MB limit
       
       if (fileSizeMB > maxSizeMB) {
-        console.error(`File size (${fileSizeMB.toFixed(2)}MB) exceeds the maximum allowed size of ${maxSizeMB}MB`);
-        toast(`File is too large (${fileSizeMB.toFixed(2)}MB). Maximum file size is ${maxSizeMB}MB.`);
+        toast.error(`File is too large (${fileSizeMB.toFixed(2)}MB). Maximum file size is ${maxSizeMB}MB.`);
+        setVideoUploadProgress(false);
         return null;
       }
+      
+      // Show upload progress indicator
+      toast.loading(`Uploading video (${fileSizeMB.toFixed(2)}MB)... Please wait.`, {
+        id: "video-upload",
+        duration: 20000,
+      });
       
       // Upload to videos bucket
       const videoUrl = await uploadFile(selectedVideoFile, 'videos');
       
       if (!videoUrl) {
-        console.error('Failed to get video URL after upload');
+        toast.error("Failed to upload video. Please check console for more details.", {
+          id: "video-upload"
+        });
         return null;
       }
+      
+      toast.success(`Video uploaded successfully! (${fileSizeMB.toFixed(2)}MB)`, {
+        id: "video-upload"
+      });
       
       console.log('Video uploaded successfully, URL:', videoUrl);
       setVideoFormData(prev => ({
@@ -305,7 +333,9 @@ const MediaManagement = () => {
       return videoUrl;
     } catch (error) {
       console.error('Error uploading video:', error);
-      toast("Video upload failed due to an unexpected error.");
+      toast.error("Video upload failed. Please try again or contact support for assistance.", {
+        id: "video-upload"
+      });
       return null;
     } finally {
       setVideoUploadProgress(false);
@@ -391,29 +421,45 @@ const MediaManagement = () => {
       let videoUrl = videoFormData.videoUrl;
       let thumbnailUrl = videoFormData.thumbnailUrl;
       
+      // Validate form fields
+      if (!videoFormData.name.trim()) {
+        toast.error("Please enter a video name");
+        setIsSubmitting(false);
+        return;
+      }
+      
       // Handle video file upload
       if (selectedVideoFile) {
         const uploadedVideoUrl = await handleVideoFileUpload();
         if (uploadedVideoUrl) {
           videoUrl = uploadedVideoUrl;
         } else {
-          toast("Failed to upload video. Please try again.");
+          toast.error("Failed to upload video. Please try again with a different file or check your connection.");
           setIsSubmitting(false);
           return;
         }
-      }
-      
-      if (!videoUrl) {
-        toast("Please upload a video file.");
+      } else if (!videoFormData.videoUrl) {
+        toast.error("Please select a video file to upload");
         setIsSubmitting(false);
         return;
       }
       
       // Handle thumbnail upload if present
       if (selectedThumbnailFile) {
+        toast.loading("Uploading thumbnail...", {
+          id: "thumbnail-upload"
+        });
+        
         const uploadedThumbnailUrl = await handleThumbnailFileUpload();
         if (uploadedThumbnailUrl) {
           thumbnailUrl = uploadedThumbnailUrl;
+          toast.success("Thumbnail uploaded successfully", {
+            id: "thumbnail-upload"
+          });
+        } else {
+          toast.error("Failed to upload thumbnail, but continuing with video upload", {
+            id: "thumbnail-upload"
+          });
         }
       }
       
@@ -425,11 +471,11 @@ const MediaManagement = () => {
         thumbnailUrl
       });
       
-      toast("Video added successfully.");
+      toast.success("Video added successfully!");
       setIsAddVideoDialogOpen(false);
     } catch (error) {
       console.error('Error adding video:', error);
-      toast("An unexpected error occurred. Please try again.");
+      toast.error("An unexpected error occurred while saving the video. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -947,235 +993,4 @@ const MediaManagement = () => {
                     </div>
                     
                     {videoUploadProgress && (
-                      <div className="flex items-center gap-2 mt-2">
-                        <Upload className="h-4 w-4 animate-pulse text-primary" />
-                        <span className="text-sm text-muted-foreground">Uploading video...</span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {/* Thumbnail Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-primary">
-                <FileImage size={18} />
-                <h3 className="text-lg font-medium">Video Thumbnail</h3>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="border rounded-lg p-4 bg-muted/30">
-                  <Label 
-                    htmlFor="video-thumbnail" 
-                    className="block mb-2 text-base"
-                  >
-                    Upload Thumbnail
-                  </Label>
-                  <div className="flex flex-col space-y-3">
-                    <Input
-                      id="video-thumbnail"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleThumbnailFileChange}
-                      className="cursor-pointer h-10"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Recommended: 16:9 ratio image (1280x720px)
-                    </p>
-                  </div>
-                </div>
-                
-                {selectedThumbnailFile && (
-                  <div className="mt-2 p-3 border rounded-md bg-primary/5">
-                    <div className="flex items-start gap-3">
-                      <FileImage className="h-5 w-5 text-primary mt-0.5" />
-                      <p className="text-sm font-medium">{selectedThumbnailFile.name}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              {videoFormData.thumbnailUrl && (
-                <div className="mt-4 space-y-2">
-                  <p className="text-sm font-medium">Thumbnail Preview:</p>
-                  <div className="w-full max-w-[280px] rounded overflow-hidden border">
-                    <img 
-                      src={videoFormData.thumbnailUrl} 
-                      alt="Thumbnail preview"
-                      className="w-full h-auto object-cover"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </FormDialog>
-
-        {/* Video Edit Dialog */}
-        <FormDialog
-          title="Edit Video"
-          isOpen={isEditVideoDialogOpen}
-          onClose={() => setIsEditVideoDialogOpen(false)}
-          onSubmit={handleEditVideoSubmit}
-          isSubmitting={isSubmitting}
-          submitLabel="Update Video"
-          maxWidth="lg"
-        >
-          <div className="grid gap-6">
-            {/* Basic Info Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-primary">
-                <Info size={18} />
-                <h3 className="text-lg font-medium">Basic Information</h3>
-              </div>
-              
-              <div className="grid gap-4 sm:grid-cols-1">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-video-name" className="text-base">Video Name</Label>
-                  <Input
-                    id="edit-video-name"
-                    name="name"
-                    value={videoFormData.name}
-                    onChange={handleVideoInputChange}
-                    placeholder="Enter a descriptive title for the video"
-                    className="h-10"
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="edit-video-description" className="text-base">Description</Label>
-                <Textarea
-                  id="edit-video-description"
-                  name="description"
-                  value={videoFormData.description}
-                  onChange={handleVideoInputChange}
-                  placeholder="Add details about this video"
-                  className="min-h-[100px] resize-y"
-                  required
-                />
-              </div>
-            </div>
-            
-            {/* Video File Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-primary">
-                <FileVideo size={18} />
-                <h3 className="text-lg font-medium">Video File</h3>
-              </div>
-              
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">Current video: {currentVideo?.videoUrl ? 
-                  <a href={currentVideo.videoUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">View</a> : "None"}</p>
-                
-                <div className="border rounded-lg p-4 bg-muted/30">
-                  <Label 
-                    htmlFor="edit-video-file" 
-                    className="block mb-2 text-base"
-                  >
-                    Upload New Video (Optional)
-                  </Label>
-                  <div className="flex flex-col space-y-3">
-                    <Input
-                      id="edit-video-file"
-                      type="file"
-                      accept="video/*"
-                      onChange={handleVideoFileChange}
-                      className="cursor-pointer h-10"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Leave empty to keep the current video
-                    </p>
-                  </div>
-                </div>
-                
-                {selectedVideoFile && (
-                  <div className="mt-2 p-3 border rounded-md bg-primary/5">
-                    <div className="flex items-start gap-3">
-                      <FileVideo className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium">
-                          {selectedVideoFile.name} 
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {(selectedVideoFile.size / 1024 / 1024).toFixed(2)} MB
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {/* Thumbnail Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-primary">
-                <FileImage size={18} />
-                <h3 className="text-lg font-medium">Video Thumbnail</h3>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="border rounded-lg p-4 bg-muted/30">
-                  <Label 
-                    htmlFor="edit-video-thumbnail" 
-                    className="block mb-2 text-base"
-                  >
-                    Upload New Thumbnail (Optional)
-                  </Label>
-                  <div className="flex flex-col space-y-3">
-                    <Input
-                      id="edit-video-thumbnail"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleThumbnailFileChange}
-                      className="cursor-pointer h-10"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Leave empty to keep the current thumbnail
-                    </p>
-                  </div>
-                </div>
-                
-                {selectedThumbnailFile && (
-                  <div className="mt-2 p-3 border rounded-md bg-primary/5">
-                    <div className="flex items-start gap-3">
-                      <FileImage className="h-5 w-5 text-primary mt-0.5" />
-                      <p className="text-sm font-medium">{selectedThumbnailFile.name}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              {videoFormData.thumbnailUrl && (
-                <div className="mt-4 space-y-2">
-                  <p className="text-sm font-medium">Current Thumbnail:</p>
-                  <div className="w-full max-w-[280px] rounded overflow-hidden border">
-                    <img 
-                      src={videoFormData.thumbnailUrl} 
-                      alt="Thumbnail"
-                      className="w-full h-auto object-cover"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </FormDialog>
-
-        {/* Video Delete Confirmation Dialog */}
-        <ConfirmationDialog
-          title="Delete Video"
-          description={`Are you sure you want to delete the video "${currentVideo?.name}"? This action cannot be undone.`}
-          isOpen={isDeleteVideoDialogOpen}
-          onClose={() => setIsDeleteVideoDialogOpen(false)}
-          onConfirm={handleDeleteVideo}
-          isConfirming={isSubmitting}
-        />
-      </div>
-    </AdminLayout>
-  );
-};
-
-export default MediaManagement;
+                      <div className
