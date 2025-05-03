@@ -95,8 +95,7 @@ const Contact = () => {
       icon: <Mail className="h-6 w-6 text-primary" />,
       title: "Email",
       details: [
-        "info@alhikmamosque.org",
-        "admin@alhikmamosque.org"
+        "attauhidglgg@gmail.com"
       ]
     },
     {
