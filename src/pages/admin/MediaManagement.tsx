@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Pencil, Trash2, PlusCircle, Image, Film, Upload, FileVideo, FileImage, Info } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -994,5 +995,238 @@ const MediaManagement = () => {
                       <FileVideo className="h-5 w-5 text-primary mt-0.5" />
                       <div>
                         <p className="text-sm font-medium">
-                          {selectedVideoFile.name} 
+                          {selectedVideoFile.name}
                         </p>
+                        <p className="text-xs text-muted-foreground">
+                          {(selectedVideoFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Thumbnail Upload Section */}
+                <div className="border rounded-lg p-4 bg-muted/30 mt-4">
+                  <Label 
+                    htmlFor="thumbnail-file" 
+                    className="block mb-2 text-base"
+                  >
+                    Upload Thumbnail (Optional)
+                  </Label>
+                  <div className="flex flex-col space-y-3">
+                    <Input
+                      id="thumbnail-file"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleThumbnailFileChange}
+                      className="cursor-pointer h-10"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Add a custom thumbnail for your video
+                    </p>
+                  </div>
+                </div>
+                
+                {selectedThumbnailFile && (
+                  <div className="mt-2">
+                    <p className="text-sm font-medium mb-2">Thumbnail Preview:</p>
+                    <div className="h-32 max-w-xs rounded overflow-hidden border">
+                      <img 
+                        src={URL.createObjectURL(selectedThumbnailFile)} 
+                        alt="Thumbnail Preview"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+                
+                {!selectedThumbnailFile && videoFormData.thumbnailUrl && (
+                  <div className="mt-2">
+                    <p className="text-sm font-medium mb-2">Current Thumbnail:</p>
+                    <div className="h-32 max-w-xs rounded overflow-hidden border">
+                      <img 
+                        src={videoFormData.thumbnailUrl} 
+                        alt="Current Thumbnail"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </FormDialog>
+        
+        {/* Video Edit Dialog */}
+        <FormDialog
+          title="Edit Video"
+          isOpen={isEditVideoDialogOpen}
+          onClose={() => setIsEditVideoDialogOpen(false)}
+          onSubmit={handleEditVideoSubmit}
+          isSubmitting={isSubmitting}
+          submitLabel="Update Video"
+          maxWidth="lg"
+        >
+          <div className="grid gap-6">
+            {/* Basic Info Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-primary">
+                <Info size={18} />
+                <h3 className="text-lg font-medium">Basic Information</h3>
+              </div>
+              
+              <div className="grid gap-4 sm:grid-cols-1">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-video-name" className="text-base">Video Name</Label>
+                  <Input
+                    id="edit-video-name"
+                    name="name"
+                    value={videoFormData.name}
+                    onChange={handleVideoInputChange}
+                    className="h-10"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="edit-video-description" className="text-base">Description</Label>
+                <Textarea
+                  id="edit-video-description"
+                  name="description"
+                  value={videoFormData.description}
+                  onChange={handleVideoInputChange}
+                  className="min-h-[100px] resize-y"
+                />
+              </div>
+            </div>
+            
+            {/* Video File Section */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-primary">
+                <FileVideo size={18} />
+                <h3 className="text-lg font-medium">Video File</h3>
+              </div>
+              
+              <div className="space-y-3">
+                {videoFormData.videoUrl && (
+                  <div className="p-3 border rounded-md">
+                    <p className="text-sm mb-2">Current Video:</p>
+                    <div className="flex items-center gap-2">
+                      <FileVideo className="h-5 w-5 text-primary" />
+                      <a 
+                        href={videoFormData.videoUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-600 hover:underline"
+                      >
+                        View current video
+                      </a>
+                    </div>
+                  </div>
+                )}
+                
+                <div className="border rounded-lg p-4 bg-muted/30">
+                  <Label 
+                    htmlFor="edit-video-file" 
+                    className="block mb-2 text-base"
+                  >
+                    Replace Video (Optional)
+                  </Label>
+                  <div className="flex flex-col space-y-3">
+                    <Input
+                      id="edit-video-file"
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoFileChange}
+                      className="cursor-pointer h-10"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Upload a new video or keep the existing one
+                    </p>
+                  </div>
+                </div>
+                
+                {selectedVideoFile && (
+                  <div className="mt-2 p-3 border rounded-md bg-primary/5">
+                    <div className="flex items-start gap-3">
+                      <FileVideo className="h-5 w-5 text-primary mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium">
+                          {selectedVideoFile.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {(selectedVideoFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Thumbnail Upload Section */}
+                <div className="border rounded-lg p-4 bg-muted/30 mt-4">
+                  <Label 
+                    htmlFor="edit-thumbnail-file" 
+                    className="block mb-2 text-base"
+                  >
+                    Replace Thumbnail (Optional)
+                  </Label>
+                  <div className="flex flex-col space-y-3">
+                    <Input
+                      id="edit-thumbnail-file"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleThumbnailFileChange}
+                      className="cursor-pointer h-10"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Upload a new thumbnail or keep the existing one
+                    </p>
+                  </div>
+                </div>
+                
+                {selectedThumbnailFile && (
+                  <div className="mt-2">
+                    <p className="text-sm font-medium mb-2">New Thumbnail Preview:</p>
+                    <div className="h-32 max-w-xs rounded overflow-hidden border">
+                      <img 
+                        src={URL.createObjectURL(selectedThumbnailFile)} 
+                        alt="Thumbnail Preview"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+                
+                {!selectedThumbnailFile && videoFormData.thumbnailUrl && (
+                  <div className="mt-2">
+                    <p className="text-sm font-medium mb-2">Current Thumbnail:</p>
+                    <div className="h-32 max-w-xs rounded overflow-hidden border">
+                      <img 
+                        src={videoFormData.thumbnailUrl} 
+                        alt="Current Thumbnail"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </FormDialog>
+
+        {/* Video Delete Confirmation Dialog */}
+        <ConfirmationDialog
+          title="Delete Video"
+          description={`Are you sure you want to delete the video "${currentVideo?.name}"? This action cannot be undone.`}
+          isOpen={isDeleteVideoDialogOpen}
+          onClose={() => setIsDeleteVideoDialogOpen(false)}
+          onConfirm={handleDeleteVideo}
+          isConfirming={isSubmitting}
+        />
+      </div>
+    </AdminLayout>
+  );
+};
+
+export default MediaManagement;
