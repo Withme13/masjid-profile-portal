@@ -149,17 +149,21 @@ const Contact = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{ 
-            backgroundImage: 'url("https://lh3.googleusercontent.com/gps-cs-s/AB5caB9I2ai2ccpAlGiqXUsOeH7UPJKr8EtIOWiCZipuk7k6KIR7AiY298B8xc-OVb5bVPKawUIOv8irP4LjlnvSyH967NPzXCfan5Bvxy9VY0_e5vb-c9HrleJT8oHjyCIvclDCI-cG=s1360-w1360-h1020")',
-            filter: 'brightness(0.4)'
+            backgroundImage: 'url("public/lovable-uploads/297f587d-8d8a-4492-a4f2-d6a675a6af8b.png")',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover',
+            filter: 'brightness(0.9)'
           }}
         />
+        
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/20 to-primary/5 z-1"></div>
         
         <div className="relative z-10 text-center max-w-4xl px-4 sm:px-6 lg:px-8">
           <motion.h1 
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="text-4xl md:text-6xl font-bold text-white font-heading mb-6"
+            className="text-4xl md:text-6xl font-bold text-primary font-heading mb-6"
           >
             Get in Touch
           </motion.h1>
@@ -167,7 +171,7 @@ const Contact = () => {
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto"
+            className="text-lg md:text-xl text-gray-800 mb-8 max-w-2xl mx-auto bg-white/70 backdrop-blur-sm py-2 px-4 rounded-lg"
           >
             We're here to answer any questions you may have about our mosque, services, or community activities.
           </motion.p>
