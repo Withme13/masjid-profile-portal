@@ -1,3 +1,4 @@
+
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { toast } from "sonner";
@@ -8,8 +9,7 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Create a single instance of the Supabase client
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-// Instead of creating buckets which requires admin permissions, 
-// we'll use this function to upload directly to existing buckets
+// Upload directly to existing Supabase buckets
 export const uploadDirectlyToSupabase = async (file: File, filePath: string, bucketName: string = 'photos'): Promise<string | null> => {
   try {
     console.log(`Uploading file directly to Supabase storage bucket: ${bucketName}, path: ${filePath}`);
@@ -24,7 +24,7 @@ export const uploadDirectlyToSupabase = async (file: File, filePath: string, buc
     // Log file information for debugging
     console.log(`File info: name=${file.name}, size=${(file.size / 1024 / 1024).toFixed(2)}MB, type=${file.type}`);
     
-    // Try to upload directly to the bucket without checking if it exists first
+    // Try to upload directly to the bucket
     const { data, error } = await supabase.storage
       .from(bucketName)
       .upload(filePath, file, {
@@ -33,23 +33,24 @@ export const uploadDirectlyToSupabase = async (file: File, filePath: string, buc
       });
 
     if (error) {
-      console.error('Error uploading file to Supabase:', error);
+      console.error(`Error uploading file to Supabase bucket '${bucketName}':`, error);
       
-      if (error.message.includes('The resource was not found')) {
-        toast(`Storage bucket ${bucketName} doesn't exist. Creating bucket...`);
-        // Try to create the bucket if it doesn't exist
-        const bucketCreated = await createBucketIfNotExists(bucketName);
-        if (bucketCreated) {
-          // Retry upload after creating bucket
-          return uploadDirectlyToSupabase(file, filePath, bucketName);
-        } else {
-          toast(`Failed to create bucket ${bucketName}. Please contact your administrator.`);
-        }
+      // Show specific error messages based on the error type
+      if (error.message.includes('not found') || error.message.includes('does not exist')) {
+        toast(`Storage bucket '${bucketName}' doesn't exist. Please contact an administrator to create this bucket.`);
       } else if (error.message.includes('row-level security policy')) {
         toast("Permission denied: Unable to upload file. Please make sure you're logged in with the correct permissions.");
+      } else if (error.message.includes('size exceeds')) {
+        toast("File size exceeds the maximum allowed size for this bucket.");
       } else {
         toast(`Upload failed: ${error.message}`);
       }
+      return null;
+    }
+
+    if (!data) {
+      console.error('No data returned from upload');
+      toast("Upload failed. Please try again.");
       return null;
     }
 
@@ -57,71 +58,32 @@ export const uploadDirectlyToSupabase = async (file: File, filePath: string, buc
     const { data: { publicUrl } } = supabase.storage.from(bucketName).getPublicUrl(filePath);
     console.log('File uploaded successfully. Public URL:', publicUrl);
     return publicUrl;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Exception during direct file upload:', error);
-    toast("An unexpected error occurred during upload.");
+    toast(error?.message || "An unexpected error occurred during upload.");
     return null;
   }
 };
 
-// Create a bucket if it doesn't exist (requires RLS to allow this operation)
-const createBucketIfNotExists = async (bucketName: string): Promise<boolean> => {
-  try {
-    // Check if bucket exists
-    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
-    
-    if (listError) {
-      console.error('Error listing buckets:', listError);
-      return false;
-    }
-    
-    const bucketExists = buckets?.some(b => b.name === bucketName);
-    
-    if (!bucketExists) {
-      console.log(`Bucket ${bucketName} doesn't exist, attempting to create...`);
-      
-      // Try to create the bucket (this might not work with limited permissions)
-      const { error: createError } = await supabase.storage.createBucket(bucketName, {
-        public: true,
-        fileSizeLimit: 50 * 1024 * 1024, // 50MB limit for videos
-      });
-      
-      if (createError) {
-        console.error('Error creating bucket:', createError);
-        return false;
-      }
-      
-      console.log(`Successfully created bucket: ${bucketName}`);
-      return true;
-    } else {
-      console.log(`Bucket ${bucketName} already exists.`);
-      return true;
-    }
-  } catch (error) {
-    console.error('Exception in createBucketIfNotExists:', error);
-    return false;
-  }
-};
-
-// Keep the original function for compatibility but simplify it
+// Function to check if a bucket exists without trying to create it
 export const ensureBucketExists = async (bucketName: string): Promise<boolean> => {
   try {
     console.log(`Checking if bucket ${bucketName} exists...`);
-    const { data: buckets, error: listError } = await supabase.storage.listBuckets();
     
-    if (listError) {
-      console.error('Error listing buckets:', listError);
+    // Check if we can list files in the bucket (which implies it exists)
+    const { data, error } = await supabase.storage.from(bucketName).list('', { limit: 1 });
+    
+    if (error) {
+      console.error(`Error checking if bucket ${bucketName} exists:`, error);
+      if (error.message.includes('not found') || error.message.includes('does not exist')) {
+        toast(`Storage bucket '${bucketName}' doesn't exist. Please contact an administrator to create this bucket.`);
+        return false;
+      }
       return false;
     }
     
-    const bucketExists = buckets?.some(b => b.name === bucketName);
-    if (!bucketExists) {
-      // Try to create the bucket
-      return await createBucketIfNotExists(bucketName);
-    }
-    
-    console.log(`Bucket ${bucketName} exists: ${bucketExists}`);
-    return bucketExists;
+    console.log(`Bucket ${bucketName} exists and is accessible`);
+    return true;
   } catch (error) {
     console.error('Exception in ensureBucketExists:', error);
     return false;
