@@ -1,5 +1,5 @@
 
-import { supabase, uploadDirectlyToSupabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 
@@ -58,16 +58,38 @@ export const uploadFile = async (file: File, bucket: string = 'uploads') => {
     }
     
     // Direct upload to Supabase bucket
-    const publicUrl = await uploadDirectlyToSupabase(file, filePath, bucket);
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
     
-    if (!publicUrl) {
-      console.error('Failed to get URL after upload');
+    if (error) {
+      console.error(`Error uploading to '${bucket}' bucket:`, error);
+      
+      if (error.message.includes('size exceeds')) {
+        toast.error(`File size exceeds the maximum allowed for the ${bucket} bucket.`);
+      } else if (error.message.includes('auth/insufficient_permissions')) {
+        toast.error("You don't have permission to upload to this bucket.");
+      } else {
+        toast.error(`Upload failed: ${error.message}`);
+      }
+      
       return null;
     }
     
-    console.log('File uploaded successfully with URL:', publicUrl);
+    if (!data) {
+      console.error('No data returned from upload');
+      toast.error("Upload failed. Please try again.");
+      return null;
+    }
+    
+    // Get the public URL of the uploaded file
+    const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(data.path);
+    console.log('File uploaded successfully. Public URL:', publicUrl);
     return publicUrl;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Exception uploading file:', error);
     toast.error("An unexpected error occurred during upload. Please try again.");
     return null;
