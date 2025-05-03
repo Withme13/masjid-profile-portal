@@ -88,7 +88,7 @@ const Contact = () => {
       icon: <Phone className="h-6 w-6 text-primary" />,
       title: "Phone",
       details: [
-        "+62 812-8484-2334",
+        "+62 812-8484-2334 (GIBRAN)",
       ]
     },
     {
