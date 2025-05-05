@@ -46,9 +46,17 @@ const Index = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{ 
-            backgroundImage: 'url("https://lh3.googleusercontent.com/gps-cs-s/AB5caB-ZnTid9Qi5BCR1qK0dnU72QTQZSTMeaCbRqfvhO6JesUyvu1vuKTEv8b53JQMxnVQKtKbNYxMS1-n811Y2WKMqi6KZYcwEM75_ofzFSKGjxxwfrUi4z7LUrJSYjz9rvEmJELi-Gg=s1360-w1360-h1020")',
-            filter: 'brightness(0.3)'
+            backgroundImage: 'url("/public/lovable-uploads/9b43433c-52f5-46f4-8443-5e29596085a9.png")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            filter: 'brightness(0.4)'
           }}
+        />
+        
+        {/* Overlay gradient for better text visibility */}
+        <div 
+          className="absolute inset-0 z-0 bg-gradient-to-b from-black/60 to-black/40"
         />
         
         <div className="relative z-10 text-center max-w-4xl px-4 sm:px-6 lg:px-8">
