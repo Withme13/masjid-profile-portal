@@ -46,7 +46,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{ 
-            backgroundImage: 'url("/public/lovable-uploads/9b43433c-52f5-46f4-8443-5e29596085a9.png")',
+            backgroundImage: 'url("/lovable-uploads/9b43433c-52f5-46f4-8443-5e29596085a9.png")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
@@ -246,3 +246,4 @@ const Index = () => {
 };
 
 export default Index;
+
