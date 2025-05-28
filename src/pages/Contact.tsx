@@ -147,7 +147,7 @@ const Contact = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{ 
-            backgroundImage: 'url("/lovable-uploads/bc5e3163-6b73-487e-9fb1-448d9691e680.png")',
+            backgroundImage: 'url("/lovable-uploads/9933a85b-542f-49b9-80d1-3dc25f397d71.png")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
@@ -162,7 +162,8 @@ const Contact = () => {
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="text-4xl md:text-6xl font-bold text-primary font-heading mb-6"
+            className="text-4xl md:text-6xl font-bold font-heading mb-6"
+            style={{ color: '#69443c' }}
           >
             Get in Touch
           </motion.h1>
