@@ -3,8 +3,11 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Map, Users, BookOpen, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
+  const { t } = useLanguage();
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -66,7 +69,7 @@ const Index = () => {
             transition={{ duration: 0.8 }}
             className="text-4xl md:text-6xl font-bold text-white font-heading mb-6"
           >
-            Welcome to At_Tauhid Mosque
+            {t('home.hero.title')}
           </motion.h1>
           <motion.p 
             initial={{ y: 30, opacity: 0 }}
@@ -74,7 +77,7 @@ const Index = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto"
           >
-            A place of worship, learning, and community service. Join us in our journey of faith, knowledge, and compassion.
+            {t('home.hero.subtitle')}
           </motion.p>
           <motion.div 
             initial={{ y: 30, opacity: 0 }}
@@ -83,10 +86,10 @@ const Index = () => {
             className="flex flex-col sm:flex-row justify-center gap-4"
           >
             <Link to="/profile" className="btn-primary">
-              Learn About Us
+              {t('home.hero.learn')}
             </Link>
             <Link to="/contact" className="btn-outline text-white border-white hover:bg-white/10">
-              Get in Touch
+              {t('home.hero.contact')}
             </Link>
           </motion.div>
         </div>
@@ -111,11 +114,11 @@ const Index = () => {
         
         <div className="text-center mb-16">
           <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-            Our Community
+            {t('home.community.badge')}
           </span>
-          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">What We Offer</h2>
+          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">{t('home.community.title')}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            At_Tauhid Mosque is more than just a place of worship. We are a community hub offering various services and activities.
+            {t('home.community.subtitle')}
           </p>
         </div>
         
@@ -130,9 +133,9 @@ const Index = () => {
             <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
               <BookOpen className="h-6 w-6 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-2 font-heading">Islamic Education</h3>
+            <h3 className="text-xl font-bold mb-2 font-heading">{t('home.education.title')}</h3>
             <p className="text-muted-foreground">
-              Classes for all ages, teaching Quran, Hadith, and Islamic principles in a modern context.
+              {t('home.education.desc')}
             </p>
           </motion.div>
           
@@ -140,9 +143,9 @@ const Index = () => {
             <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
               <Calendar className="h-6 w-6 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-2 font-heading">Prayer Services</h3>
+            <h3 className="text-xl font-bold mb-2 font-heading">{t('home.prayer.title')}</h3>
             <p className="text-muted-foreground">
-              Daily prayers, Friday sermons, and special Ramadan and Eid celebrations.
+              {t('home.prayer.desc')}
             </p>
           </motion.div>
           
@@ -150,9 +153,9 @@ const Index = () => {
             <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
               <Users className="h-6 w-6 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-2 font-heading">Community Support</h3>
+            <h3 className="text-xl font-bold mb-2 font-heading">{t('home.support.title')}</h3>
             <p className="text-muted-foreground">
-              Counseling services, youth programs, and community assistance initiatives.
+              {t('home.support.desc')}
             </p>
           </motion.div>
           
@@ -160,9 +163,9 @@ const Index = () => {
             <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
               <Map className="h-6 w-6 text-primary" />
             </div>
-            <h3 className="text-xl font-bold mb-2 font-heading">Cultural Events</h3>
+            <h3 className="text-xl font-bold mb-2 font-heading">{t('home.culture.title')}</h3>
             <p className="text-muted-foreground">
-              Regular cultural programs fostering understanding and interfaith dialogue.
+              {t('home.culture.desc')}
             </p>
           </motion.div>
         </motion.div>
@@ -186,22 +189,22 @@ const Index = () => {
                 className="w-full h-64 md:h-full object-cover object-center"
               />
               <div className="absolute top-4 left-4 bg-primary/90 text-white rounded-lg px-4 py-2 text-sm font-medium">
-                Coming Soon
+                {t('home.event.badge')}
               </div>
             </div>
             
             <div className="p-6 md:p-8 md:w-1/2 flex flex-col justify-center">
               <div className="flex items-center text-primary mb-4">
                 <Calendar className="h-5 w-5 mr-2" />
-                <span className="text-sm font-medium">July 15, 2024</span>
+                <span className="text-sm font-medium">{t('home.event.date')}</span>
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold font-heading mb-4">Annual Community Gathering</h3>
+              <h3 className="text-2xl md:text-3xl font-bold font-heading mb-4">{t('home.event.title')}</h3>
               <p className="text-muted-foreground mb-6">
-                Join us for our annual community gathering featuring guest speakers, family activities, food stalls, and much more. This event is open to everyone in the community.
+                {t('home.event.desc')}
               </p>
               <div className="mt-auto">
                 <Link to="/activities" className="btn-primary inline-flex items-center">
-                  View All Events
+                  {t('home.event.view')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </div>
@@ -227,16 +230,16 @@ const Index = () => {
           viewport={{ once: true, amount: 0.2 }}
           className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8"
         >
-          <h2 className="text-3xl md:text-4xl font-bold font-heading mb-6">Join Our Community Today</h2>
+          <h2 className="text-3xl md:text-4xl font-bold font-heading mb-6">{t('home.cta.title')}</h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Whether you're looking for a place to pray, learn, or connect with others, At_Tauhid Mosque welcomes you with open arms. Visit us to experience our community firsthand.
+            {t('home.cta.subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/contact" className="btn-primary">
-              Get in Touch
+              {t('home.cta.contact')}
             </Link>
             <Link to="/activities" className="btn-outline">
-              View Our Programs
+              {t('home.cta.programs')}
             </Link>
           </div>
         </motion.div>
@@ -246,4 +249,3 @@ const Index = () => {
 };
 
 export default Index;
-

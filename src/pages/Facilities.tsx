@@ -1,13 +1,14 @@
-
 import React, { useEffect } from 'react';
 import { Building, Wifi, Clipboard, Book, Car, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useData } from '@/contexts/DataContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Facilities = () => {
   const { facilities } = useData();
+  const { t } = useLanguage();
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -35,33 +36,33 @@ const Facilities = () => {
   const mainFacilities = [
     {
       icon: <Building className="h-10 w-10 text-primary" />,
-      title: "Main Prayer Hall",
-      description: "Spacious prayer hall that can accommodate up to 1,000 worshippers with comfortable prayer mats and excellent acoustics."
+      title: t('facilities.main.prayer'),
+      description: t('facilities.main.prayer.desc')
     },
     {
       icon: <Wifi className="h-10 w-10 text-primary" />,
-      title: "Free Wi-Fi",
-      description: "High-speed internet access throughout the mosque premises for educational and research purposes."
+      title: t('facilities.wifi.title'),
+      description: t('facilities.wifi.desc')
     },
     {
       icon: <Clipboard className="h-10 w-10 text-primary" />,
-      title: "Islamic Library",
-      description: "Extensive collection of Islamic books, references, and digital resources available for reading and borrowing."
+      title: t('facilities.library.title'),
+      description: t('facilities.library.desc')
     },
     {
       icon: <Book className="h-10 w-10 text-primary" />,
-      title: "Education Center",
-      description: "Dedicated classrooms for Quran recitation, Islamic studies, and Arabic language courses for all age groups."
+      title: t('facilities.education.title'),
+      description: t('facilities.education.desc')
     },
     {
       icon: <Car className="h-10 w-10 text-primary" />,
-      title: "Parking Area",
-      description: "Large parking area with 200+ parking spaces, including designated spots for disabled visitors."
+      title: t('facilities.parking.title'),
+      description: t('facilities.parking.desc')
     },
     {
       icon: <Clock className="h-10 w-10 text-primary" />,
-      title: "24/7 Access",
-      description: "The mosque remains open 24 hours for prayers, with security personnel present at all times."
+      title: t('facilities.access.title'),
+      description: t('facilities.access.desc')
     }
   ];
 
@@ -87,7 +88,7 @@ const Facilities = () => {
             transition={{ duration: 0.8 }}
             className="text-4xl md:text-6xl font-bold text-white font-heading mb-6"
           >
-            Our Facilities
+            {t('facilities.hero.title')}
           </motion.h1>
           <motion.p 
             initial={{ y: 30, opacity: 0 }}
@@ -95,7 +96,7 @@ const Facilities = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto"
           >
-            At_Tauhid Mosque offers modern facilities to ensure a comfortable and enriching experience for all visitors.
+            {t('facilities.hero.subtitle')}
           </motion.p>
         </div>
       </section>
@@ -104,11 +105,11 @@ const Facilities = () => {
       <section className="section-container">
         <div className="text-center mb-16">
           <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-            Modern Amenities
+            {t('facilities.overview.badge')}
           </span>
-          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">What We Offer</h2>
+          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">{t('facilities.overview.title')}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Our mosque is equipped with a variety of facilities to serve the needs of our community members and visitors.
+            {t('facilities.overview.subtitle')}
           </p>
         </div>
         
@@ -154,9 +155,9 @@ const Facilities = () => {
             </div>
             
             <div className="p-6 md:p-8 md:w-1/2 flex flex-col justify-center">
-              <h3 className="text-2xl md:text-3xl font-bold font-heading mb-4">State-of-the-art Prayer Hall</h3>
+              <h3 className="text-2xl md:text-3xl font-bold font-heading mb-4">{t('facilities.featured.title')}</h3>
               <p className="text-muted-foreground mb-6">
-                Our main prayer hall is designed to create a peaceful atmosphere for worship. With excellent acoustics, temperature control, and natural lighting, it provides an ideal environment for prayer and contemplation.
+                {t('facilities.featured.desc')}
               </p>
               <ul className="space-y-2 mb-6">
                 <li className="flex items-center">
@@ -165,7 +166,7 @@ const Facilities = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <span>Accommodates up to 1,000 worshippers</span>
+                  <span>{t('facilities.featured.capacity')}</span>
                 </li>
                 <li className="flex items-center">
                   <div className="rounded-full bg-primary/20 p-1 mr-3">
@@ -173,7 +174,7 @@ const Facilities = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <span>Premium quality prayer mats</span>
+                  <span>{t('facilities.featured.mats')}</span>
                 </li>
                 <li className="flex items-center">
                   <div className="rounded-full bg-primary/20 p-1 mr-3">
@@ -181,7 +182,7 @@ const Facilities = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <span>Advanced sound system</span>
+                  <span>{t('facilities.featured.sound')}</span>
                 </li>
                 <li className="flex items-center">
                   <div className="rounded-full bg-primary/20 p-1 mr-3">
@@ -189,7 +190,7 @@ const Facilities = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <span>Climate controlled environment</span>
+                  <span>{t('facilities.featured.climate')}</span>
                 </li>
               </ul>
             </div>
@@ -199,7 +200,7 @@ const Facilities = () => {
 
       {/* Additional Facilities Grid - Updated to match Photo Gallery format */}
       <section className="section-container">
-        <h2 className="section-title mb-12">Additional Amenities</h2>
+        <h2 className="section-title mb-12">{t('facilities.additional.title')}</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {facilities.length > 0 ? (

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Image, Play, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -6,9 +5,11 @@ import { useData } from '@/contexts/DataContext';
 import { Photo, Video } from '@/types/adminTypes';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const MediaCenter = () => {
   const { photos, videos } = useData();
+  const { t } = useLanguage();
   const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [localPhotos, setLocalPhotos] = useState<Photo[]>([]);
@@ -132,19 +133,19 @@ const MediaCenter = () => {
   
   return (
     <div className="section-container animate-fade-in min-h-screen">
-      <h1 className="section-title text-center mb-12">Media Center</h1>
+      <h1 className="section-title text-center mb-12">{t('media.title')}</h1>
       
       {/* Photo Gallery Section */}
       <section className="mb-16">
         <div className="flex items-center space-x-3 mb-8">
           <Image className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl font-heading font-bold">Photo Gallery</h2>
+          <h2 className="text-2xl font-heading font-bold">{t('media.photos.title')}</h2>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoading ? (
             <div className="col-span-3 text-center py-10">
-              <p className="text-muted-foreground">Loading photos...</p>
+              <p className="text-muted-foreground">{t('media.loading.photos')}</p>
             </div>
           ) : localPhotos.length > 0 ? (
             localPhotos.map((photo) => (
@@ -161,7 +162,7 @@ const MediaCenter = () => {
                     onError={handleImageError}
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-white text-lg font-medium">View Larger</span>
+                    <span className="text-white text-lg font-medium">{t('media.view.larger')}</span>
                   </div>
                 </div>
                 <div className="p-4">
@@ -172,7 +173,7 @@ const MediaCenter = () => {
             ))
           ) : (
             <div className="col-span-3 text-center py-10">
-              <p className="text-muted-foreground">No photos available at the moment.</p>
+              <p className="text-muted-foreground">{t('media.no.photos')}</p>
             </div>
           )}
         </div>
@@ -182,13 +183,13 @@ const MediaCenter = () => {
       <section>
         <div className="flex items-center space-x-3 mb-8">
           <Play className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl font-heading font-bold">Video Gallery</h2>
+          <h2 className="text-2xl font-heading font-bold">{t('media.videos.title')}</h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {isLoading ? (
             <div className="col-span-3 text-center py-10">
-              <p className="text-muted-foreground">Loading videos...</p>
+              <p className="text-muted-foreground">{t('media.loading.videos')}</p>
             </div>
           ) : localVideos.length > 0 ? (
             localVideos.map((video) => (
@@ -220,7 +221,7 @@ const MediaCenter = () => {
             ))
           ) : (
             <div className="col-span-3 text-center py-10">
-              <p className="text-muted-foreground">No videos available at the moment.</p>
+              <p className="text-muted-foreground">{t('media.no.videos')}</p>
             </div>
           )}
         </div>
