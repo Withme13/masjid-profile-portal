@@ -17,9 +17,11 @@ const Profile = () => {
       <section 
         className="relative min-h-[80vh] flex flex-col items-center justify-center bg-cover bg-center px-4 py-20"
         style={{ 
-          backgroundImage: 'url("https://lh3.googleusercontent.com/gps-cs-s/AB5caB9lrLmRyWEkh1LLs7zq81zG5iQfsys47LcTdEDGRzycB0FmAyyYlw759Xh66FbQHH9UyKvTaEsm9fxBLaDIihLo_lsPhijXQtYQSNAAsVQw603xGqFTLj7GxZyOZaki6L386Ype=s1360-w1360-h1020")',
+          backgroundImage: 'url("/lovable-uploads/65c78719-8577-46da-b5b4-2816088aa6b6.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          filter: 'brightness(0.9)'
         }}
       >
         <div className="absolute inset-0 bg-black/50"></div>

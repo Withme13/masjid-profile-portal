@@ -101,7 +101,10 @@ const Activities = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{ 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1517022812141-23620dba5c23?auto=format&fit=crop&w=2070&q=80")',
+            backgroundImage: 'url("/lovable-uploads/5ae82c25-a1ce-459c-b23e-779b56c24df9.png")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             filter: 'brightness(0.4)'
           }}
         />

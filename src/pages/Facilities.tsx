@@ -72,7 +72,10 @@ const Facilities = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{ 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1496307653780-42ee777d4833?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80")',
+            backgroundImage: 'url("/lovable-uploads/b616b8d3-28ae-4a1d-929e-303d6df90979.png")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             filter: 'brightness(0.4)'
           }}
         />

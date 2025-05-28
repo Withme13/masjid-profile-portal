@@ -147,9 +147,10 @@ const Contact = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center z-0"
           style={{ 
-            backgroundImage: 'url("public/lovable-uploads/297f587d-8d8a-4492-a4f2-d6a675a6af8b.png")',
-            backgroundRepeat: 'no-repeat',
+            backgroundImage: 'url("/lovable-uploads/bc5e3163-6b73-487e-9fb1-448d9691e680.png")',
             backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
             filter: 'brightness(0.9)'
           }}
         />
