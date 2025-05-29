@@ -4,6 +4,8 @@ import { Calendar, BookOpen, Users, Search, Filter } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, parseISO } from 'date-fns';
 import { useData } from '@/contexts/DataContext';
+import { Button } from '@/components/ui/button';
+import ActivityRegistrationModal from '@/components/ActivityRegistrationModal';
 
 const Activities = () => {
   useEffect(() => {
@@ -12,6 +14,8 @@ const Activities = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState('all');
+  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState<{id: string, name: string} | null>(null);
   const { activities } = useData();
   
   // Create activity types mapping to classify activities
@@ -31,7 +35,6 @@ const Activities = () => {
     return 'community'; // Default type
   };
 
-  // Get default image based on activity type
   function getDefaultImage(type: string) {
     switch(type) {
       case 'prayer':
@@ -47,11 +50,9 @@ const Activities = () => {
     }
   }
 
-  // Transform Supabase activities to the format needed for the UI
   const transformedActivities = activities.map(activity => {
     const type = getActivityType(activity.name, activity.description || '');
     
-    // Debug logging to check image URLs
     console.log(`Activity: ${activity.name}, Image URL: ${activity.imageUrl}`);
     
     return {
@@ -60,7 +61,6 @@ const Activities = () => {
       description: activity.description || '',
       date: activity.date,
       type: type,
-      // Use the uploaded image if available and not empty, otherwise use the default image for the activity type
       image: activity.imageUrl && activity.imageUrl.trim() !== '' 
         ? activity.imageUrl 
         : getDefaultImage(type)
@@ -92,6 +92,16 @@ const Activities = () => {
       opacity: 1,
       transition: { duration: 0.5 }
     }
+  };
+
+  const handleRegisterClick = (activity: {id: string, title: string}) => {
+    setSelectedActivity({id: activity.id, name: activity.title});
+    setIsRegistrationModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsRegistrationModalOpen(false);
+    setSelectedActivity(null);
   };
 
   return (
@@ -208,7 +218,6 @@ const Activities = () => {
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       console.error(`Failed to load image: ${activity.image}`);
-                      // If image fails to load, fall back to default image
                       const target = e.target as HTMLImageElement;
                       target.src = getDefaultImage(activity.type);
                     }}
@@ -225,7 +234,13 @@ const Activities = () => {
                   </div>
                   <h3 className="text-xl font-bold mb-2 font-heading">{activity.title}</h3>
                   <p className="text-muted-foreground mb-4">{activity.description}</p>
-                  {/* Button removed as per user request */}
+                  
+                  <Button 
+                    onClick={() => handleRegisterClick(activity)}
+                    className="w-full bg-primary hover:bg-primary/90 text-white"
+                  >
+                    Daftar
+                  </Button>
                 </div>
               </motion.div>
             ))}
@@ -303,7 +318,6 @@ const Activities = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="section-container">
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
@@ -324,6 +338,16 @@ const Activities = () => {
           </button>
         </motion.div>
       </section>
+
+      {/* Registration Modal */}
+      {selectedActivity && (
+        <ActivityRegistrationModal
+          isOpen={isRegistrationModalOpen}
+          onClose={handleCloseModal}
+          activityName={selectedActivity.name}
+          activityId={selectedActivity.id}
+        />
+      )}
     </div>
   );
 };

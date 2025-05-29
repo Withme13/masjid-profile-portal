@@ -1,175 +1,142 @@
 
-import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Users, 
-  Building, 
-  Calendar, 
-  Image, 
-  MessageSquare, 
-  LogOut, 
-  Menu, 
-  X,
-  Home,
-  ChevronDown
-} from 'lucide-react';
+import React, { useEffect } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+  LayoutDashboard, 
+  Users, 
+  Building, 
+  CalendarDays, 
+  Image, 
+  MessageCircle, 
+  LogOut, 
+  Moon, 
+  Sun, 
+  MenuIcon, 
+  XIcon, 
+  ClipboardList
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { cn } from '@/lib/utils';
+import { useTheme } from '@/components/ThemeProvider';
+import { toast } from 'sonner';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-type SidebarItemProps = {
-  icon: React.ReactNode;
-  label: string;
-  href: string;
-  isActive: boolean;
-};
+interface AdminLayoutProps {
+  children: React.ReactNode;
+}
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ icon, label, href, isActive }) => (
-  <Link
-    to={href}
-    className={cn(
-      "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-      isActive 
-        ? "bg-primary text-primary-foreground" 
-        : "hover:bg-primary/10 text-muted-foreground hover:text-foreground"
-    )}
-  >
-    {icon}
-    {label}
-  </Link>
-);
-
-const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const location = useLocation();
-  const { logout } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
+  
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/admin/login');
+    }
+  }, [isAuthenticated, navigate]);
 
-  const menuItems = [
-    { icon: <Home size={18} />, label: 'Dashboard', href: '/admin/dashboard' },
-    { icon: <Users size={18} />, label: 'Profile Management', href: '/admin/profiles' },
-    { icon: <Building size={18} />, label: 'Facilities', href: '/admin/facilities' },
-    { icon: <Calendar size={18} />, label: 'Activities', href: '/admin/activities' },
-    { icon: <Image size={18} />, label: 'Media Center', href: '/admin/media' },
-    { icon: <MessageSquare size={18} />, label: 'Contact Messages', href: '/admin/messages' },
-  ];
-
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const closeSidebar = () => setIsSidebarOpen(false);
-
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
+    toast.success("Logged out successfully");
     navigate('/admin/login');
   };
+  
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
-  return (
-    <div className="flex h-screen bg-background overflow-hidden">
-      {/* Sidebar - Mobile */}
-      <div 
-        className={cn(
-          "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm lg:hidden",
-          isSidebarOpen ? "block" : "hidden"
-        )}
-        onClick={closeSidebar}
-      />
-      
-      {/* Sidebar */}
-      <aside
-        className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r bg-background transition-transform lg:static lg:translate-x-0",
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        <div className="flex h-14 items-center border-b px-4">
-          <Link to="/admin/dashboard" className="flex items-center gap-2 font-semibold">
-            <img 
-              src="https://cdn-icons-png.flaticon.com/512/10031/10031045.png" 
-              alt="At_Tauhid Logo" 
-              className="h-6 w-6" 
-            />
-            <span>At_Tauhid Admin</span>
-          </Link>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="ml-auto lg:hidden"
-            onClick={closeSidebar}
-          >
-            <X size={18} />
-          </Button>
-        </div>
-        
-        <nav className="flex-1 overflow-auto py-4 px-2">
+  const navigationItems = [
+    { to: '/admin/dashboard', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
+    { to: '/admin/profiles', icon: <Users size={18} />, label: 'Profiles' },
+    { to: '/admin/facilities', icon: <Building size={18} />, label: 'Facilities' },
+    { to: '/admin/activities', icon: <CalendarDays size={18} />, label: 'Activities' },
+    { to: '/admin/media', icon: <Image size={18} />, label: 'Media' },
+    { to: '/admin/messages', icon: <MessageCircle size={18} />, label: 'Messages' },
+    { to: '/admin/registrations', icon: <ClipboardList size={18} />, label: 'Registrations' }
+  ];
+
+  const NavContent = () => (
+    <>
+      <div className="space-y-1">
+        <div className="px-3 py-2">
+          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+            Admin Panel
+          </h2>
           <div className="space-y-1">
-            {menuItems.map((item) => (
-              <SidebarItem
-                key={item.href}
-                icon={item.icon}
-                label={item.label}
-                href={item.href}
-                isActive={location.pathname === item.href}
-              />
+            {navigationItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-accent ${
+                    isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
+                  }`
+                }
+              >
+                {item.icon}
+                {item.label}
+              </NavLink>
             ))}
           </div>
-        </nav>
-        
-        <div className="border-t p-4">
+        </div>
+      </div>
+
+      <div className="px-3 py-2">
+        <div className="space-y-1">
           <Button
-            variant="outline"
-            className="w-full justify-start"
+            variant="ghost"
+            className="w-full justify-start gap-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            onClick={toggleTheme}
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
             onClick={handleLogout}
           >
-            <LogOut size={18} className="mr-2" />
+            <LogOut size={18} />
             Logout
           </Button>
         </div>
+      </div>
+    </>
+  );
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  return (
+    <div className="flex min-h-screen bg-muted/40">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex w-64 flex-col border-r bg-background h-screen sticky top-0">
+        <div className="flex flex-col h-full py-4 justify-between">
+          <NavContent />
+        </div>
       </aside>
       
-      {/* Main content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Top navbar */}
-        <header className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:px-6">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={toggleSidebar}
-          >
-            <Menu size={20} />
-          </Button>
-          
-          <div className="ml-auto flex items-center gap-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-1">
-                  Admin
-                  <ChevronDown size={16} />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => navigate('/')}>
-                  View Website
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </header>
-        
-        {/* Page content */}
-        <main className="flex-1 overflow-auto p-4 lg:p-6">
-          {children}
-        </main>
+      {/* Mobile Navigation */}
+      <div className="lg:hidden sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button size="icon" variant="outline">
+              <MenuIcon className="h-5 w-5" />
+              <span className="sr-only">Toggle Menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64">
+            <div className="flex flex-col h-full py-4 justify-between">
+              <NavContent />
+            </div>
+          </SheetContent>
+        </Sheet>
+        <div className="font-semibold">Admin Panel</div>
       </div>
+      
+      <main className="flex-1">{children}</main>
     </div>
   );
 };

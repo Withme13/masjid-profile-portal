@@ -39,6 +39,50 @@ export type Database = {
         }
         Relationships: []
       }
+      activity_registrations: {
+        Row: {
+          activity_id: string | null
+          activity_name: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          phone_number: string
+          registration_date: string
+          updated_at: string
+        }
+        Insert: {
+          activity_id?: string | null
+          activity_name: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          phone_number: string
+          registration_date?: string
+          updated_at?: string
+        }
+        Update: {
+          activity_id?: string | null
+          activity_name?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          phone_number?: string
+          registration_date?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_registrations_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_users: {
         Row: {
           created_at: string

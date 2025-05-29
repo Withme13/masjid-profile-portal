@@ -27,6 +27,7 @@ import FacilitiesManagement from "./pages/admin/FacilitiesManagement";
 import ActivitiesManagement from "./pages/admin/ActivitiesManagement";
 import MediaManagement from "./pages/admin/MediaManagement";
 import MessagesManagement from "./pages/admin/MessagesManagement";
+import RegistrationsManagement from "./pages/admin/RegistrationsManagement";
 
 import { ThemeProvider } from "./components/ThemeProvider";
 
@@ -102,6 +103,14 @@ const App = () => (
                     element={
                       <ProtectedRoute>
                         <MessagesManagement />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/registrations"
+                    element={
+                      <ProtectedRoute>
+                        <RegistrationsManagement />
                       </ProtectedRoute>
                     }
                   />
