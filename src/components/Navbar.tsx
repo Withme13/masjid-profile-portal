@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, User, Building, Calendar, Mail, Menu, X, Sun, Moon, Film, Languages } from 'lucide-react';
+import { Home, User, Building, Calendar, Mail, Menu, X, Sun, Moon, Film, Languages, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from './ThemeProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -86,12 +86,23 @@ const Navbar = () => {
           {/* Language Selector */}
           <div className="ml-4">
             <Select value={language} onValueChange={(value: 'en' | 'id') => setLanguage(value)}>
-              <SelectTrigger className="w-20 h-8 border-none bg-transparent hover:bg-accent">
-                <SelectValue />
+              <SelectTrigger className="w-24 h-8 border-none bg-transparent hover:bg-accent">
+                <div className="flex items-center gap-1">
+                  {language === 'en' ? '🇬🇧' : '🇮🇩'}
+                  <SelectValue />
+                </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="en">EN</SelectItem>
-                <SelectItem value="id">ID</SelectItem>
+                <SelectItem value="en">
+                  <div className="flex items-center gap-2">
+                    🇬🇧 <span>EN</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="id">
+                  <div className="flex items-center gap-2">
+                    🇮🇩 <span>ID</span>
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -115,11 +126,21 @@ const Navbar = () => {
           {/* Language Selector for Mobile */}
           <Select value={language} onValueChange={(value: 'en' | 'id') => setLanguage(value)}>
             <SelectTrigger className="w-16 h-8 border-none bg-transparent hover:bg-accent">
-              <SelectValue />
+              <div className="flex items-center gap-1">
+                {language === 'en' ? '🇬🇧' : '🇮🇩'}
+              </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="en">EN</SelectItem>
-              <SelectItem value="id">ID</SelectItem>
+              <SelectItem value="en">
+                <div className="flex items-center gap-2">
+                  🇬🇧 <span>EN</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="id">
+                <div className="flex items-center gap-2">
+                  🇮🇩 <span>ID</span>
+                </div>
+              </SelectItem>
             </SelectContent>
           </Select>
           
