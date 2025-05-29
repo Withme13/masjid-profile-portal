@@ -10,14 +10,10 @@ import {
   Image, 
   MessageCircle, 
   LogOut, 
-  Moon, 
-  Sun, 
   MenuIcon, 
-  XIcon, 
   ClipboardList
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from '@/components/ThemeProvider';
 import { toast } from 'sonner';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
@@ -28,7 +24,6 @@ interface AdminLayoutProps {
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
   
   useEffect(() => {
     if (!isAuthenticated) {
@@ -40,10 +35,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     await logout();
     toast.success("Logged out successfully");
     navigate('/admin/login');
-  };
-  
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   const navigationItems = [
@@ -84,14 +75,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
       <div className="px-3 py-2">
         <div className="space-y-1">
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            onClick={toggleTheme}
-          >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-          </Button>
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
