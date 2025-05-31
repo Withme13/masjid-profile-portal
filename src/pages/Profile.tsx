@@ -161,40 +161,40 @@ const Profile = () => {
               viewport={{ once: true, amount: 0.2 }}
               className="glass-panel p-8"
             >
-              <h3 className="text-2xl font-bold font-heading mb-4">Our Values</h3>
+              <h3 className="text-2xl font-bold font-heading mb-4">Nilai-Nilai Kami</h3>
               <p className="text-muted-foreground mb-6">
-                Our core values are rooted in Islamic teachings and guide our operations and interactions.
+                Nilai-nilai inti kami berakar pada ajaran Islam dan memandu operasi dan interaksi kami.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <div className="rounded-full bg-primary/10 p-1 mr-3 mt-1">
                     <Heart className="h-4 w-4 text-primary" />
                   </div>
-                  <span>Compassion and respect for all people</span>
+                  <span>Belas kasih dan rasa hormat kepada semua orang</span>
                 </li>
                 <li className="flex items-start">
                   <div className="rounded-full bg-primary/10 p-1 mr-3 mt-1">
                     <Heart className="h-4 w-4 text-primary" />
                   </div>
-                  <span>Excellence in service and education</span>
+                  <span>Keunggulan dalam pelayanan dan pendidikan</span>
                 </li>
                 <li className="flex items-start">
                   <div className="rounded-full bg-primary/10 p-1 mr-3 mt-1">
                     <Heart className="h-4 w-4 text-primary" />
                   </div>
-                  <span>Inclusivity and openness to all</span>
+                  <span>Inklusifitas dan keterbukaan kepada semua</span>
                 </li>
                 <li className="flex items-start">
                   <div className="rounded-full bg-primary/10 p-1 mr-3 mt-1">
                     <Heart className="h-4 w-4 text-primary" />
                   </div>
-                  <span>Integrity and transparency in all operations</span>
+                  <span>Integritas dan transparansi dalam semua kegiatan</span>
                 </li>
                 <li className="flex items-start">
                   <div className="rounded-full bg-primary/10 p-1 mr-3 mt-1">
                     <Heart className="h-4 w-4 text-primary" />
                   </div>
-                  <span>Balance between tradition and contemporary needs</span>
+                  <span>Keseimbangan antara tradisi dan kebutuhan kontemporer</span>
                 </li>
               </ul>
             </motion.div>
@@ -206,11 +206,11 @@ const Profile = () => {
       <section className="section-container">
         <div className="text-center mb-16">
           <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-            Our Team
+            Tim Kami
           </span>
-          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Leadership</h2>
+          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Kepemimpinan</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Meet the dedicated individuals who lead our mosque and community.
+            Temui individu-individu berdedikasi yang memimpin masjid dan komunitas kami.
           </p>
         </div>
         
@@ -360,8 +360,8 @@ const Profile = () => {
                     <Users className="h-8 w-8 text-primary" />
                   </div>
                 </div>
-                <h3 className="text-3xl font-bold mb-2">5,000+</h3>
-                <p className="text-muted-foreground">Community Members</p>
+                <h3 className="text-3xl font-bold mb-2">500+</h3>
+                <p className="text-muted-foreground">Anggota Komunitas</p>
               </div>
               
               <div>
@@ -371,7 +371,7 @@ const Profile = () => {
                   </div>
                 </div>
                 <h3 className="text-3xl font-bold mb-2">39</h3>
-                <p className="text-muted-foreground">Years of Service</p>
+                <p className="text-muted-foreground">Yahun Pelayanan</p>
               </div>
               
               <div>
@@ -380,8 +380,8 @@ const Profile = () => {
                     <BookOpen className="h-8 w-8 text-primary" />
                   </div>
                 </div>
-                <h3 className="text-3xl font-bold mb-2">25+</h3>
-                <p className="text-muted-foreground">Educational Programs</p>
+                <h3 className="text-3xl font-bold mb-2">15+</h3>
+                <p className="text-muted-foreground">Program Edukasi</p>
               </div>
               
               <div>
@@ -390,8 +390,8 @@ const Profile = () => {
                     <Heart className="h-8 w-8 text-primary" />
                   </div>
                 </div>
-                <h3 className="text-3xl font-bold mb-2">100+</h3>
-                <p className="text-muted-foreground">Community Events Yearly</p>
+                <h3 className="text-3xl font-bold mb-2">50+</h3>
+                <p className="text-muted-foreground">Acara Komunitas Tahunan</p>
               </div>
             </div>
           </motion.div>
