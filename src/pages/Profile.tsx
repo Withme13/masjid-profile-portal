@@ -42,7 +42,7 @@ const Profile = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto"
           >
-            Established in 1985, At_Tauhid Mosque has been serving the community for nearly four decades with a commitment to spirituality, education, and social service.
+            Didirikan pada tahun 1985, Masjid At_Tauhid telah melayani masyarakat selama hampir empat dekade dengan komitmen terhadap kerohanian, pendidikan, dan pelayanan sosial.
           </motion.p>
         </div>
       </section>
