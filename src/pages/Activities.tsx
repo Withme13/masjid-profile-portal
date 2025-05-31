@@ -164,7 +164,7 @@ const Activities = () => {
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
               >
-                <option value="all">All Activities</option>
+                <option value="all">Semua Aktivitas</option>
                 <option value="prayer">Prayer</option>
                 <option value="education">Education</option>
                 <option value="community">Community</option>
