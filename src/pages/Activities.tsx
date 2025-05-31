@@ -134,7 +134,7 @@ const Activities = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto"
           >
-            Bergabunglah bersama kami dalam berbagai kegiatan spiritual, pendidikan, dan komunitas sepanjang tahun.
+            Bergabunglah bersama kami dalam berbagai kegiatan kajian, pendidikan, dan komunitas sepanjang tahun.
           </motion.p>
         </div>
       </section>
