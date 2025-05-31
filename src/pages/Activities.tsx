@@ -325,12 +325,12 @@ const Activities = () => {
           viewport={{ once: true, amount: 0.2 }}
           className="text-center max-w-4xl mx-auto"
         >
-          <h2 className="text-3xl md:text-4xl font-bold font-heading mb-6">Want to Suggest an Activity?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold font-heading mb-6">Ingin Mengusulkan Kegiatan?</h2>
           <p className="text-lg text-muted-foreground mb-8">
-            We're always open to new ideas that can benefit our community. If you have suggestions for activities or programs, please share them with us.
+           Kami selalu terbuka untuk ide-ide baru yang dapat bermanfaat bagi komunitas kami. Jika Anda memiliki saran untuk kegiatan atau program, silakan bagikan dengan kami.
           </p>
           <button className="btn-primary inline-flex items-center">
-            Contact Us
+           Hubungi Kami
             <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
