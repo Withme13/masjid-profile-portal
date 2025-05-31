@@ -171,48 +171,6 @@ const Index = () => {
         </motion.div>
       </section>
 
-      {/* Upcoming Event */}
-      <section className="bg-primary/5 py-16">
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true, amount: 0.2 }}
-            className="glass-panel overflow-hidden rounded-xl flex flex-col md:flex-row"
-          >
-            <div className="md:w-1/2 relative">
-              <img 
-                src="https://images.unsplash.com/photo-1564939558297-fc396f18e5c7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80" 
-                alt="Upcoming Event" 
-                className="w-full h-64 md:h-full object-cover object-center"
-              />
-              <div className="absolute top-4 left-4 bg-primary/90 text-white rounded-lg px-4 py-2 text-sm font-medium">
-                {t('home.event.badge')}
-              </div>
-            </div>
-            
-            <div className="p-6 md:p-8 md:w-1/2 flex flex-col justify-center">
-              <div className="flex items-center text-primary mb-4">
-                <Calendar className="h-5 w-5 mr-2" />
-                <span className="text-sm font-medium">{t('home.event.date')}</span>
-              </div>
-              <h3 className="text-2xl md:text-3xl font-bold font-heading mb-4">{t('home.event.title')}</h3>
-              <p className="text-muted-foreground mb-6">
-                {t('home.event.desc')}
-              </p>
-              <div className="mt-auto">
-                <Link to="/activities" className="btn-primary inline-flex items-center">
-                  {t('home.event.view')}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="relative py-20 overflow-hidden">
         
