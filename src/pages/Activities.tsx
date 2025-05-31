@@ -179,11 +179,11 @@ const Activities = () => {
       <section className="section-container">
         <div className="text-center mb-12">
           <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-            Join Us
+            Bergabung Bersama Kami
           </span>
-          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Upcoming Activities</h2>
+          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Kegiatan Mendatang</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore our upcoming events and programs. All activities are open to the community unless otherwise specified.
+            Jelajahi acara dan program kami yang akan datang. Semua kegiatan terbuka untuk komunitas kecuali ditentukan lain.
           </p>
         </div>
         
@@ -192,9 +192,9 @@ const Activities = () => {
             <div className="mb-4">
               <Calendar className="h-12 w-12 mx-auto text-gray-400" />
             </div>
-            <h3 className="text-xl font-bold mb-2">No Activities Found</h3>
+            <h3 className="text-xl font-bold mb-2">Tidak Ada Aktivitas yang Ditemukan</h3>
             <p className="text-muted-foreground">
-              No activities match your current search and filter criteria. Try adjusting your search or check back later.
+             Tidak ada kegiatan yang cocok dengan kriteria pencarian dan filter Anda saat ini. Coba sesuaikan pencarian Anda atau periksa kembali nanti.
             </p>
           </div>
         ) : (
@@ -252,9 +252,9 @@ const Activities = () => {
       <section className="bg-primary/5 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Regular Programs</h2>
+            <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Program Reguler</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              In addition to our special events, we offer these regular programs throughout the week.
+              Selain acara khusus kami, kami menawarkan program reguler ini sepanjang minggu.
             </p>
           </div>
           
@@ -271,16 +271,16 @@ const Activities = () => {
                   <BookOpen className="h-8 w-8 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-2 font-heading">Daily Quran Classes</h3>
+                  <h3 className="text-xl font-bold mb-2 font-heading">Kelas Quran Harian</h3>
                   <p className="text-muted-foreground mb-4">
-                    Learn proper Quran recitation with tajweed rules. Classes available for all age groups and proficiency levels.
+                    Belajar membaca Al-Quran yang benar dengan kaidah tajwid. Kelas tersedia untuk semua kelompok usia dan tingkat kemahiran.
                   </p>
                   <div className="bg-primary/5 p-3 rounded-lg">
-                    <p className="font-medium mb-1">Schedule:</p>
+                    <p className="font-medium mb-1">Jadwal:</p>
                     <ul className="text-sm space-y-1">
-                      <li>Beginners: Mondays & Wednesdays, 6:00 PM - 7:30 PM</li>
-                      <li>Intermediate: Tuesdays & Thursdays, 6:00 PM - 7:30 PM</li>
-                      <li>Advanced: Saturdays, 10:00 AM - 12:00 PM</li>
+                      <li>Pemula: Senin & Rabu, 18:00 - 19:30</li>
+                      <li>Tingkat Menengah: Selasa & Kamis, 18:00 - 19:30</li>
+                      <li>Tingkat Lanjut: Sabtu, pukul 10:00 - 12:00 siang</li>
                     </ul>
                   </div>
                 </div>
@@ -299,16 +299,15 @@ const Activities = () => {
                   <Users className="h-8 w-8 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold mb-2 font-heading">Weekly Study Circles</h3>
+                  <h3 className="text-xl font-bold mb-2 font-heading">Halaqah Kajian Mingguan</h3>
                   <p className="text-muted-foreground mb-4">
-                    Join our weekly halaqas where we discuss various Islamic topics, contemporary issues, and spiritual development.
+                    Bergabunglah dengan halaqah mingguan kami di mana kami mendiskusikan berbagai topik keislaman, isu-isu kontemporer, dan pengembangan pemahaman agama.
                   </p>
                   <div className="bg-primary/5 p-3 rounded-lg">
-                    <p className="font-medium mb-1">Schedule:</p>
+                    <p className="font-medium mb-1">Jadwal:</p>
                     <ul className="text-sm space-y-1">
-                      <li>Sisters' Circle: Sundays, 11:00 AM - 12:30 PM</li>
-                      <li>Brothers' Circle: Sundays, 2:00 PM - 3:30 PM</li>
-                      <li>Youth Circle: Fridays, 7:30 PM - 9:00 PM</li>
+                      <li>Akhwat: Minggu, 11:00 - 12:30 siang</li>
+                      <li>Ikhwan: Minggu, pukul 14.00 - 15.30</li>
                     </ul>
                   </div>
                 </div>
