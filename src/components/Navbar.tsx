@@ -1,24 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, User, Building, Calendar, Mail, Menu, X, Sun, Moon, Film, Languages } from 'lucide-react';
+import { Home, User, Building, Calendar, Mail, Menu, X, Sun, Moon, Film } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from './ThemeProvider';
 import { useLanguage } from '@/contexts/LanguageContext';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { theme, setTheme } = useTheme();
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -83,23 +76,10 @@ const Navbar = () => {
             </Link>
           ))}
           
-          {/* Language Selector */}
-          <div className="ml-4">
-            <Select value={language} onValueChange={(value: 'en' | 'id') => setLanguage(value)}>
-              <SelectTrigger className="w-20 h-8 border-none bg-transparent hover:bg-accent">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">EN</SelectItem>
-                <SelectItem value="id">ID</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
           {/* Theme Toggle Button */}
           <button 
             onClick={toggleTheme}
-            className="ml-2 p-2 rounded-full hover:bg-accent transition-colors"
+            className="ml-4 p-2 rounded-full hover:bg-accent transition-colors"
             aria-label="Toggle theme"
           >
             {theme === 'dark' ? (
@@ -112,17 +92,6 @@ const Navbar = () => {
         
         {/* Mobile Navigation Toggle */}
         <div className="md:hidden flex items-center space-x-2">
-          {/* Language Selector for Mobile */}
-          <Select value={language} onValueChange={(value: 'en' | 'id') => setLanguage(value)}>
-            <SelectTrigger className="w-16 h-8 border-none bg-transparent hover:bg-accent">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">EN</SelectItem>
-              <SelectItem value="id">ID</SelectItem>
-            </SelectContent>
-          </Select>
-          
           {/* Theme Toggle Button for Mobile */}
           <button 
             onClick={toggleTheme}
