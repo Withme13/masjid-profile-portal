@@ -33,7 +33,7 @@ const Profile = () => {
             transition={{ duration: 0.5 }}
             className="text-5xl md:text-6xl font-bold text-white mb-6"
           >
-            About At_Tauhid Mosque
+            Tentang At_Tauhid Mosque
           </motion.h1>
           
           <motion.p 
