@@ -58,21 +58,21 @@ const Profile = () => {
             className="order-2 lg:order-1"
           >
             <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-              Our Journey
+              Perjalanan Kami
             </span>
-            <h2 className="section-title mb-6">Our Story</h2>
+            <h2 className="section-title mb-6">Kisah Kami</h2>
             <div className="space-y-4 text-muted-foreground">
               <p>
-                At_Tauhid Mosque began as a small prayer space in a community center in 1985. Founded by a group of 12 families who saw the need for a dedicated Islamic center in the growing Muslim community.
+                Masjid At_Tauhid dimulai sebagai ruang shalat kecil di pusat komunitas pada tahun 1985. Didirikan oleh keluarga yang melihat kebutuhan akan pusat Islam yang berdedikasi dalam komunitas Muslim yang sedang berkembang.
               </p>
               <p>
-                Over the years, with the support of our community and generous donors, we expanded to our current location in 1995. The beautiful building we occupy today was completed in 2005 after extensive renovations and expansions.
+                Selama bertahun-tahun, dengan dukungan dari komunitas kami dan para donatur yang dermawan, kami memperluas lokasi kami saat ini pada tahun 1995. Bangunan indah yang kami tempati saat ini selesai dibangun pada tahun 2005 setelah renovasi dan perluasan yang ekstensif.
               </p>
               <p>
-                Today, At_Tauhid serves thousands of Muslims in the area, providing not only a place for worship but also a community hub for education, social services, and cultural activities.
+                Saat ini, At_Tauhid melayani ribuan umat Islam di daerah tersebut, tidak hanya menyediakan tempat untuk beribadah tetapi juga sebagai pusat komunitas untuk pendidikan, layanan sosial, dan kegiatan budaya.
               </p>
               <p>
-                Our name "At_Tauhid" (The Oneness) reflects our commitment to education and thoughtful application of Islamic principles in contemporary life.
+               Nama kami "At_Tauhid" (Keesaan) mencerminkan komitmen kami terhadap pendidikan dan penerapan prinsip-prinsip Islam yang bijaksana dalam kehidupan kontemporer.
               </p>
             </div>
           </motion.div>
