@@ -93,7 +93,7 @@ const Profile = () => {
               <div className="absolute -bottom-6 -left-6 bg-primary/10 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20">
                 <div className="flex items-center space-x-2">
                   <Clock className="h-5 w-5 text-primary" />
-                  <span className="font-medium">Serving since 1985</span>
+                  <span className="font-medium">Melayani Sejak 1985</span>
                 </div>
               </div>
             </div>
@@ -106,11 +106,11 @@ const Profile = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="inline-block px-3 py-1 bg-white text-primary rounded-full text-sm font-medium mb-4">
-              Our Purpose
+              Tujuan Kami
             </span>
-            <h2 className="section-title after:left-1/4 after:w-1/2 mx-auto mb-4">Mission & Values</h2>
+            <h2 className="section-title after:left-1/4 after:w-1/2 mx-auto mb-4">Misi & Nilai</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Our mission and values guide everything we do at At_Tauhid Mosque.
+             Misi dan nilai-nilai kami memandu semua yang kami lakukan di Masjid At_Tauhid.
             </p>
           </div>
           
@@ -122,34 +122,34 @@ const Profile = () => {
               viewport={{ once: true, amount: 0.2 }}
               className="glass-panel p-8"
             >
-              <h3 className="text-2xl font-bold font-heading mb-4">Our Mission</h3>
+              <h3 className="text-2xl font-bold font-heading mb-4">Misi Kami</h3>
               <p className="text-muted-foreground mb-6">
-                To provide a welcoming space for worship, education, and community service based on Islamic principles, fostering spiritual growth and social harmony.
+               Menyediakan tempat yang ramah untuk beribadah, pendidikan, dan pelayanan masyarakat berdasarkan prinsip-prinsip Islam, mendorong pertumbuhan spiritual dan keharmonisan sosial.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <div className="rounded-full bg-primary/10 p-1 mr-3 mt-1">
                     <Award className="h-4 w-4 text-primary" />
                   </div>
-                  <span>Provide authentic Islamic education for all ages</span>
+                  <span>Menyediakan pendidikan Islam yang otentik untuk segala usia</span>
                 </li>
                 <li className="flex items-start">
                   <div className="rounded-full bg-primary/10 p-1 mr-3 mt-1">
                     <Award className="h-4 w-4 text-primary" />
                   </div>
-                  <span>Establish a vibrant community center for Muslims</span>
+                  <span>Membangun pusat komunitas yang dinamis bagi umat Islam</span>
                 </li>
                 <li className="flex items-start">
                   <div className="rounded-full bg-primary/10 p-1 mr-3 mt-1">
                     <Award className="h-4 w-4 text-primary" />
                   </div>
-                  <span>Promote interfaith dialogue and understanding</span>
+                  <span>Mempromosikan dialog dan pemahaman antar agama</span>
                 </li>
                 <li className="flex items-start">
                   <div className="rounded-full bg-primary/10 p-1 mr-3 mt-1">
                     <Award className="h-4 w-4 text-primary" />
                   </div>
-                  <span>Support social welfare initiatives in the wider community</span>
+                  <span>Mendukung inisiatif kesejahteraan sosial di masyarakat luas</span>
                 </li>
               </ul>
             </motion.div>
