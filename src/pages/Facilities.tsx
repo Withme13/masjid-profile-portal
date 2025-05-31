@@ -137,69 +137,7 @@ const Facilities = () => {
         </motion.div>
       </section>
 
-      {/* Featured Facility */}
-      <section className="bg-primary/5 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true, amount: 0.2 }}
-            className="glass-panel overflow-hidden rounded-xl flex flex-col md:flex-row"
-          >
-            <div className="md:w-1/2 relative">
-              <img 
-                src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&auto=format&fit=crop&w=1171&q=80" 
-                alt="Main Prayer Hall" 
-                className="w-full h-64 md:h-full object-cover object-center"
-              />
-            </div>
-            
-            <div className="p-6 md:p-8 md:w-1/2 flex flex-col justify-center">
-              <h3 className="text-2xl md:text-3xl font-bold font-heading mb-4">{t('facilities.featured.title')}</h3>
-              <p className="text-muted-foreground mb-6">
-                {t('facilities.featured.desc')}
-              </p>
-              <ul className="space-y-2 mb-6">
-                <li className="flex items-center">
-                  <div className="rounded-full bg-primary/20 p-1 mr-3">
-                    <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <span>{t('facilities.featured.capacity')}</span>
-                </li>
-                <li className="flex items-center">
-                  <div className="rounded-full bg-primary/20 p-1 mr-3">
-                    <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <span>{t('facilities.featured.mats')}</span>
-                </li>
-                <li className="flex items-center">
-                  <div className="rounded-full bg-primary/20 p-1 mr-3">
-                    <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <span>{t('facilities.featured.sound')}</span>
-                </li>
-                <li className="flex items-center">
-                  <div className="rounded-full bg-primary/20 p-1 mr-3">
-                    <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                  <span>{t('facilities.featured.climate')}</span>
-                </li>
-              </ul>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Additional Facilities Grid - Updated to match Photo Gallery format */}
+      {/* Additional Facilities Grid */}
       <section className="section-container">
         <h2 className="section-title mb-12">{t('facilities.additional.title')}</h2>
         
