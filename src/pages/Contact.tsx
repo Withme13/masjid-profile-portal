@@ -19,18 +19,21 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Define form schema with Zod
 const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  subject: z.string().min(1, { message: "Please select a subject." }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
+  name: z.string().min(2, { message: "Nama harus minimal 2 karakter." }),
+  email: z.string().email({ message: "Mohon masukkan alamat email yang valid." }),
+  subject: z.string().min(1, { message: "Mohon pilih subjek." }),
+  message: z.string().min(10, { message: "Pesan harus minimal 10 karakter." }),
 });
 
 type ContactFormValues = z.infer<typeof formSchema>;
 
 const Contact = () => {
+  const { t } = useLanguage();
+  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -68,14 +71,14 @@ const Contact = () => {
       form.reset();
       
       toast({
-        title: "Message Sent!",
-        description: "We'll get back to you as soon as possible.",
+        title: "Pesan Terkirim!",
+        description: "Kami akan menghubungi Anda sesegera mungkin.",
       });
     } catch (error) {
       console.error("Error sending message:", error);
       toast({
         title: "Error",
-        description: "There was a problem sending your message. Please try again.",
+        description: "Terjadi masalah saat mengirim pesan Anda. Silakan coba lagi.",
         variant: "destructive",
       });
     } finally {
@@ -86,7 +89,7 @@ const Contact = () => {
   const contactInfo = [
     {
       icon: <Phone className="h-6 w-6 text-primary" />,
-      title: "Phone",
+      title: "Telepon",
       details: [
         "+62 812-8484-2334 (GIBRAN)",
       ]
@@ -100,7 +103,7 @@ const Contact = () => {
     },
     {
       icon: <MapPin className="h-6 w-6 text-primary" />,
-      title: "Address",
+      title: "Alamat",
       details: [
         "Jl. Ganggeng VII No.2 3, RT.4/RW.7,",
         "Sungai Bambu, Kec. Tj. Priok,",
@@ -109,11 +112,11 @@ const Contact = () => {
     },
     {
       icon: <Clock className="h-6 w-6 text-primary" />,
-      title: "Office Hours",
+      title: "Jam Operasional",
       details: [
-        "Monday - Friday: 9:00 AM - 5:00 PM",
-        "Saturday: 10:00 AM - 2:00 PM",
-        "Sunday: Closed"
+        "Senin - Jumat: 09:00 - 17:00",
+        "Sabtu: 10:00 - 14:00",
+        "Minggu: Tutup"
       ]
     }
   ];
@@ -132,12 +135,12 @@ const Contact = () => {
 
   // Available subject options
   const subjectOptions = [
-    { value: "general", label: "General Inquiry" },
-    { value: "prayer", label: "Prayer Times" },
-    { value: "activities", label: "Activities & Events" },
-    { value: "donation", label: "Donations" },
-    { value: "volunteer", label: "Volunteering" },
-    { value: "other", label: "Other" }
+    { value: "general", label: "Pertanyaan Umum" },
+    { value: "prayer", label: "Waktu Shalat" },
+    { value: "activities", label: "Aktivitas & Acara" },
+    { value: "donation", label: "Donasi" },
+    { value: "volunteer", label: "Volunteer" },
+    { value: "other", label: "Lainnya" }
   ];
 
   return (
@@ -165,7 +168,7 @@ const Contact = () => {
             className="text-4xl md:text-6xl font-bold font-heading mb-6"
             style={{ color: '#69443c' }}
           >
-            Get in Touch
+            {t('contact.hero.title')}
           </motion.h1>
           <motion.p 
             initial={{ y: 30, opacity: 0 }}
@@ -173,7 +176,7 @@ const Contact = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg md:text-xl text-gray-800 mb-8 max-w-2xl mx-auto bg-white/70 backdrop-blur-sm py-2 px-4 rounded-lg"
           >
-            We're here to answer any questions you may have about our mosque, services, or community activities.
+            {t('contact.hero.subtitle')}
           </motion.p>
         </div>
       </section>
@@ -182,11 +185,11 @@ const Contact = () => {
       <section className="section-container">
         <div className="text-center mb-16">
           <span className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-            Contact Us
+            Hubungi Kami
           </span>
-          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">How to Reach Us</h2>
+          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Cara Menghubungi Kami</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Feel free to reach out through any of these channels. We strive to respond to all inquiries within 24 hours.
+            Jangan ragu untuk menghubungi kami melalui salah satu saluran ini. Kami berusaha merespons semua pertanyaan dalam 24 jam.
           </p>
         </div>
         
@@ -228,7 +231,7 @@ const Contact = () => {
               <div className="p-6 border-b">
                 <div className="flex items-center">
                   <Map className="h-6 w-6 text-primary mr-3" />
-                  <h3 className="text-xl font-bold font-heading">Our Location</h3>
+                  <h3 className="text-xl font-bold font-heading">Lokasi Kami</h3>
                 </div>
               </div>
               <div className="h-[400px] relative">
@@ -246,7 +249,7 @@ const Contact = () => {
               <div className="p-6 border-b">
                 <div className="flex items-center">
                   <Mail className="h-6 w-6 text-primary mr-3" />
-                  <h3 className="text-xl font-bold font-heading">Send Us a Message</h3>
+                  <h3 className="text-xl font-bold font-heading">Kirim Pesan</h3>
                 </div>
               </div>
               <div className="p-6">
@@ -257,9 +260,9 @@ const Contact = () => {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Your Name</FormLabel>
+                          <FormLabel>Nama Anda</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your name" {...field} />
+                            <Input placeholder="Masukkan nama Anda" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -271,9 +274,9 @@ const Contact = () => {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email Address</FormLabel>
+                          <FormLabel>Alamat Email</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your email" {...field} />
+                            <Input placeholder="Masukkan email Anda" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -285,14 +288,14 @@ const Contact = () => {
                       name="subject"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Subject</FormLabel>
+                          <FormLabel>Subjek</FormLabel>
                           <Select 
                             onValueChange={field.onChange} 
                             defaultValue={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a subject" />
+                                <SelectValue placeholder="Pilih subjek" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -313,10 +316,10 @@ const Contact = () => {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Message</FormLabel>
+                          <FormLabel>Pesan</FormLabel>
                           <FormControl>
                             <Textarea 
-                              placeholder="Type your message here..." 
+                              placeholder="Ketik pesan Anda di sini..." 
                               rows={4} 
                               {...field} 
                             />
@@ -332,10 +335,10 @@ const Contact = () => {
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (
-                        "Processing..."
+                        "Memproses..."
                       ) : (
                         <>
-                          Send Message
+                          Kirim Pesan
                           <Send className="ml-2 h-4 w-4" />
                         </>
                       )}
@@ -351,9 +354,9 @@ const Contact = () => {
       {/* FAQ Section */}
       <section className="section-container">
         <div className="text-center mb-12">
-          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Frequently Asked Questions</h2>
+          <h2 className="section-title mb-4 after:left-1/4 after:w-1/2 mx-auto">Pertanyaan yang Sering Diajukan</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Find quick answers to common questions about our mosque and services.
+            Temukan jawaban cepat untuk pertanyaan umum tentang masjid dan layanan kami.
           </p>
         </div>
         
@@ -366,30 +369,30 @@ const Contact = () => {
             className="space-y-4"
           >
             <div className="glass-panel p-6 rounded-xl">
-              <h3 className="text-lg font-bold mb-2">What are the prayer times?</h3>
+              <h3 className="text-lg font-bold mb-2">Kapan waktu shalat?</h3>
               <p className="text-muted-foreground">
-                Prayer times vary throughout the year based on the position of the sun. You can check our website's prayer times section or download our mobile app for accurate, up-to-date prayer times.
+                Waktu shalat bervariasi sepanjang tahun berdasarkan posisi matahari. Anda dapat memeriksa bagian waktu shalat di website kami atau mengunduh aplikasi mobile kami untuk mendapatkan waktu shalat yang akurat dan terkini.
               </p>
             </div>
             
             <div className="glass-panel p-6 rounded-xl">
-              <h3 className="text-lg font-bold mb-2">Do you offer tours of the mosque?</h3>
+              <h3 className="text-lg font-bold mb-2">Apakah ada tur masjid?</h3>
               <p className="text-muted-foreground">
-                Yes, we offer guided tours for individuals and groups. Please contact us at least 48 hours in advance to schedule a tour.
+                Ya, kami menawarkan tur terpandu untuk individu dan kelompok. Mohon hubungi kami setidaknya 48 jam sebelumnya untuk menjadwalkan tur.
               </p>
             </div>
             
             <div className="glass-panel p-6 rounded-xl">
-              <h3 className="text-lg font-bold mb-2">How can I donate to the mosque?</h3>
+              <h3 className="text-lg font-bold mb-2">Bagaimana cara berdonasi ke masjid?</h3>
               <p className="text-muted-foreground">
-                Donations can be made in person, by mail, or online through our secure donation portal. All donations are tax-deductible.
+                Donasi dapat dilakukan secara langsung, melalui pos, atau online melalui portal donasi aman kami. Semua donasi dapat dikurangkan dari pajak.
               </p>
             </div>
             
             <div className="glass-panel p-6 rounded-xl">
-              <h3 className="text-lg font-bold mb-2">Can non-Muslims visit the mosque?</h3>
+              <h3 className="text-lg font-bold mb-2">Bisakah non-Muslim mengunjungi masjid?</h3>
               <p className="text-muted-foreground">
-                Absolutely! We welcome visitors of all faiths who wish to learn about Islam and our community. We ask that visitors dress modestly out of respect.
+                Tentu saja! Kami menyambut pengunjung dari semua agama yang ingin belajar tentang Islam dan komunitas kami. Kami meminta pengunjung berpakaian sopan sebagai bentuk penghormatan.
               </p>
             </div>
           </motion.div>

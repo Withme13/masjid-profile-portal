@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Building, Wifi, Clipboard, Book, Car, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -246,15 +247,15 @@ const Facilities = () => {
                     <AspectRatio ratio={4/3}>
                       <img 
                         src="https://images.unsplash.com/photo-1439337153520-7082a56a81f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1171&q=80" 
-                        alt="Modern Architecture" 
+                        alt="Arsitektur Modern" 
                         className="w-full h-full object-cover rounded-t-lg"
                       />
                     </AspectRatio>
                   </div>
                   <CardContent className="flex-1 p-6">
-                    <h3 className="text-xl font-bold mb-2 font-heading">Modern Architecture</h3>
+                    <h3 className="text-xl font-bold mb-2 font-heading">Arsitektur Modern</h3>
                     <p className="text-muted-foreground">
-                      Our mosque features contemporary Islamic architecture with energy-efficient design and beautiful geometric patterns.
+                      Masjid kami menampilkan arsitektur Islam kontemporer dengan desain hemat energi dan pola geometris yang indah.
                     </p>
                   </CardContent>
                 </Card>
@@ -272,15 +273,15 @@ const Facilities = () => {
                     <AspectRatio ratio={4/3}>
                       <img 
                         src="https://images.unsplash.com/photo-1721322800607-8c38375eef04?auto=format&fit=crop&w=1171&q=80" 
-                        alt="Community Hall" 
+                        alt="Aula Komunitas" 
                         className="w-full h-full object-cover rounded-t-lg"
                       />
                     </AspectRatio>
                   </div>
                   <CardContent className="flex-1 p-6">
-                    <h3 className="text-xl font-bold mb-2 font-heading">Multipurpose Community Hall</h3>
+                    <h3 className="text-xl font-bold mb-2 font-heading">Aula Komunitas Serbaguna</h3>
                     <p className="text-muted-foreground">
-                      A versatile space for community gatherings, workshops, and social events with modern audiovisual equipment.
+                      Ruang serbaguna untuk pertemuan komunitas, workshop, dan acara sosial dengan peralatan audiovisual modern.
                     </p>
                   </CardContent>
                 </Card>
