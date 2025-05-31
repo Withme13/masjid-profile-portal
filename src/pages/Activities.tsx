@@ -126,7 +126,7 @@ const Activities = () => {
             transition={{ duration: 0.8 }}
             className="text-4xl md:text-6xl font-bold text-white font-heading mb-6"
           >
-            Our Activities
+            Aktivitas Kami
           </motion.h1>
           <motion.p 
             initial={{ y: 30, opacity: 0 }}
@@ -134,7 +134,7 @@ const Activities = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto"
           >
-            Join us for a variety of spiritual, educational, and community activities throughout the year.
+            Bergabunglah bersama kami dalam berbagai kegiatan spiritual, pendidikan, dan komunitas sepanjang tahun.
           </motion.p>
         </div>
       </section>
