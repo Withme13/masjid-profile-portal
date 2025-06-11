@@ -699,11 +699,11 @@ const MediaManagement = () => {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Events">Events</SelectItem>
-                  <SelectItem value="Architecture">Architecture</SelectItem>
-                  <SelectItem value="Community">Community</SelectItem>
-                  <SelectItem value="Activities">Activities</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
+                  <SelectItem value="Events">Acara</SelectItem>
+                  <SelectItem value="Architecture">Arsitektur</SelectItem>
+                  <SelectItem value="Community">Komunitas</SelectItem>
+                  <SelectItem value="Activities">Aktivitas</SelectItem>
+                  <SelectItem value="Other">Lainnya</SelectItem>
                 </SelectContent>
               </Select>
             </div>
