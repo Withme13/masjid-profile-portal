@@ -35,6 +35,22 @@ const Activities = () => {
     return 'community'; // Default type
   };
 
+  // Function to get Indonesian type labels
+  const getTypeLabel = (type: string) => {
+    switch(type) {
+      case 'prayer':
+        return 'Sholat';
+      case 'education':
+        return 'Pendidikan';
+      case 'community':
+        return 'Komunitas';
+      case 'youth':
+        return 'Pemuda';
+      default:
+        return 'Komunitas';
+    }
+  };
+
   function getDefaultImage(type: string) {
     switch(type) {
       case 'prayer':
@@ -165,10 +181,10 @@ const Activities = () => {
                 onChange={(e) => setFilter(e.target.value)}
               >
                 <option value="all">Semua Aktivitas</option>
-                <option value="prayer">Prayer</option>
-                <option value="education">Education</option>
-                <option value="community">Community</option>
-                <option value="youth">Youth</option>
+                <option value="prayer">Sholat</option>
+                <option value="education">Pendidikan</option>
+                <option value="community">Komunitas</option>
+                <option value="youth">Pemuda</option>
               </select>
             </div>
           </div>
@@ -223,7 +239,7 @@ const Activities = () => {
                     }}
                   />
                   <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 text-xs font-medium">
-                    {activity.type.charAt(0).toUpperCase() + activity.type.slice(1)}
+                    {getTypeLabel(activity.type)}
                   </div>
                 </div>
                 
