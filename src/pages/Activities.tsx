@@ -1,11 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, BookOpen, Users, Search, Filter } from 'lucide-react';
+import { Calendar, BookOpen, Users, Search, Filter, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { format, parseISO } from 'date-fns';
 import { useData } from '@/contexts/DataContext';
 import { Button } from '@/components/ui/button';
 import ActivityRegistrationModal from '@/components/ActivityRegistrationModal';
+
+interface ActivityImage {
+  id: string;
+  title: string;
+  image: string;
+}
 
 const Activities = () => {
   useEffect(() => {
@@ -16,6 +22,7 @@ const Activities = () => {
   const [filter, setFilter] = useState('all');
   const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<{id: string, name: string} | null>(null);
+  const [selectedImage, setSelectedImage] = useState<ActivityImage | null>(null);
   const { activities } = useData();
   
   // Create activity types mapping to classify activities
@@ -227,17 +234,23 @@ const Activities = () => {
                 variants={itemVariants}
                 className="glass-panel overflow-hidden rounded-xl hover-scale"
               >
-                <div className="relative h-48">
+                <div 
+                  className="relative h-48 overflow-hidden cursor-pointer group/image"
+                  onClick={() => setSelectedImage({ id: activity.id, title: activity.title, image: activity.image })}
+                >
                   <img 
                     src={activity.image} 
                     alt={activity.title} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover/image:scale-110"
                     onError={(e) => {
                       console.error(`Failed to load image: ${activity.image}`);
                       const target = e.target as HTMLImageElement;
                       target.src = getDefaultImage(activity.type);
                     }}
                   />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white text-lg font-medium">Lihat Lebih Besar</span>
+                  </div>
                   <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 text-xs font-medium">
                     {getTypeLabel(activity.type)}
                   </div>
@@ -353,6 +366,36 @@ const Activities = () => {
           </button>
         </motion.div>
       </section>
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div 
+            className="relative max-w-4xl w-full bg-background rounded-xl overflow-hidden animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              className="absolute top-4 right-4 z-10 bg-black/50 rounded-full p-1 hover:bg-black/70 transition-colors"
+              onClick={() => setSelectedImage(null)}
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+            <div className="h-[70vh] overflow-hidden">
+              <img 
+                src={selectedImage.image} 
+                alt={selectedImage.title} 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="p-6">
+              <h3 className="font-heading font-bold text-xl">{selectedImage.title}</h3>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Registration Modal */}
       {selectedActivity && (
